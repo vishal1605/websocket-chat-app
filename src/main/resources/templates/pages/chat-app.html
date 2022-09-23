@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::.row},~{::title},~{::script})">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat app</title>
+
+</head>
+
+<body>
+    <div class="row chat-section mt-5">
+        <div class="col-9 chat m-auto shadow">
+            <div class="chat-app">
+                <div class="chat-sidebar border-end border-primary">
+                    <ul class="chat-list-user">
+                        <li class="list shadow mb-1">
+                            <div class="user-photo">
+                                <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" style="border-radius: 50%;">
+                            </div>
+                            <div class="user-detail">
+                                <h5 class="m-0">Vishal</h5>
+                                <p class="m-0">vybbubythbub</p>
+                            </div>
+                            <div class="user-extra">
+                                <small>3.55</small>
+                            </div>
+                        </li>
+                        <li class="list shadow mb-1">
+                            <div class="user-photo">
+                                <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" style="border-radius: 50%;">
+                            </div>
+                            <div class="user-detail">
+                                <h5 class="m-0">Vishal</h5>
+                                <p class="m-0">vybbubythbub</p>
+                            </div>
+                            <div class="user-extra">
+                                <small>3.55</small>
+                            </div>
+                        </li>
+                        <li class="list shadow mb-1">
+                            <div class="user-photo">
+                                <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" style="border-radius: 50%;">
+                            </div>
+                            <div class="user-detail">
+                                <h5 class="m-0">Vishal</h5>
+                                <p class="m-0">vybbubythbub</p>
+                            </div>
+                            <div class="user-extra">
+                                <small>3.55</small>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+                <div class="chat-main border-start border-primary">
+                    <div class="message-section border-bottom border-primary">
+                        <div class="left-div">
+                            <div class="left-msg">
+                                <small>Hello</small>
+                            </div>
+                        </div>
+                        <div class="right-div">
+                            <div class="right-msg">
+                                <small>Hello</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="message-input-section border-top border-primary">
+                        <form action="">
+                            <input type="text" class="">
+                            <button>send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+<script th:src="@{/chat-app/js/chat-app.js}"></script>
+</body>
+
+</html>
