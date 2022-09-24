@@ -11,6 +11,13 @@
 
 <body>
     <div class="row chat-section mt-5">
+        <div class="col-12">
+            <h6 th:text="${session.user.userName}" id="unique-name"></h6>
+            
+                <a th:href="@{/logout}" class="btn btn-danger">Logout</a>
+                <input type="checkbox" name="" id="online" >
+            
+        </div>
         <div class="col-9 chat m-auto shadow">
             <div class="chat-app">
                 <div class="chat-sidebar border-end border-primary">
@@ -79,7 +86,7 @@
         </div>
 
     </div>
-<script th:src="@{/chat-app/js/chat-app.js}"></script>
+<script th:inline="javascript" th:src="@{/chat-app/js/chat-app.js}"></script>
 </body>
 
 </html>

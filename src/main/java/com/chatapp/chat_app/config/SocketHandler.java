@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import javax.servlet.http.HttpSession;
 import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -16,6 +17,7 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import org.springframework.stereotype.Component;
 
+import com.chatapp.chat_app.model.ChatUser;
 import com.chatapp.chat_app.model.Message;
 
 @Component
@@ -36,7 +38,6 @@ public class SocketHandler{
         chatEndpoints.add(this);
         users.put(session.getId(), username);
         System.out.println(users.toString());
-
         Message message = new Message();
         message.setFromUser(username);
         message.setContent("connected!");
@@ -58,6 +59,8 @@ public class SocketHandler{
         Message message = new Message();
         message.setFromUser(users.get(session.getId()));
         message.setContent("disconnected!");
+        users.remove(session.getId());
+        System.out.println(users.toString());
         broadcast(message);
     }
 

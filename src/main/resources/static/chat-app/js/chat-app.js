@@ -1,26 +1,35 @@
 var ws;
-var elem = document.getElementById("username");
-
+var session = document.getElementById('unique-name');
+var online = document.getElementById('online');
 function connect() {
-    var username = elem.innerHTML;
+    var username = session.innerHTML;
     ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-    elem.style = "color:green";
 }
 function disconnect(){
-    
-    ws.close();
-    elem.style = "color:red";
+    ws.close(); 
     
 }
 
-function send() {
-    var content = document.getElementById("msg").value;
-    var to = document.getElementById("to").value;
-    var json = JSON.stringify({
-        "to":to,
-        "content":content
-    });
+online.onchange = function(e){
+    if (e.target.checked) {
+        connect();
+        
+        
+    } else {
+        disconnect();
+    }
 
-    ws.send(json);
-    log.innerHTML += "Me : " + content + "\n";
 }
+
+
+// function send() {
+//     var content = document.getElementById("msg").value;
+//     var to = document.getElementById("to").value;
+//     var json = JSON.stringify({
+//         "to":to,
+//         "content":content
+//     });
+
+//     ws.send(json);
+//     log.innerHTML += "Me : " + content + "\n";
+// }

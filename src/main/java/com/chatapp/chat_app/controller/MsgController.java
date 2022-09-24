@@ -56,6 +56,12 @@ public class MsgController {
         return "redirect:/dashboard/" + u.getUserName();
     }
 
+    @GetMapping("/logout")
+    public String logoutProcess(HttpSession session){
+        session.removeAttribute("user");
+        return "redirect:/login-form";
+    }
+
     @GetMapping("/dashboard/{name}")
     public String dashboard(@PathVariable("name") String name) {
         // System.out.println(name+"dash");
@@ -64,9 +70,11 @@ public class MsgController {
     }
 
     @GetMapping("/dashboard/chat/{name}")
-    public String chat(@PathVariable("name") String name, Model m) {
+    public String chat(@PathVariable("name") String name, Model m,HttpSession session) {
         m.addAttribute("username", name);
         // System.out.println(name+"dash");
+        // ChatUser c = (ChatUser)session.getAttribute("user");
+        // c.setActive(true);
         return "pages/chat-app";
 
     }
