@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.chatapp.chat_app.model.ChatUser;
 import com.chatapp.chat_app.model.Message;
+import com.google.gson.Gson;
 
 @Component
 @ServerEndpoint(value = "/chat/{username}",
@@ -26,7 +27,7 @@ import com.chatapp.chat_app.model.Message;
                 decoders = MessageDecoder.class
 )
 public class SocketHandler{
-    private static Map<String, String> users  = new HashMap<>();
+    private static Map<String, ChatUser> users  = new HashMap<>();
     private Session session;
     private String username;
     private static final Set<SocketHandler> chatEndpoints = new CopyOnWriteArraySet<>();
@@ -36,32 +37,32 @@ public class SocketHandler{
         this.session = session;
         this.username = username;
         chatEndpoints.add(this);
-        users.put(session.getId(), username);
-        System.out.println(users.toString());
-        Message message = new Message();
-        message.setFromUser(username);
-        message.setContent("connected!");
-        broadcast(message);
+        // System.out.println(users.toString());
+        ChatUser user = new ChatUser();
+        user.setUserName(username);
+        user.setActive(true);
+        users.put(session.getId(), user);        
+        broadcast(user);
 
     }
     @OnMessage
     public void onMessage(Session session, Message message) throws IOException, EncodeException {
         System.out.println("Message");
-        message.setFromUser(users.get(session.getId()));
-        sendMessageToOneUser(message);
+        // message.setFromUser(users.get(session.getId()));
+        // sendMessageToOneUser(message);
     }
     @OnClose
     public void onClose(Session session) throws IOException, EncodeException {
-        
 
         chatEndpoints.remove(this);
         System.out.println("Disconnetced");
-        Message message = new Message();
-        message.setFromUser(users.get(session.getId()));
-        message.setContent("disconnected!");
+        ChatUser user = new ChatUser();
+        user.setUserName(username);
+        user.setActive(false);
+        users.put(session.getId(), user);
+        
+        broadcast(user);
         users.remove(session.getId());
-        System.out.println(users.toString());
-        broadcast(message);
     }
 
     @OnError
@@ -89,10 +90,10 @@ public class SocketHandler{
         }
         return null;
     }
-    private static void broadcast(Message message) throws IOException, EncodeException {
+    private static void broadcast(ChatUser user) throws IOException, EncodeException {
         for (SocketHandler endpoint : chatEndpoints) {
             synchronized(endpoint) {
-                endpoint.session.getBasicRemote().sendObject(message);
+                endpoint.session.getBasicRemote().sendObject(user);
             }
         }
     }

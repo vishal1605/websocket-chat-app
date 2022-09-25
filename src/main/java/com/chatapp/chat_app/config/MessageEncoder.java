@@ -1,13 +1,16 @@
 package com.chatapp.chat_app.config;
 
+import java.util.Map;
+
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
+import com.chatapp.chat_app.model.ChatUser;
 import com.chatapp.chat_app.model.Message;
 import com.google.gson.Gson;
 
-public class MessageEncoder implements Encoder.Text<Message> {
+public class MessageEncoder implements Encoder.Text<ChatUser> {
 
     @Override
     public void destroy() {
@@ -22,10 +25,10 @@ public class MessageEncoder implements Encoder.Text<Message> {
     }
 
     @Override
-    public String encode(Message message) throws EncodeException {
-        System.out.println(message);
+    public String encode(ChatUser user) throws EncodeException {
+        System.out.println(user);
         Gson gson = new Gson();
-        String json = gson.toJson(message);
+        String json = gson.toJson(user);
         return json;
     }
 

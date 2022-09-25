@@ -28,6 +28,9 @@ public class ChatUser {
 
     @OneToMany
     private List<Message> messages;
+    
+    @Transient
+    private List<ChatUser> user;
 
     public long getUser_id() {
         return user_id;
@@ -84,11 +87,44 @@ public class ChatUser {
     public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
+   
+    public List<ChatUser> getUser() {
+        return user;
+    }
 
-    public ChatUser(String userName, String password, String email) {
+    public void setUser(List<ChatUser> user) {
+        this.user = user;
+    }
+
+    public ChatUser(long user_id, String userName, String password, String email, boolean isActive, Byte[] profile_img,
+            List<Message> messages, List<ChatUser> user) {
+        this.user_id = user_id;
         this.userName = userName;
         this.password = password;
         this.email = email;
+        this.isActive = isActive;
+        this.profile_img = profile_img;
+        this.messages = messages;
+        this.user = user;
+    }
+
+    public ChatUser(String userName, String password, String email, boolean isActive, Byte[] profile_img,
+            List<Message> messages, List<ChatUser> user) {
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
+        this.isActive = isActive;
+        this.profile_img = profile_img;
+        this.messages = messages;
+        this.user = user;
+    }
+
+    
+
+    public ChatUser(long user_id, String userName, boolean isActive) {
+        this.user_id = user_id;
+        this.userName = userName;
+        this.isActive = isActive;
     }
 
     public ChatUser() {
@@ -98,9 +134,13 @@ public class ChatUser {
     @Override
     public String toString() {
         return "ChatUser [email=" + email + ", isActive=" + isActive + ", messages=" + messages + ", password="
-                + password + ", profile_img=" + Arrays.toString(profile_img) + ", userName=" + userName + ", user_id="
-                + user_id + "]";
+                + password + ", profile_img=" + Arrays.toString(profile_img) + ", user=" + user + ", userName="
+                + userName + ", user_id=" + user_id + "]";
     }
+
+    
+
+    
     
     
     
