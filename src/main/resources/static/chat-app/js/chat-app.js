@@ -4,40 +4,27 @@ var online = document.getElementById('online');
 let active = [];
 function connect() {
     var username = session.innerHTML;
-    ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-    ws.onmessage = function (event) {
+    ws = new WebSocket("ws://" + document.location.host + "/chat/"+username);
+    ws.onmessage = function(event){
         var activeUser = JSON.parse(event.data);
-        //console.log(activeUser);
-        if (activeUser.isActive==true) {
-            active.push(activeUser);            
-            
-        } else {
-            var removeUser = active.find((e)=>{
-                return e.userName == activeUser.userName;
-            })
-            //console.log(removeUser);
-            active.splice(active.indexOf(removeUser),1);
-            
-        }
-        $.ajax({
+		$.ajax({
             type: "GET",
             url: "http://localhost:8080/active-users",
             data: {
-                requestData:JSON.stringify(active)
+                requestData:JSON.stringify(activeUser)
             },
             success: function(response){
-                console.log(JSON.parse(response));
+                var activeListUser = JSON.parse(response);
+                console.log(activeListUser);
             }
             
         });
-        
-
-    };
+	}
+    
 }
 function disconnect() {
-
-    
     ws.close();
+    console.log(active);
     
 
 }
@@ -45,10 +32,10 @@ function disconnect() {
 online.addEventListener('change', (e) => {
     if (e.target.checked) {
         connect();
-        //console.log("connected");
+        
     } else {
         disconnect();
-        ///console.log("disconnected");
+        
     }
 })
 

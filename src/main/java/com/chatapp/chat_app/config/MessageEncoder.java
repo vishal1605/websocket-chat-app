@@ -26,7 +26,7 @@ public class MessageEncoder implements Encoder.Text<ChatUser> {
 
     @Override
     public String encode(ChatUser user) throws EncodeException {
-        System.out.println(user);
+        System.out.println(user+""+1);
         Gson gson = new Gson();
         String json = gson.toJson(user);
         return json;

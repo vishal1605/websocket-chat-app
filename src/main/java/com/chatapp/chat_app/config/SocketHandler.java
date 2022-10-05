@@ -2,98 +2,72 @@ package com.chatapp.chat_app.config;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.servlet.http.HttpSession;
 import javax.websocket.EncodeException;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.server.PathParam;
-import javax.websocket.server.ServerEndpoint;
+
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
 import com.chatapp.chat_app.model.ChatUser;
-import com.chatapp.chat_app.model.Message;
 import com.google.gson.Gson;
 
 @Component
-@ServerEndpoint(value = "/chat/{username}",
-                encoders = MessageEncoder.class, 
-                decoders = MessageDecoder.class
-)
-public class SocketHandler{
+public class SocketHandler extends AbstractWebSocketHandler{
+    static List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     private static Map<String, ChatUser> users  = new HashMap<>();
-    private Session session;
-    private String username;
-    private static final Set<SocketHandler> chatEndpoints = new CopyOnWriteArraySet<>();
-    
-    @OnOpen
-    public void onOpen(Session session, @PathParam("username") String username) throws IOException, EncodeException {
-        this.session = session;
-        this.username = username;
-        chatEndpoints.add(this);
-        // System.out.println(users.toString());
+
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        //System.out.println("Connection establish");
+        String username = session.getUri().toString().split("/")[4];
         ChatUser user = new ChatUser();
         user.setUserName(username);
         user.setActive(true);
-        users.put(session.getId(), user);        
+        users.put(session.getId(), user);
+        sessions.add(session);
         broadcast(user);
-
+        System.out.println(users.toString());
     }
-    @OnMessage
-    public void onMessage(Session session, Message message) throws IOException, EncodeException {
-        System.out.println("Message");
-        // message.setFromUser(users.get(session.getId()));
-        // sendMessageToOneUser(message);
-    }
-    @OnClose
-    public void onClose(Session session) throws IOException, EncodeException {
 
-        chatEndpoints.remove(this);
-        System.out.println("Disconnetced");
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        //System.out.println("Connection closed");
+        sessions.remove(session);
+        String username = session.getUri().toString().split("/")[4];
         ChatUser user = new ChatUser();
         user.setUserName(username);
         user.setActive(false);
-        users.put(session.getId(), user);
+        users.remove(session.getId());
         
         broadcast(user);
-        users.remove(session.getId());
-    }
-
-    @OnError
-    public void onError(Session session, Throwable throwable) {
-        System.out.println(throwable);
+        System.out.println(users.toString());
         
     }
-    private static void sendMessageToOneUser(Message message) throws IOException, EncodeException {
-        for (SocketHandler endpoint : chatEndpoints) {
-            synchronized(endpoint) {
-                if (endpoint.session.getId().equals(getSessionId(message.getToUser()))) {
-                    endpoint.session.getBasicRemote().sendObject(message);
-                }
-            }
-        }
+
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        // TODO Auto-generated method stub
+        super.handleTextMessage(session, message);
     }
 
-    private static String getSessionId(String to) {
-        if (users.containsValue(to)) {
-            for (String sessionId: users.keySet()) {
-                if (users.get(sessionId).equals(to)) {
-                    return sessionId;
-                }
-            }
-        }
-        return null;
+    @Override
+    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+        // TODO Auto-generated method stub
+        super.handleTransportError(session, exception);
     }
+
     private static void broadcast(ChatUser user) throws IOException, EncodeException {
-        for (SocketHandler endpoint : chatEndpoints) {
+        Gson gson = new Gson();
+        String json = gson.toJson(user);
+        for (WebSocketSession endpoint : sessions) {
             synchronized(endpoint) {
-                endpoint.session.getBasicRemote().sendObject(user);
+                endpoint.sendMessage(new TextMessage(json));
             }
         }
     }

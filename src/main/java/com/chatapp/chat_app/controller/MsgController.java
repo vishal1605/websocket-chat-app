@@ -35,6 +35,8 @@ public class MsgController {
     @Autowired
     private UserDao dao;
 
+    private List<ChatUser> listOfUsers = new ArrayList<>();
+
     @GetMapping("/")
     public ModelAndView home(HttpSession session, Model m) {
         ModelAndView mv = new ModelAndView();
@@ -109,20 +111,17 @@ public class MsgController {
     }
 
     @GetMapping("/active-users")
-    public String activeUsers(String requestData, HttpSession session, ChatUser u) throws JsonMappingException, JsonProcessingException {
+    public String activeUsers(String requestData, HttpSession session, ChatUser u)
+            throws JsonMappingException, JsonProcessingException {
         System.out.println(requestData);
-        List<Object> list = new ArrayList<>();
-        JSONArray jsonArray = new JSONArray(requestData);
-        for (int i = 0; i < jsonArray.length(); i++) {
-            list.add(jsonArray.get(i));
-            //JSONObject jo = jsonArray.getJSONObject(i);
-            
-            // u = dao.login(jo.getString("userName"));
-            // u.setActive(jo.getBoolean("isActive"));
-        }
-        // System.out.println(u);
+        Gson gson = new Gson(); // Or use new GsonBuilder().create();
+        ChatUser user = gson.fromJson(requestData, ChatUser.class);
+        listOfUsers.add(user);
+        System.out.println(user);
+
+        String json = new Gson().toJson(listOfUsers);
         
-        return list.toString();
+        return json;
 
     }
 
