@@ -15,7 +15,11 @@
             <h6 th:text="${session.user.userName}" id="unique-name"></h6>
             
                 <a th:href="@{/logout}" class="btn btn-danger">Logout</a>
-                <input type="checkbox" name="" id="online" >
+                <input type="checkbox" name="" id="online" ><br>
+                <button class="btn btn-success" id="refresh">Refresh</button>
+                <ul id="list-user">
+                    
+                </ul>
             
         </div>
         <div class="col-9 chat m-auto shadow">

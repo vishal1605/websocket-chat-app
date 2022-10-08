@@ -31,8 +31,9 @@ public class SocketHandler extends AbstractWebSocketHandler{
         user.setActive(true);
         users.put(session.getId(), user);
         sessions.add(session);
-        broadcast(user);
-        System.out.println(users.toString());
+        //System.out.println(session.getHandshakeHeaders().get("sec-websocket-key")+"connect");
+		ConnectBroadcast();
+        //System.out.println(users.toString());
     }
 
     @Override
@@ -44,8 +45,8 @@ public class SocketHandler extends AbstractWebSocketHandler{
         user.setUserName(username);
         user.setActive(false);
         users.remove(session.getId());
-        
-        broadcast(user);
+        ConnectBroadcast();
+		disconnectBroadcast(user);
         System.out.println(users.toString());
         
     }
@@ -62,14 +63,32 @@ public class SocketHandler extends AbstractWebSocketHandler{
         super.handleTransportError(session, exception);
     }
 
-    private static void broadcast(ChatUser user) throws IOException, EncodeException {
-        Gson gson = new Gson();
-        String json = gson.toJson(user);
-        for (WebSocketSession endpoint : sessions) {
-            synchronized(endpoint) {
-                endpoint.sendMessage(new TextMessage(json));
-            }
-        }
-    }
+    private static void ConnectBroadcast() throws IOException, EncodeException {
+		for (String sessionId : users.keySet()) {
+			Gson gson = new Gson();
+			String json = gson.toJson(users.get(sessionId));
+			for (WebSocketSession endpoint : sessions) {
+				synchronized (endpoint) {
+
+					endpoint.sendMessage(new TextMessage(json));
+				}
+			}
+
+		}
+
+	}
+
+	private static void disconnectBroadcast(ChatUser user) throws IOException, EncodeException {
+
+		Gson gson = new Gson();
+		String json = gson.toJson(user);
+		for (WebSocketSession endpoint : sessions) {
+			synchronized (endpoint) {
+
+				endpoint.sendMessage(new TextMessage(json));
+			}
+		}
+
+	}
     
 }
