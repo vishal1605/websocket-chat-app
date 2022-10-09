@@ -125,4 +125,15 @@ public class MsgController {
 
     }
 
+    //I will implement this later
+    // @GetMapping("/getAllFriends")
+    // public List<ChatUser> getAllFriends(String requestData){
+    //     List<ChatUser> list = dao.getAllUser();
+    //     Optional<ChatUser> u1 = list.stream().filter(u -> u.getUserName().toLowerCase().equals(requestData.toLowerCase())).findFirst();
+    //     ChatUser user = u1.get();
+    //     List<ChatUser> friends = user.getFriends();
+    //     return friends;
+        
+    // }
+
 }

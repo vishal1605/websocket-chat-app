@@ -17,12 +17,15 @@
                 <a th:href="@{/logout}" class="btn btn-danger">Logout</a>
                 <input type="checkbox" name="" id="online" ><br>
                 <button class="btn btn-success" id="refresh">Refresh</button>
-                <ul id="list-user">
+                <ul id="list-user-online" style="background: green">
+                
+                </ul>
+                <ul id="list-user-offline" style="background: red">
                     
                 </ul>
             
         </div>
-        <div class="col-9 chat m-auto shadow">
+        <!-- <div class="col-9 chat m-auto shadow">
             <div class="chat-app">
                 <div class="chat-sidebar border-end border-primary">
                     <ul class="chat-list-user">
@@ -87,7 +90,7 @@
                 </div>
             </div>
 
-        </div>
+        </div> -->
 
     </div>
 <script th:inline="javascript" th:src="@{/chat-app/js/chat-app.js}"></script>
