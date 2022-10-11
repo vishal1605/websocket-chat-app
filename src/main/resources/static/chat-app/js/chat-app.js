@@ -89,7 +89,7 @@ function whoOnline() {
 //setInterval(()=>whoOnline(),2000);
 
 function allFriends(user){
-	$.ajax({
+	//$.ajax({
 		// type:'GET',
 		// url: '/getAllFriends',
 		// data:{requestData:user},
@@ -101,11 +101,11 @@ function allFriends(user){
 		// 	console.log(notActive);
 			
 		// }
-	});
+	//});
 	
 	
 }
-allFriends(username);
+//allFriends(username);
 
 
 // function send() {

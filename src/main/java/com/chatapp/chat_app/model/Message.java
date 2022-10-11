@@ -2,10 +2,13 @@ package com.chatapp.chat_app.model;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -15,11 +18,13 @@ public class Message {
     private long message_id;
     private String fromUser;
     private String toUser;
+
+    @Lob
     private String content;
     private String sendDate;
     private String recievedDate;
     
-    @OneToOne
+    @ManyToOne
     private ChatUser user;
 
     public long getMessage_id() {

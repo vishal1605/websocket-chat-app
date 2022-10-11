@@ -1,17 +1,10 @@
 package com.chatapp.chat_app.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpSession;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,18 +15,15 @@ import org.springframework.web.servlet.ModelAndView;
 import com.chatapp.chat_app.model.ChatUser;
 import com.chatapp.chat_app.services.UserDao;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 @RestController
 public class MsgController {
 
     @Autowired
     private UserDao dao;
+    
 
     private List<ChatUser> listOfUsers = new ArrayList<>();
 
@@ -103,7 +93,7 @@ public class MsgController {
         ModelAndView mv = new ModelAndView();
         m.addAttribute("username", name);
         // System.out.println(name+"dash");
-        // ChatUser c = (ChatUser)session.getAttribute("user");
+        ChatUser c = (ChatUser)session.getAttribute("user");
         // c.setActive(true);
         mv.setViewName("pages/chat-app");
         return mv;
@@ -126,14 +116,23 @@ public class MsgController {
     }
 
     //I will implement this later
-    // @GetMapping("/getAllFriends")
-    // public List<ChatUser> getAllFriends(String requestData){
-    //     List<ChatUser> list = dao.getAllUser();
-    //     Optional<ChatUser> u1 = list.stream().filter(u -> u.getUserName().toLowerCase().equals(requestData.toLowerCase())).findFirst();
-    //     ChatUser user = u1.get();
-    //     List<ChatUser> friends = user.getFriends();
-    //     return friends;
+    @GetMapping("/getAllFriends")
+    public void getAllFriends(String requestData){
+        //dao.find
         
-    // }
+        
+    }
+    @GetMapping("/makeFriends")
+    public void makeFriends(){
+        // ChatUser u = dao.login("ravi");
+
+        // Friend f = friendDao.saveFriend(new Friend(u));
+        // // System.out.println(f);
+        // dao.saveMyFriend(1,f.getF_id());
+        //return dao.getAllFriends(3);
+        
+        
+        
+    }
 
 }
