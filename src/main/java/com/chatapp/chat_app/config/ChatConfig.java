@@ -12,8 +12,13 @@ public class ChatConfig implements WebSocketConfigurer{
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new SocketHandler(), "/chat/*");
+        registry.addHandler(new SocketHandler(), "/chat/*").addInterceptors(getSocketHandShakeInceptor());
         
+    }
+
+    @Bean
+    public SocketHandShakeInceptor getSocketHandShakeInceptor(){
+        return new SocketHandShakeInceptor();
     }
 
     

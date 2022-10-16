@@ -25,9 +25,9 @@ public class SocketHandler extends AbstractWebSocketHandler{
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         //System.out.println("Connection establish");
-        String username = session.getUri().toString().split("/")[4];
-        ChatUser user = new ChatUser();
-        user.setUserName(username);
+        ChatUser user = (ChatUser)session.getAttributes().get("log");
+        //String username = session.getUri().toString().split("/")[4];
+        
         user.setActive(true);
         users.put(session.getId(), user);
         sessions.add(session);
@@ -40,9 +40,8 @@ public class SocketHandler extends AbstractWebSocketHandler{
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         //System.out.println("Connection closed");
         sessions.remove(session);
-        String username = session.getUri().toString().split("/")[4];
-        ChatUser user = new ChatUser();
-        user.setUserName(username);
+        ChatUser user = (ChatUser)session.getAttributes().get("log");
+        //String username = session.getUri().toString().split("/")[4];
         user.setActive(false);
         users.remove(session.getId());
         ConnectBroadcast();

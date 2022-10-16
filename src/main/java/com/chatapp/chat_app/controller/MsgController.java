@@ -117,22 +117,27 @@ public class MsgController {
 
     //I will implement this later
     @GetMapping("/getAllFriends")
-    public void getAllFriends(String requestData){
-        //dao.find
+    public List<ChatUser> getAllFriends(String requestData){
+        List<ChatUser> friends = dao.getAllFriends(Long.parseLong(requestData));
+        //System.out.println(friends);
+        return friends;
         
         
     }
     @GetMapping("/makeFriends")
-    public void makeFriends(){
-        // ChatUser u = dao.login("ravi");
+    public String makeFriends(String requestData, HttpSession session){
+        
+        ChatUser c = (ChatUser)session.getAttribute("user");
+        ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+        dao.saveMyFriend(c.getUser_id(), friend.getUser_id());
+        return "done";
+        
+        
+    }
 
-        // Friend f = friendDao.saveFriend(new Friend(u));
-        // // System.out.println(f);
-        // dao.saveMyFriend(1,f.getF_id());
-        //return dao.getAllFriends(3);
-        
-        
-        
+    @GetMapping("/getAllChatUsers")
+    public List<ChatUser> getAllChatUsers(){
+        return dao.getAllChatUser();
     }
 
 }

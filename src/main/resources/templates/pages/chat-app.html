@@ -1,176 +1,70 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::.row},~{::title},~{::script})">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::.row},~{::title},~{::script},~{::link})">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/chat-app/css/chat-app.css}">
     <title>chat app</title>
 
 </head>
 
 <body>
     <div class="row chat-section">
-        <div class="col-12 chat-header mb-3 bg-warning text-light d-flex">  
-            <h6 class="mb-0 me-2" th:text="${session.user.userName}" id="unique-name"></h6>   
+        <div class="col-12 chat-header mb-3 bg-warning text-light d-flex">
+            <h6 class="mb-0 me-2" th:text="${session.user.user_id}" id="unique-name"></h6>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="online" autocomplete="off">
-                
+
             </div>
-            
+
             <button class="btn btn-success me-2" id="refresh">Refresh</button>
             <a th:href="@{/logout}" class="btn btn-danger">Logout</a>
-                <!-- <ul id="list-user-online" style="background: green">
+            <!-- <ul id="list-user-online" style="background: green">
                 
                 </ul>
                 <ul id="list-user-offline" style="background: red">
                     
                 </ul> -->
-                
-            
+
+
         </div>
-        <div class="col-9 chat m-auto shadow">
-            <div class="chat-app">
-                <div class="chat-sidebar border-end border-primary">
-                    <div class="all-users" style="overflow-y: auto;max-height: 490px;">
-                        <ul class="chat-list-user">
-                            <li class="list shadow mb-1">
-                                <div class="user-photo">
-                                    <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" style="border-radius: 50%;">
-                                </div>
-                                <div class="user-detail">
-                                    <h5 class="m-0">Vishal</h5>
-                                    <p class="m-0">vybbubythbub</p>
-                                </div>
-                                <div class="user-extra">
-                                    <small>3.55</small>
-                                </div>
-                            </li>
-                            <li class="list shadow mb-1">
-                                <div class="user-photo">
-                                    <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" style="border-radius: 50%;">
-                                </div>
-                                <div class="user-detail">
-                                    <h5 class="m-0">Vishal</h5>
-                                    <p class="m-0">vybbubythbub</p>
-                                </div>
-                                <div class="user-extra">
-                                    <small>3.55</small>
-                                </div>
-                            </li>
-                            <li class="list shadow mb-1">
-                                <div class="user-photo">
-                                    <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" style="border-radius: 50%;">
-                                </div>
-                                <div class="user-detail">
-                                    <h5 class="m-0">Vishal</h5>
-                                    <p class="m-0">vybbubythbub</p>
-                                </div>
-                                <div class="user-extra">
-                                    <small>3.55</small>
-                                </div>
-                            </li>
-                            <li class="list shadow mb-1">
-                                <div class="user-photo">
-                                    <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" style="border-radius: 50%;">
-                                </div>
-                                <div class="user-detail">
-                                    <h5 class="m-0">Vishal</h5>
-                                    <p class="m-0">vybbubythbub</p>
-                                </div>
-                                <div class="user-extra">
-                                    <small>3.55</small>
-                                </div>
-                            </li>
-                            <li class="list shadow mb-1">
-                                <div class="user-photo">
-                                    <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" style="border-radius: 50%;">
-                                </div>
-                                <div class="user-detail">
-                                    <h5 class="m-0">Vishal</h5>
-                                    <p class="m-0">vybbubythbub</p>
-                                </div>
-                                <div class="user-extra">
-                                    <small>3.55</small>
-                                </div>
-                            </li>
-                            <li class="list shadow mb-1">
-                                <div class="user-photo">
-                                    <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" style="border-radius: 50%;">
-                                </div>
-                                <div class="user-detail">
-                                    <h5 class="m-0">Vishal</h5>
-                                    <p class="m-0">vybbubythbub</p>
-                                </div>
-                                <div class="user-extra">
-                                    <small>3.55</small>
-                                </div>
-                            </li>
-                            <li class="list shadow mb-1">
-                                <div class="user-photo">
-                                    <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" style="border-radius: 50%;">
-                                </div>
-                                <div class="user-detail">
-                                    <h5 class="m-0">Vishal</h5>
-                                    <p class="m-0">vybbubythbub</p>
-                                </div>
-                                <div class="user-extra">
-                                    <small>3.55</small>
-                                </div>
-                            </li>
-                            <li class="list shadow mb-1">
-                                <div class="user-photo">
-                                    <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" style="border-radius: 50%;">
-                                </div>
-                                <div class="user-detail">
-                                    <h5 class="m-0">Vishal</h5>
-                                    <p class="m-0">vybbubythbub</p>
-                                </div>
-                                <div class="user-extra">
-                                    <small>3.55</small>
-                                </div>
-                            </li>
-    
+        <div class="col-10 chat m-auto shadow">
+            <div class="row">
+                <div class="col-3 p-0 border border-1 d-flex flex-column justify-content-between" style="height:550px">
+                    <div class="friends-selection-section" style="height: 510px;overflow:auto">
+                        <ul class="mb-2" id="friend-list" style="list-style: none;padding-left:0;margin-bottom:0;">
+                            
+                            
+                        </ul>
+                        <ul class="mb-2" id="not-friend-list" style="list-style: none;padding-left:0;margin-bottom:0;">
+                            
+                            
                         </ul>
                     </div>
                     <div class="change-users-view">
-                        <div class="row">
-                            <div class="col-11 m-auto border border-1">
-                                <div class="row">
-                                    <div class="col-6 border border-1 border-danger"><h1>hhh</h1></div>
-                                    <div class="col-6 border border-1 border-warning"><h1>jjjj</h1></div>
-                                </div>
+                        <div class="row m-0">
+                            <div class="col-6 border border-1 bg-warning" id="not-my-friends" style="cursor: pointer;">
+                                <h5>Not friend</h5>
+                            </div>
+                            <div class="col-6 border border-1 bg-warning" id="my-friends" style="cursor: pointer;">
+                                <h6>Friends</h6>
                             </div>
                         </div>
                     </div>
-                    
                 </div>
-                <div class="chat-main border-start border-primary">
-                    <div class="message-section border-bottom border-primary">
-                        <div class="left-div">
-                            <div class="left-msg">
-                                <small>Hello</small>
-                            </div>
-                        </div>
-                        <div class="right-div">
-                            <div class="right-msg">
-                                <small>Hello</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="message-input-section border-top border-primary">
-                        <form action="">
-                            <input type="text" class="">
-                            <button>send</button>
-                        </form>
-                    </div>
+                <div class="col-9 border border-1">
+                    <h1>Hello</h1>
                 </div>
             </div>
+
+
 
         </div>
 
     </div>
-<script th:inline="javascript" th:src="@{/chat-app/js/chat-app.js}"></script>
+    <script th:inline="javascript" th:src="@{/chat-app/js/chat-app.js}"></script>
 </body>
 
 </html>

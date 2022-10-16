@@ -81,6 +81,12 @@ public class Message {
 
     public void setUser(ChatUser user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Message [message_id=" + message_id + ", fromUser=" + fromUser + ", toUser=" + toUser + ", content="
+                + content + ", sendDate=" + sendDate + ", recievedDate=" + recievedDate + ", user=" + user + "]";
     }  
 
     

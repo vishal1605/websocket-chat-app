@@ -2,8 +2,12 @@ package com.chatapp.chat_app.model;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,7 +15,12 @@ import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import net.bytebuddy.agent.builder.AgentBuilder.PoolStrategy.Eager;
 
 @Entity
 public class ChatUser {
@@ -28,9 +37,11 @@ public class ChatUser {
     @Lob
     private byte[] profile_img;
 
-    @OneToMany
-    private List<Message> messages;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<Message> messages;
     
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany
     @JsonIgnore
     private List<ChatUser> friends;
@@ -83,14 +94,6 @@ public class ChatUser {
         this.profile_img = profile_img;
     }
 
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
-
     public List<ChatUser> getFriends() {
         return friends;
     }
@@ -98,6 +101,19 @@ public class ChatUser {
     public void setFriends(List<ChatUser> friends) {
         this.friends = friends;
     }
+
+    @Override
+    public String toString() {
+        return "ChatUser [user_id=" + user_id + ", userName=" + userName + ", password=" + password + ", email=" + email
+                + ", isActive=" + isActive + ", profile_img=" + Arrays.toString(profile_img) + ", messages=" + messages
+                + ", friends=" + friends + "]";
+    }
+
+    
+    
+    
+
+    
 
     
 

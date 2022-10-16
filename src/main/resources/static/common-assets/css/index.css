@@ -37,11 +37,11 @@
     width: 35%;
     /* border: 1px solid black !important; */
 }
-.container-fluid .chat-section .chat .chat-app .chat-sidebar .chat-list-user{
+/* .container-fluid .chat-section .chat .chat-app .chat-sidebar .chat-list-user{
     list-style: none;
     padding: 0;
-}
-.chat-sidebar .chat-list-user li{    
+} */
+/* .chat-sidebar .chat-list-user li{    
     cursor: pointer;
     border: 1px solid black;
     border-radius: 10px;
@@ -56,7 +56,7 @@
     width: 65%;
     display: flex;
     flex-direction: column;
-}
+} */
 .container-fluid .chat-section .chat .chat-app .chat-main .message-section{
     height: 550px;
     /* border: 1px solid black; */

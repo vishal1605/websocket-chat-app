@@ -42,8 +42,8 @@ public class UserDao {
 
     }
 
-    // public List<ChatUser> getAllFriends(){
-    //     userRepo.f
-    // }
+    public List<ChatUser> getAllChatUser(){
+        return userRepo.findAll();
+    }
     
 }
