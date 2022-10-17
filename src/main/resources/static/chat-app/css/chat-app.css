@@ -6,7 +6,7 @@
     position: absolute;
     display: block;
     width: 100%;
-    transform: scale(1,1);
+    transform: scale(0,1);
     transition: transform ease-in-out .6s;
     transform-origin: left;
     
@@ -15,7 +15,7 @@
     position: absolute;
     display: block;
     width: 100%;
-    transform: scale(0,1);
+    transform: scale(1,1);
     transition: transform ease-in-out .6s;
     transform-origin: right;
     color: white;

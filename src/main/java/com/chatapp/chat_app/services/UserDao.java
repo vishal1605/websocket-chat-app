@@ -1,5 +1,6 @@
 package com.chatapp.chat_app.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,7 @@ public class UserDao {
 
     public ChatUser login(String username){
         ChatUser u = userRepo.findByUserName(username);
+        u.getFriends().clear();
         return u;
     }
 
@@ -37,10 +39,19 @@ public class UserDao {
     }
 
     public List<ChatUser> getAllFriends(long id){
-        List<ChatUser> list = userRepo.listOfFriends(id);
+        List<ChatUser> list = getOnlyFriends(id);
         return list;
 
     }
+
+    private List<ChatUser> getOnlyFriends(long id){
+        List<ChatUser> friends = new ArrayList<>();
+        userRepo.listOfFriends(id).forEach((f)->{
+                f.getFriends().clear();
+                friends.add(f);
+            });
+        return friends;
+    } 
 
     public List<ChatUser> getAllChatUser(){
         return userRepo.findAll();

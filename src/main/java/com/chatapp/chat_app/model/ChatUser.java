@@ -11,6 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
@@ -44,6 +46,8 @@ public class ChatUser {
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany
     @JsonIgnore
+    @JoinTable(name = "chat_user_id",joinColumns = @JoinColumn(name = "friend_user_id", unique = false),
+     inverseJoinColumns = @JoinColumn(name = "maryKey", unique = false,referencedColumnName = "user_id"))
     private List<ChatUser> friends;
 
     public long getUser_id() {

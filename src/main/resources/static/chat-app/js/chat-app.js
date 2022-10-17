@@ -40,10 +40,10 @@ function connect() {
 		var activeUser = JSON.parse(event.data);
 		if (activeUser.isActive == true) {
 			let exist = active.some((e) => {
-				return e.userName == activeUser.userName;
+				return e.user_id == activeUser.user_id;
 			})
 			if (!exist) {
-				if (username != activeUser.userName) {
+				if (parseInt(username) != activeUser.user_id) {
 
 					active.push(activeUser)
 				}
@@ -51,7 +51,7 @@ function connect() {
 
 		} else {
 			var removeUser = active.find((e) => {
-				return e.userName == activeUser.userName;
+				return e.user_id == activeUser.user_id;
 			})
 			//console.log(removeUser);
 			active.splice(active.indexOf(removeUser), 1);
@@ -85,29 +85,30 @@ online.addEventListener('change', (e) => {
 });
 
 function whoOnline() {
+	//console.log(active);
 	if (!active.length == 0) {
-		onlineUser.innerHTML = "";
-		offlineUser.innerHTML = "";
-		notActive.forEach((off) => {
-			active.forEach((on) => {
-				if (on.userName == off.userName) {
-					onlineUser.innerHTML += `<li>${on.userName}</li>`;
-				}
-			})
 
+		[...friendList.children].forEach((e) => {
+
+			e.style.background = "aqua";
 		})
-		notActive.forEach((e) => {
-			var index = active.indexOf(active.find((e1) => {
-				return e1.userName == e.userName;
-			}));
-			if (index === (-1)) {
-				offlineUser.innerHTML += `<li>${e.userName}</li>`;
+		active.forEach((on) => {
+			var elem = [...friendList.children].find((e) => {
+				return e.id == on.user_id;
+			})
+			if (!(elem === undefined)) {
+
+				elem.style.background = "green";
 			}
 		})
 
 
 	} else {
-		onlineUser.innerHTML = "";
+		[...friendList.children].forEach((e) => {
+
+			e.style.background = "aqua";
+		})
+
 	}
 
 }
@@ -158,7 +159,7 @@ function getAllFriends(id) {
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
 				responseObject.forEach((e) => {
-					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" style="background-color:green;">
+					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" style="background-color:aqua;" id="${e.user_id}">
 
 												<div class="user-photo">
 													<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
@@ -167,7 +168,7 @@ function getAllFriends(id) {
 													<h5 class="m-0">${e.userName}</h5>
 													<p class="m-0">vybbubythbub</p>
 												</div>
-												<div class="user-remove shadow" onclick="removeFriend(${e.user_id})">
+												<div class="user-remove shadow" onclick="removeFriend(event)" data-id="${e.user_id}">
 													<i class="fa-solid fa-x"></i>
 												</div>
 											</li>`;
@@ -190,13 +191,14 @@ function addFriend(e) {
 		},
 		success: function (responseObject) {
 			console.log(responseObject);
-			
+
 		}
 	});
 	document.getElementById(e.target.parentElement.getAttribute('data-id')).remove();
 
 }
 function removeFriend(e) {
+	document.getElementById(e.target.parentElement.getAttribute('data-id')).remove();
 	console.log(e)
 }
 
