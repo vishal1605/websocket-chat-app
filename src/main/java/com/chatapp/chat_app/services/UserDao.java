@@ -23,7 +23,6 @@ public class UserDao {
 
     public ChatUser login(String username){
         ChatUser u = userRepo.findByUserName(username);
-        u.getFriends().clear();
         return u;
     }
 
@@ -54,7 +53,12 @@ public class UserDao {
     } 
 
     public List<ChatUser> getAllChatUser(){
-        return userRepo.findAll();
+        List<ChatUser> users = new ArrayList<>();
+        userRepo.findAll().forEach((e)->{
+            e.getFriends().clear();
+            users.add(e);
+        });
+        return users;
     }
     
 }

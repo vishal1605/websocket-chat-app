@@ -62,11 +62,11 @@ public class MsgController {
     public ModelAndView loginProcess(ChatUser user, HttpSession session) {
         ModelAndView mv = new ModelAndView();
         ChatUser u = dao.login(user.getUserName());
-        System.out.println(u);
         if (u == null) {
             mv.setViewName("redirect:/login-form");
             return mv;
         }
+        u.getFriends().clear();
         session.setAttribute("user", u);
         mv.setViewName("redirect:/dashboard/" + u.getUserName());
         return mv;

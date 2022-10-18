@@ -5,20 +5,25 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.CollectionId;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -42,12 +47,10 @@ public class ChatUser {
     @OneToMany(fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Message> messages;
-    
+
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany
     @JsonIgnore
-    @JoinTable(name = "chat_user_id",joinColumns = @JoinColumn(name = "friend_user_id", unique = false),
-     inverseJoinColumns = @JoinColumn(name = "maryKey", unique = false,referencedColumnName = "user_id"))
     private List<ChatUser> friends;
 
     public long getUser_id() {
@@ -113,13 +116,4 @@ public class ChatUser {
                 + ", friends=" + friends + "]";
     }
 
-    
-    
-    
-
-    
-
-    
-
-    
 }
