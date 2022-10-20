@@ -124,15 +124,23 @@ public class MsgController {
         
         
     }
-    @GetMapping("/makeFriends")
-    public String makeFriends(String requestData, HttpSession session){
+    @GetMapping("/makeFriend")
+    public ChatUser makeFriends(String requestData, HttpSession session){
         
         ChatUser c = (ChatUser)session.getAttribute("user");
         ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
         dao.saveMyFriend(c.getUser_id(), friend.getUser_id());
-        return "done";
+        return friend;
         
         
+    }
+
+    @GetMapping("/removeFriend")
+    public ChatUser removeFriend(String requestData, HttpSession session){
+        ChatUser c = (ChatUser)session.getAttribute("user");
+        ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+        dao.deleteSingleFriend(c.getUser_id(), Long.parseLong(requestData));
+        return friend;
     }
 
     @GetMapping("/getAllChatUsers")

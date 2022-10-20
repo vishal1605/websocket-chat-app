@@ -60,5 +60,10 @@ public class UserDao {
         });
         return users;
     }
+
+    public void deleteSingleFriend(long u_id, long f_id){
+        userRepo.deleteMyFriend(u_id, f_id);
+
+    }
     
 }

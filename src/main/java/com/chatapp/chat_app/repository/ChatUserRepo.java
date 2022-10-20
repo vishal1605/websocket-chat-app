@@ -24,5 +24,10 @@ public interface ChatUserRepo extends JpaRepository<ChatUser, Long>{
     @Query(value = "select user.* from chat_user user inner join chat_user_friends friends on user.user_id = friends.friends_user_id inner join chat_user user2 on friends.chat_user_user_id = user2.user_id where chat_user_user_id = ?;",nativeQuery = true)
     public List<ChatUser> listOfFriends(long id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "delete from chat_user_friends where chat_user_user_id = :user_id and friends_user_id = :f_id", nativeQuery = true)
+    public void deleteMyFriend(@Param("user_id") long userId, @Param("f_id") long fId);
+
     
 }

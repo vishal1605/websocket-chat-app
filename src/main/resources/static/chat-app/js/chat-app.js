@@ -74,11 +74,6 @@ online.addEventListener('change', (e) => {
 
 	} else {
 		disconnect();
-		// onlineUser.innerHTML = "";
-		// offlineUser.innerHTML = "";
-		// notActive.forEach((e) => {
-		// 	offlineUser.innerHTML += `<li>${e.userName}</li>`;
-		// });
 		active = [];
 
 	}
@@ -96,9 +91,13 @@ function whoOnline() {
 			var elem = [...friendList.children].find((e) => {
 				return e.id == on.user_id;
 			})
+			console.log(elem);
 			if (!(elem === undefined)) {
 
 				elem.style.background = "green";
+				var first = elem.cloneNode(true);
+				elem.remove();
+				friendList.prepend(first);
 			}
 		})
 
@@ -185,21 +184,63 @@ function addFriend(e) {
 	var friendId = e.target.parentElement.getAttribute('data-id');
 	$.ajax({
 		type: "GET",
-		url: "/makeFriends",
+		url: "/makeFriend",
 		data: {
-			requestData:friendId
+			requestData: friendId
 		},
 		success: function (responseObject) {
-			console.log(responseObject);
+			var list = document.createElement('li');
+			list.className = 'list-of-friend border border-1 border-dark mb-1';
+			list.style.backgroundColor = 'aqua';
+			list.id = responseObject.user_id;
+			list.innerHTML = `<div class="user-photo">
+								<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
+							  </div>
+								<div class="user-detail">
+									<h5 class="m-0">${responseObject.userName}</h5>
+									<p class="m-0">vybbubythbub</p>
+								</div>
+								<div class="user-remove shadow" onclick="removeFriend(event)" data-id="${responseObject.user_id}">
+									<i class="fa-solid fa-x"></i>
+								</div>`;
 
+
+			friendList.append(list);
 		}
 	});
 	document.getElementById(e.target.parentElement.getAttribute('data-id')).remove();
 
 }
 function removeFriend(e) {
+	var friendId = e.target.parentElement.getAttribute('data-id');
+	$.ajax({
+		type: "GET",
+		url: "/removeFriend",
+		data: {
+			requestData: friendId
+		},
+		success: function (responseObject) {
+			var list = document.createElement('li');
+			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
+			list.style.backgroundColor = 'red';
+			list.id = responseObject.user_id;
+			list.innerHTML = `<div class="user-photo">
+								<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
+							</div>
+							<div class="user-detail">
+								<h5 class="m-0">${responseObject.userName}</h5>
+								<p class="m-0">vybbubythbub</p>
+							</div>
+							<div class="user-add shadow" onclick="addFriend(event)" data-id="${responseObject.user_id}">
+								<i class="fa-solid fa-plus"></i>
+							</div>`;
+			
+			notFriendList.append(list);
+
+		}
+	});
 	document.getElementById(e.target.parentElement.getAttribute('data-id')).remove();
-	console.log(e)
+
 }
 
 
@@ -214,21 +255,3 @@ function removeFriend(e) {
 //     ws.send(json);
 //     log.innerHTML += "Me : " + content + "\n";
 // }
-
-function allFriends(user) {
-	//$.ajax({
-	// type:'GET',
-	// url: '/getAllFriends',
-	// data:{requestData:user},
-	// success: function(responseObject){
-	// 	notActive = [...responseObject]
-	// 	responseObject.forEach((e)=>{
-	// 		offlineUser.innerHTML += `<li>${e.userName}</li>`; 
-	// 	});
-	// 	console.log(notActive);
-
-	// }
-	//});
-
-
-}
