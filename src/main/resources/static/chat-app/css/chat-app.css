@@ -60,3 +60,42 @@
     cursor: pointer;
     font-size: 20px;
 }
+
+#my-friends{
+    background-color: #f76b2a;
+    color: white;
+
+}
+#not-my-friends{
+    background-color: #f76b2a;
+    color: white;
+
+}
+
+/* /////////////////////////////////Notification/////////////////////////// */
+#notification-logo{
+    position: absolute;
+    font-size: 30px;
+    left: 0px;
+    top: -8px;
+    background-color: white;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    font-size:16px;
+    text-align: center;
+    padding-bottom: 4px;
+}
+
+/* /////////////////////////////////Profile pop up/////////////////////////// */
+
+#profile-pop-up{
+    top: 230px;
+    left: 50%;
+    transform: translate(-50%);
+    z-index: 500;
+    background-color: rgb(218, 212, 212);
+    position: absolute;
+    transform-origin: center;
+    transition: transform ease-in-out 0.9s;
+}

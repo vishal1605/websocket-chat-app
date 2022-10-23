@@ -16,81 +16,59 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long message_id;
-    private String fromUser;
-    private String toUser;
+
+    @ManyToOne
+    private ChatUser toUser;
 
     @Lob
     private String content;
     private String sendDate;
     private String recievedDate;
-    
-    @ManyToOne
-    private ChatUser user;
-
     public long getMessage_id() {
         return message_id;
     }
-
     public void setMessage_id(long message_id) {
         this.message_id = message_id;
     }
-
-    public String getFromUser() {
-        return fromUser;
-    }
-
-    public void setFromUser(String fromUser) {
-        this.fromUser = fromUser;
-    }
-
-    public String getToUser() {
+    public ChatUser getToUser() {
         return toUser;
     }
-
-    public void setToUser(String toUser) {
+    public void setToUser(ChatUser toUser) {
         this.toUser = toUser;
     }
-
     public String getContent() {
         return content;
     }
-
     public void setContent(String content) {
         this.content = content;
     }
-
     public String getSendDate() {
         return sendDate;
     }
-
     public void setSendDate(String sendDate) {
         this.sendDate = sendDate;
     }
-
     public String getRecievedDate() {
         return recievedDate;
     }
-
     public void setRecievedDate(String recievedDate) {
         this.recievedDate = recievedDate;
     }
-
-    public ChatUser getUser() {
-        return user;
+    
+    public Message(ChatUser toUser, String content, String sendDate, String recievedDate) {
+        this.toUser = toUser;
+        this.content = content;
+        this.sendDate = sendDate;
+        this.recievedDate = recievedDate;
     }
-
-    public void setUser(ChatUser user) {
-        this.user = user;
+    
+    public Message() {
     }
-
     @Override
     public String toString() {
-        return "Message [message_id=" + message_id + ", fromUser=" + fromUser + ", toUser=" + toUser + ", content="
-                + content + ", sendDate=" + sendDate + ", recievedDate=" + recievedDate + ", user=" + user + "]";
-    }  
-
+        return "Message [message_id=" + message_id + ", toUser=" + toUser + ", content=" + content + ", sendDate="
+                + sendDate + ", recievedDate=" + recievedDate + "]";
+    }
     
-
-
     
 }

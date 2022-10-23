@@ -1,7 +1,13 @@
 package com.chatapp.chat_app.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.chatapp.chat_app.model.ChatUser;
+import com.chatapp.chat_app.model.Message;
+import com.chatapp.chat_app.services.MessageDao;
 import com.chatapp.chat_app.services.UserDao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -23,7 +31,9 @@ public class MsgController {
 
     @Autowired
     private UserDao dao;
-    
+
+    @Autowired
+    private MessageDao mDao;    
 
     private List<ChatUser> listOfUsers = new ArrayList<>();
 
@@ -146,6 +156,16 @@ public class MsgController {
     @GetMapping("/getAllChatUsers")
     public List<ChatUser> getAllChatUsers(){
         return dao.getAllChatUser();
+    }
+
+    @PostMapping("/send-message")
+    public String saveUserMessage(String requestData, HttpSession session){
+        System.out.println(requestData);
+        ChatUser c = (ChatUser)session.getAttribute("user");
+        ChatUser f = dao.getSingleUser(2l);
+        Set<Message> set  = new HashSet<Message>();
+        set.add(mDao.saveMessage(c.getUser_id(),new Message(f,"hddddddddddddd",LocalDateTime.now().toString(), LocalDateTime.now().toString())));
+        return "done";
     }
 
 }
