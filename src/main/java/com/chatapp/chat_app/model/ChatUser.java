@@ -109,12 +109,12 @@ public class ChatUser {
         this.friends = friends;
     }
 
-    // @Override
-    // public String toString() {
-    //     return "ChatUser [user_id=" + user_id + ", userName=" + userName + ", password=" + password + ", email=" + email
-    //             + ", isActive=" + isActive + ", profile_img=" + Arrays.toString(profile_img) + ", messages=" + messages
-    //             + ", friends=" + friends + "]";
-    // }
+    @Override
+    public String toString() {
+        return "ChatUser [user_id=" + user_id + ", userName=" + userName + ", password=" + password + ", email=" + email
+                + ", isActive=" + isActive + ", profile_img=" + Arrays.toString(profile_img) + ", messages=" + messages
+                + ", friends=" + friends + "]";
+    }
 
     public void setMessages(Set<Message> messages) {
         this.messages = messages;

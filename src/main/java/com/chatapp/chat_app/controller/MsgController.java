@@ -77,6 +77,7 @@ public class MsgController {
             return mv;
         }
         u.getFriends().clear();
+        u.getMessages().clear();
         session.setAttribute("user", u);
         mv.setViewName("redirect:/dashboard/" + u.getUserName());
         return mv;
@@ -162,10 +163,21 @@ public class MsgController {
     public String saveUserMessage(String requestData, HttpSession session){
         System.out.println(requestData);
         ChatUser c = (ChatUser)session.getAttribute("user");
-        ChatUser f = dao.getSingleUser(2l);
+        ChatUser f = dao.getSingleUser(1l);
         Set<Message> set  = new HashSet<Message>();
-        set.add(mDao.saveMessage(c.getUser_id(),new Message(f,"hddddddddddddd",LocalDateTime.now().toString(), LocalDateTime.now().toString())));
+        set.add(mDao.saveMessage(c.getUser_id(),new Message(f,"bus bhai jaldi he aane wala hu",LocalDateTime.now().toString(), LocalDateTime.now().toString())));
         return "done";
+    }
+
+    @GetMapping("/get-message")
+    public List<Message> fetchMessage(HttpSession session){
+        ChatUser c = (ChatUser)session.getAttribute("user");
+        //mDao.getFriendMessages(1, 2);
+        System.out.println(c);
+        List<Message> list = new ArrayList<>();
+        list.addAll(mDao.getFriendMessages(1, 2));
+        list.addAll(mDao.getFriendMessages(2, 1));
+        return list;
     }
 
 }

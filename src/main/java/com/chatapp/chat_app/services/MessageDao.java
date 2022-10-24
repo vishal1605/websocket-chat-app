@@ -1,5 +1,7 @@
 package com.chatapp.chat_app.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +21,9 @@ public class MessageDao {
         return m;
     }
     
+    public List<Message> getFriendMessages(long user_id, long f_id){
+        List<Message> message = repo.getUserSpecificMessage(user_id, f_id);
+        return message;
+
+    }
 }

@@ -33,8 +33,8 @@
 
             <a th:href="@{/logout}" class="btn btn-danger me-2">Logout</a>
             <div class="my-profile-pic" style="width: 35px; height: 35px; cursor: pointer;">
-                <img th:src="@{/assets/img_avatar.png}" alt="" th:attr="data-user=${session.user.user_id}"
-                    width="100%" style="border-radius: 50%;" onclick="openEditProfileModel(event)">
+                <img th:src="@{/assets/img_avatar.png}" alt="" th:attr="data-user=${session.user.user_id}" width="100%"
+                    style="border-radius: 50%;" onclick="openEditProfileModel(event)">
             </div>
         </div>
         <div class="col-10 chat m-auto shadow">
@@ -71,9 +71,34 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-8 border border-1">
-                    <h1>Hello</h1>
-                    <button class="btn btn-warning" id="send-message" th:value="${session.user.user_id}" onclick="sendMessage(event)">Send</button>
+                <div class="col-8 border border-1 p-0" id="chat-main">
+                    <div class="message-section" id="section-of-message">
+                        <!-- <div class="left-div">
+                            <div class="left-msg">
+                                <small>Hello</small>
+                            </div>
+                        </div>
+                        <div class="right-div">
+                            <div class="right-msg d-flex justify-content-between align-items-center">
+                                <small>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consectetur quia
+                                    repellendus omnis aspernatur earum quae, aliquam quidem modi aperiam expedita
+                                    doloremque illo nemo. Sint aliquam laboriosam eveniet incidunt dolorum sunt officiis
+                                    voluptatibus asperiores, possimus, rem maxime eos fuga tempora quasi blanditiis
+                                    beatae nemo temporibus fugit illo itaque. Ducimus, eos error.</small>
+                                <p class="bg-warning">3:25</p>
+                            </div>
+                        </div> -->
+                        
+                    </div>
+                    <div class="message-input-section bg-warning">
+                        <form action="" class="d-flex align-items-center">
+                            <input type="text" class="form-control w-50 me-2 my-1">
+                            <button type="submit" class="btn btn-primary">send</button>
+                            <!-- <input type="file" class="form-control"> -->
+                        </form>
+                    </div>
+                    <!-- <h1>Hello</h1>
+                    <button class="btn btn-warning" id="send-message" th:value="${session.user.user_id}" onclick="sendMessage(event)">Send</button> -->
                 </div>
             </div>
 

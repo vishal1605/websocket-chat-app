@@ -12,6 +12,7 @@ const popUpProfileModel = document.getElementById('profile-pop-up');
 const closePopUpProfileModel = document.getElementById('close-profile-model');
 const profilePic = document.getElementById('form-file');
 const profileDemo = document.getElementById('profile-demo');
+const messageSection = document.getElementById('section-of-message');
 
 //Global variable
 let active = [];
@@ -176,7 +177,7 @@ function getAllFriends(id) {
 												<div class="user-photo">
 													<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
 												</div>
-												<div class="user-detail">
+												<div class="user-detail" onclick="showMessageOfSpecificUser('${e.user_id}')" style="cursor:pointer">
 													<h5 class="m-0">${e.userName}</h5>
 													<p class="m-0">vybbubythbub</p>
 												</div>
@@ -308,6 +309,43 @@ function sendMessage(e) {
 		}
 	});
  }
+
+ function showMessageOfSpecificUser(param) { 
+	$.ajax({
+		type: "GET",
+		url: "/get-message",
+		
+		success: function (response) {
+			messageSection.innerHTML='';
+			response.sort((a,b)=>{
+				var date1 = new Date(a.sendDate)
+				var date2 = new Date(b.sendDate)
+				return date1 - date2;
+			});
+			response.forEach((e)=>{
+				//var mydate = new Date(e.sendDate);
+				console.log(e);
+				var parentDiv = document.createElement('div');
+				var childDiv = document.createElement('div');
+				if(e.toUser.user_id == username){
+					parentDiv.className = 'left-div';
+					childDiv.className = 'left-msg';
+					parentDiv.append(childDiv);
+					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`
+					messageSection.append(parentDiv);
+				}else{
+					parentDiv.className = 'right-div';
+					childDiv.className = 'right-msg';
+					parentDiv.append(childDiv);
+					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`
+					messageSection.append(parentDiv);
+
+				}
+
+			})
+		}
+	});
+  }
 
 // function send() {
 //     var content = document.getElementById("msg").value;
