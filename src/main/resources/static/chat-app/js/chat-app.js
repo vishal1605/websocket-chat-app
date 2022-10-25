@@ -22,6 +22,7 @@ let active = [];
 let notActive = [];
 let allChatUsers = [];
 let allFriendsUsers = [];
+let messageArray = [];
 let friend_id = 0;
 var username = session.innerHTML;
 
@@ -58,29 +59,49 @@ function connect() {
 		var activeUser = JSON.parse(event.data);
 		console.log(activeUser);
 		if ('user_id' in activeUser) {
-			// if (activeUser.isActive == true) {
-			// 	let exist = active.some((e) => {
-			// 		return e.user_id == activeUser.user_id;
-			// 	})
-			// 	if (!exist) {
-			// 		if (parseInt(username) != activeUser.user_id) {
+			if (activeUser.isActive == true) {
+				let exist = active.some((e) => {
+					return e.user_id == activeUser.user_id;
+				})
+				if (!exist) {
+					if (parseInt(username) != activeUser.user_id) {
 
-			// 			active.push(activeUser)
-			// 		}
-			// 	}
+						active.push(activeUser)
+					}
+				}
 
-			// } else {
-			// 	var removeUser = active.find((e) => {
-			// 		return e.user_id == activeUser.user_id;
-			// 	})
-			// 	//console.log(removeUser);
-			// 	active.splice(active.indexOf(removeUser), 1);
+			} else {
+				var removeUser = active.find((e) => {
+					return e.user_id == activeUser.user_id;
+				})
+				//console.log(removeUser);
+				active.splice(active.indexOf(removeUser), 1);
 
-			// }
-			console.log("user");
+			}
+
 		} else {
-			console.log("msg");
+			if (friend_id != activeUser.toUser.friends[0].user_id) {
+
+				messageArray.push(activeUser.toUser.friends[0].user_id)
+				console.log(messageArray);
+				var count = {};
+				messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+				console.log(count);
+				for (let key in count) {
+					document.getElementById(key).children[0].textContent = count[key];
+				}
+			} else {
+
+				var parentDiv = document.createElement('div');
+				var childDiv = document.createElement('div');
+				parentDiv.className = 'left-div';
+				childDiv.className = 'left-msg';
+				parentDiv.append(childDiv);
+				childDiv.innerHTML = `<small class="text-light">${activeUser.content}</small>`;
+				messageSection.append(parentDiv);
+			}
 		}
+
 
 	}
 
@@ -183,7 +204,7 @@ function getAllFriends(id) {
 				responseObject.forEach((e) => {
 					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" style="background-color:aqua;position:relative" id="${e.user_id}">
 												
-												<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">1</span></div>
+												<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 												<div class="user-photo">
 													<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
 												</div>
@@ -303,24 +324,8 @@ function unit8ToString(bytes) {
 	return out;
 }
 
-function sendMessage(e) {
-	// $.ajax({
-	// 	type: "POST",
-	// 	url: "/send-message",
-	// 	data: {
-	// 		requestData: JSON.stringify({
-	// 			userId: 1,
-	// 			friendId: 2
-	// 		})
-	// 	},
-
-	// 	success: function (response) {
-	// 		console.log(response);
-	// 	}
-	// });
-}
-
 function showMessageOfSpecificUser(u_id, f_id, friendName) {
+	document.getElementById(f_id).children[0].textContent = 0;
 	friend_id = f_id;
 	$.ajax({
 		type: "GET",
@@ -365,49 +370,49 @@ function preocessMessage(e) {
 	e.preventDefault();
 	var formData = new FormData(e.target);
 	let myMessage = formData.get('message');
-	ws.send(JSON.stringify({
-		toUser: {
-			user_id: friend_id,
-			friends: [{ user_id: username }]
+	if (friend_id != 0) {
+		if (online.checked) {
+			ws.send(JSON.stringify({
+				toUser: {
+					user_id: friend_id,
+					friends: [{ user_id: username }]
+				},
+				content: myMessage,
+				sendDate: new Date().toString(),
+				recievedDate: new Date().toString(),
+			}));
+			var parentDiv = document.createElement('div');
+			var childDiv = document.createElement('div');
+			parentDiv.className = 'right-div';
+			childDiv.className = 'right-msg';
+			parentDiv.append(childDiv);
+			childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
+			messageSection.append(parentDiv);
+			messageArea.value = "";
+		} else {
+			alert("sorry you are not online")
+		}
+
+	} else {
+		alert("please select user")
+
+	}
+	$.ajax({
+		type: "POST",
+		url: "/send-message",
+		data: {
+			requestData: JSON.stringify({
+				username, friend_id, myMessage
+			})
 		},
-		content: myMessage,
-		sendDate: new Date().toString(),
-		recievedDate: new Date().toString(),
-	}));
-	var parentDiv = document.createElement('div');
-	var childDiv = document.createElement('div');
-	parentDiv.className = 'right-div';
-	childDiv.className = 'right-msg';
-	parentDiv.append(childDiv);
-	childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
-	messageSection.append(parentDiv);
-	// $.ajax({
-	// 	type: "POST",
-	// 	url: "/send-message",
-	// 	data: {
-	// 		requestData: JSON.stringify({
-	// 			username, friend_id, myMessage
-	// 		})
-	// 	},
 
-	// 	success: function (response) {
-	// 		//console.log(response);
-	// 	}
-	// });
+		success: function (response) {
+			//console.log(response);
+		}
+	});
 
-	messageArea.value = "";
 
 
 }
 
-// function send() {
-//     var content = document.getElementById("msg").value;
-//     var to = document.getElementById("to").value;
-//     var json = JSON.stringify({
-//         "to":to,
-//         "content":content
-//     });
 
-//     ws.send(json);
-//     log.innerHTML += "Me : " + content + "\n";
-// }

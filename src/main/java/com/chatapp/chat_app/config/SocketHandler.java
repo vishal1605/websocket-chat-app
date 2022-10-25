@@ -71,6 +71,10 @@ public class SocketHandler extends AbstractWebSocketHandler {
                     System.out.println("send successfully");
                     endpoint.sendMessage(new TextMessage(new Gson().toJson(message)));
                 }
+                // else{
+                //     System.out.println("error");
+                //     endpoint.sendMessage(new TextMessage(new Gson().toJson("error")));
+                // }
             }
         }
     }
