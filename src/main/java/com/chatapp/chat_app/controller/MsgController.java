@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ import com.chatapp.chat_app.services.UserDao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 @RestController
 public class MsgController {
@@ -160,23 +162,25 @@ public class MsgController {
     }
 
     @PostMapping("/send-message")
-    public String saveUserMessage(String requestData, HttpSession session){
-        System.out.println(requestData);
-        ChatUser c = (ChatUser)session.getAttribute("user");
-        ChatUser f = dao.getSingleUser(1l);
+    public String saveUserMessage(String requestData){
+        JSONObject json = new JSONObject(requestData);
+        long user_id = json.getLong("username");
+        long f_id = json.getLong("friend_id");
+        String message = json.getString("myMessage");
+        ChatUser f = dao.getSingleUser(f_id);
         Set<Message> set  = new HashSet<Message>();
-        set.add(mDao.saveMessage(c.getUser_id(),new Message(f,"bus bhai jaldi he aane wala hu",LocalDateTime.now().toString(), LocalDateTime.now().toString())));
+        set.add(mDao.saveMessage(user_id,new Message(f, message, LocalDateTime.now().toString(), LocalDateTime.now().toString())));
         return "done";
     }
 
     @GetMapping("/get-message")
-    public List<Message> fetchMessage(HttpSession session){
-        ChatUser c = (ChatUser)session.getAttribute("user");
-        //mDao.getFriendMessages(1, 2);
-        System.out.println(c);
+    public List<Message> fetchMessage(String requestData){
+        JSONObject json = new JSONObject(requestData);
+        long user_id = json.getLong("u_id");
+        long f_id = json.getLong("f_id");
         List<Message> list = new ArrayList<>();
-        list.addAll(mDao.getFriendMessages(1, 2));
-        list.addAll(mDao.getFriendMessages(2, 1));
+        list.addAll(mDao.getFriendMessages(user_id, f_id));
+        list.addAll(mDao.getFriendMessages(f_id, user_id));
         return list;
     }
 

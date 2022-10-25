@@ -107,7 +107,7 @@
     justify-content: space-between;
 }
 #chat-main .message-section{
-    height: 495px;
+    height: 430px;
     overflow: auto;
 }
 #chat-main .message-section .left-div{

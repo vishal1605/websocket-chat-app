@@ -13,12 +13,16 @@ const closePopUpProfileModel = document.getElementById('close-profile-model');
 const profilePic = document.getElementById('form-file');
 const profileDemo = document.getElementById('profile-demo');
 const messageSection = document.getElementById('section-of-message');
+const messageHeaderLabel = document.getElementById('message-header-label');
+const submitMessage = document.getElementById('submit-message');
+const messageArea = document.getElementById('message-area');
 
 //Global variable
 let active = [];
 let notActive = [];
 let allChatUsers = [];
 let allFriendsUsers = [];
+let friend_id = 0;
 var username = session.innerHTML;
 
 ////Event Listners
@@ -45,32 +49,38 @@ function initialFunct(param) {
 	getAllChatUsers();
 	myFriends.style.background = 'gray';
 	profilePic.addEventListener('change', trackProfilePic);
+	submitMessage.addEventListener('submit', preocessMessage);
 }
 
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
 	ws.onmessage = function (event) {
 		var activeUser = JSON.parse(event.data);
-		if (activeUser.isActive == true) {
-			let exist = active.some((e) => {
-				return e.user_id == activeUser.user_id;
-			})
-			if (!exist) {
-				if (parseInt(username) != activeUser.user_id) {
+		console.log(activeUser);
+		if ('user_id' in activeUser) {
+			// if (activeUser.isActive == true) {
+			// 	let exist = active.some((e) => {
+			// 		return e.user_id == activeUser.user_id;
+			// 	})
+			// 	if (!exist) {
+			// 		if (parseInt(username) != activeUser.user_id) {
 
-					active.push(activeUser)
-				}
-			}
+			// 			active.push(activeUser)
+			// 		}
+			// 	}
 
+			// } else {
+			// 	var removeUser = active.find((e) => {
+			// 		return e.user_id == activeUser.user_id;
+			// 	})
+			// 	//console.log(removeUser);
+			// 	active.splice(active.indexOf(removeUser), 1);
+
+			// }
+			console.log("user");
 		} else {
-			var removeUser = active.find((e) => {
-				return e.user_id == activeUser.user_id;
-			})
-			//console.log(removeUser);
-			active.splice(active.indexOf(removeUser), 1);
-
+			console.log("msg");
 		}
-		//console.log(active);
 
 	}
 
@@ -177,7 +187,7 @@ function getAllFriends(id) {
 												<div class="user-photo">
 													<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
 												</div>
-												<div class="user-detail" onclick="showMessageOfSpecificUser('${e.user_id}')" style="cursor:pointer">
+												<div class="user-detail" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}')" style="cursor:pointer">
 													<h5 class="m-0">${e.userName}</h5>
 													<p class="m-0">vybbubythbub</p>
 												</div>
@@ -268,7 +278,7 @@ function trackProfilePic(e) {
 	//console.log(e.target.getAttribute('data-user_id'));
 	var imgFile = e.target.files[0];
 	if (imgFile.type == 'image/png' || imgFile.type == 'image/jpeg') {
-		fileToArray(imgFile).then((e)=>{
+		fileToArray(imgFile).then((e) => {
 			var strImg = unit8ToString(e);
 			//profileDemo.src = 'data:image/png;base64,' + strImg;
 			console.log(strImg);
@@ -293,51 +303,55 @@ function unit8ToString(bytes) {
 	return out;
 }
 
-function sendMessage(e) { 
-	$.ajax({
-		type: "POST",
-		url: "/send-message",
-		data: {
-			requestData:JSON.stringify({
-				userId:1,
-				friendId: 2
-			})
-		},
-		
-		success: function (response) {
-			console.log(response);
-		}
-	});
- }
+function sendMessage(e) {
+	// $.ajax({
+	// 	type: "POST",
+	// 	url: "/send-message",
+	// 	data: {
+	// 		requestData: JSON.stringify({
+	// 			userId: 1,
+	// 			friendId: 2
+	// 		})
+	// 	},
 
- function showMessageOfSpecificUser(param) { 
+	// 	success: function (response) {
+	// 		console.log(response);
+	// 	}
+	// });
+}
+
+function showMessageOfSpecificUser(u_id, f_id, friendName) {
+	friend_id = f_id;
 	$.ajax({
 		type: "GET",
 		url: "/get-message",
-		
+		data: {
+			requestData: JSON.stringify({ u_id, f_id })
+		},
+
 		success: function (response) {
-			messageSection.innerHTML='';
-			response.sort((a,b)=>{
+			messageSection.innerHTML = '';
+			messageHeaderLabel.innerText = friendName;
+			response.sort((a, b) => {
 				var date1 = new Date(a.sendDate)
 				var date2 = new Date(b.sendDate)
 				return date1 - date2;
 			});
-			response.forEach((e)=>{
-				//var mydate = new Date(e.sendDate);
-				console.log(e);
+			response.forEach((e) => {
+
 				var parentDiv = document.createElement('div');
 				var childDiv = document.createElement('div');
-				if(e.toUser.user_id == username){
+				if (e.toUser.user_id == username) {
 					parentDiv.className = 'left-div';
 					childDiv.className = 'left-msg';
 					parentDiv.append(childDiv);
-					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`
+					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`;
 					messageSection.append(parentDiv);
-				}else{
+				} else {
 					parentDiv.className = 'right-div';
 					childDiv.className = 'right-msg';
 					parentDiv.append(childDiv);
-					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`
+					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`;
 					messageSection.append(parentDiv);
 
 				}
@@ -345,7 +359,46 @@ function sendMessage(e) {
 			})
 		}
 	});
-  }
+}
+
+function preocessMessage(e) {
+	e.preventDefault();
+	var formData = new FormData(e.target);
+	let myMessage = formData.get('message');
+	ws.send(JSON.stringify({
+		toUser: {
+			user_id: friend_id,
+			friends: [{ user_id: username }]
+		},
+		content: myMessage,
+		sendDate: new Date().toString(),
+		recievedDate: new Date().toString(),
+	}));
+	var parentDiv = document.createElement('div');
+	var childDiv = document.createElement('div');
+	parentDiv.className = 'right-div';
+	childDiv.className = 'right-msg';
+	parentDiv.append(childDiv);
+	childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
+	messageSection.append(parentDiv);
+	// $.ajax({
+	// 	type: "POST",
+	// 	url: "/send-message",
+	// 	data: {
+	// 		requestData: JSON.stringify({
+	// 			username, friend_id, myMessage
+	// 		})
+	// 	},
+
+	// 	success: function (response) {
+	// 		//console.log(response);
+	// 	}
+	// });
+
+	messageArea.value = "";
+
+
+}
 
 // function send() {
 //     var content = document.getElementById("msg").value;

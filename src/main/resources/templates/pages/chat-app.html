@@ -72,6 +72,13 @@
                     </div>
                 </div>
                 <div class="col-8 border border-1 p-0" id="chat-main">
+                    <div class="message-section-header bg-primary" style="height: 55px;">
+                        <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" height="45px" style="border-radius: 50%;">
+                        <small id="message-header-label">
+                            
+                        </small>
+                        
+                    </div>
                     <div class="message-section" id="section-of-message">
                         <!-- <div class="left-div">
                             <div class="left-msg">
@@ -91,8 +98,8 @@
                         
                     </div>
                     <div class="message-input-section bg-warning">
-                        <form action="" class="d-flex align-items-center">
-                            <input type="text" class="form-control w-50 me-2 my-1">
+                        <form action="" class="d-flex align-items-center" id="submit-message">
+                            <input type="text" class="form-control w-50 me-2 my-1" name="message" id="message-area" required>
                             <button type="submit" class="btn btn-primary">send</button>
                             <!-- <input type="file" class="form-control"> -->
                         </form>
