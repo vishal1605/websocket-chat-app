@@ -47,7 +47,6 @@ initialFunct();
 function initialFunct(param) {
 
 	getAllFriends(username);
-	getAllChatUsers();
 	myFriends.style.background = 'gray';
 	profilePic.addEventListener('change', trackProfilePic);
 	submitMessage.addEventListener('submit', preocessMessage);
@@ -199,10 +198,21 @@ function getAllFriends(id) {
 			requestData: id
 		},
 		success: function (responseObject) {
-			allFriendsUsers = [...responseObject]
-			if (responseObject.length != 0) {
-				responseObject.forEach((e) => {
-					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" style="background-color:aqua;position:relative" id="${e.user_id}">
+			$.ajax({
+				type: "GET",
+				url: "/get-last-message",
+				data: {
+					requestData: JSON.stringify(responseObject),
+					myId: id
+				}
+				,
+				success: function (lastMessages) {
+					console.log(lastMessages);
+					allFriendsUsers = [...responseObject]
+
+					if (responseObject.length != 0) {
+						responseObject.forEach((e) => {
+							friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" style="background-color:aqua;position:relative" id="${e.user_id}">
 												
 												<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 												<div class="user-photo">
@@ -216,10 +226,17 @@ function getAllFriends(id) {
 													<i class="fa-solid fa-x"></i>
 												</div>
 											</li>`;
-				});
-			} else {
-				friendList.innerHTML = `<li class="border border-1 border-dark" style="height:40px; background-color:green;">Sorry! no friends</li>`;
-			}
+						});
+						// lastMessages.forEach((e)=>{
+						// 	document.getElementById(e.toUser.user_id).children[2].children[1].innerText = e.content;
+						// })
+					} else {
+						friendList.innerHTML = `<li class="border border-1 border-dark" style="height:40px; background-color:green;">Sorry! no friends</li>`;
+					}
+					getAllChatUsers();
+				}
+			});
+			// 
 
 		}
 	});

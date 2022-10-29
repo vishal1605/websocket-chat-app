@@ -2,6 +2,8 @@ package com.chatapp.chat_app.controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +12,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -27,6 +31,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 @RestController
 public class MsgController {
@@ -35,7 +40,7 @@ public class MsgController {
     private UserDao dao;
 
     @Autowired
-    private MessageDao mDao;    
+    private MessageDao mDao;
 
     private List<ChatUser> listOfUsers = new ArrayList<>();
 
@@ -107,7 +112,7 @@ public class MsgController {
         ModelAndView mv = new ModelAndView();
         m.addAttribute("username", name);
         // System.out.println(name+"dash");
-        ChatUser c = (ChatUser)session.getAttribute("user");
+        ChatUser c = (ChatUser) session.getAttribute("user");
         // c.setActive(true);
         mv.setViewName("pages/chat-app");
         return mv;
@@ -124,57 +129,89 @@ public class MsgController {
         System.out.println(user);
 
         String json = new Gson().toJson(listOfUsers);
-        
+
         return json;
 
     }
 
-    //I will implement this later
     @GetMapping("/getAllFriends")
-    public List<ChatUser> getAllFriends(String requestData){
+    public List<ChatUser> getAllFriends(String requestData) {
         List<ChatUser> friends = dao.getAllFriends(Long.parseLong(requestData));
+
         return friends;
-        
-        
+
     }
+
+    @GetMapping("/get-last-message")
+    public List<Message> getLastMessage(String requestData, String myId) {
+        TypeToken<List<ChatUser>> token = new TypeToken<List<ChatUser>>() {
+        };
+        List<ChatUser> friends = new Gson().fromJson(requestData, token.getType());
+        List<Message> messages = new ArrayList<>();
+        List<Message> messages1 = new ArrayList<>();
+        for (ChatUser chatUser : friends) {
+            messages.addAll(mDao.getFriendMessages(Long.parseLong(myId), chatUser.getUser_id()));
+            messages.addAll(mDao.getFriendMessages(chatUser.getUser_id(), Long.parseLong(myId)));
+            // System.out.println(messages);
+            for (int i = 0; i < messages.size(); i++) {
+                for (int j = i + 1; j < messages.size(); j++) {
+                    if (LocalDateTime.parse(messages.get(i).getSendDate())
+                            .isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
+                        Message temp = messages.get(j);
+                        messages.set(j, messages.get(i));
+                        messages.set(i, temp);
+                    }
+
+                }
+                
+            }
+            Message m = new Message();
+            m.setToUser(chatUser);
+            m.setContent(messages.get(messages.size() - 1).getContent());
+            messages1.add(m);
+        }
+
+        return messages1;
+    }
+
     @GetMapping("/makeFriend")
-    public ChatUser makeFriends(String requestData, HttpSession session){
-        
-        ChatUser c = (ChatUser)session.getAttribute("user");
+    public ChatUser makeFriends(String requestData, HttpSession session) {
+
+        ChatUser c = (ChatUser) session.getAttribute("user");
         ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
         dao.saveMyFriend(c.getUser_id(), friend.getUser_id());
         return friend;
-        
-        
+
     }
 
     @GetMapping("/removeFriend")
-    public ChatUser removeFriend(String requestData, HttpSession session){
-        ChatUser c = (ChatUser)session.getAttribute("user");
+    public ChatUser removeFriend(String requestData, HttpSession session) {
+        ChatUser c = (ChatUser) session.getAttribute("user");
         ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
         dao.deleteSingleFriend(c.getUser_id(), Long.parseLong(requestData));
         return friend;
     }
 
     @GetMapping("/getAllChatUsers")
-    public List<ChatUser> getAllChatUsers(){
+    public List<ChatUser> getAllChatUsers() {
         return dao.getAllChatUser();
     }
 
     @PostMapping("/send-message")
-    public String saveUserMessage(String requestData){
+    public String saveUserMessage(String requestData) {
         JSONObject json = new JSONObject(requestData);
         long user_id = json.getLong("username");
         long f_id = json.getLong("friend_id");
         String message = json.getString("myMessage");
         ChatUser f = dao.getSingleUser(f_id);
-        Set<Message> set  = new HashSet<Message>();
-        set.add(mDao.saveMessage(user_id,new Message(f, message, LocalDateTime.now().toString(), LocalDateTime.now().toString())));
+        Set<Message> set = new HashSet<Message>();
+        set.add(mDao.saveMessage(user_id,
+                new Message(f, message, LocalDateTime.now().toString(), LocalDateTime.now().toString())));
         return "done";
     }
 
     @GetMapping("/get-message")
-    public List<Message> fetchMessage(String requestData){
+    public List<Message> fetchMessage(String requestData) {
         JSONObject json = new JSONObject(requestData);
         long user_id = json.getLong("u_id");
         long f_id = json.getLong("f_id");
