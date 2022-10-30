@@ -147,29 +147,39 @@ public class MsgController {
         TypeToken<List<ChatUser>> token = new TypeToken<List<ChatUser>>() {
         };
         List<ChatUser> friends = new Gson().fromJson(requestData, token.getType());
-        List<Message> messages = new ArrayList<>();
         List<Message> messages1 = new ArrayList<>();
-        for (ChatUser chatUser : friends) {
-            messages.addAll(mDao.getFriendMessages(Long.parseLong(myId), chatUser.getUser_id()));
-            messages.addAll(mDao.getFriendMessages(chatUser.getUser_id(), Long.parseLong(myId)));
-            // System.out.println(messages);
-            for (int i = 0; i < messages.size(); i++) {
-                for (int j = i + 1; j < messages.size(); j++) {
-                    if (LocalDateTime.parse(messages.get(i).getSendDate())
-                            .isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
-                        Message temp = messages.get(j);
-                        messages.set(j, messages.get(i));
-                        messages.set(i, temp);
+        if(friends.size()!=0){
+            List<Message> messages = new ArrayList<>();
+            for (ChatUser chatUser : friends) {
+                messages.addAll(mDao.getFriendMessages(Long.parseLong(myId), chatUser.getUser_id()));
+                messages.addAll(mDao.getFriendMessages(chatUser.getUser_id(), Long.parseLong(myId)));
+                // System.out.println(messages);
+                if (messages.size()!=0) {
+                    for (int i = 0; i < messages.size(); i++) {
+                        for (int j = i + 1; j < messages.size(); j++) {
+                            if (LocalDateTime.parse(messages.get(i).getSendDate())
+                                    .isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
+                                Message temp = messages.get(j);
+                                messages.set(j, messages.get(i));
+                                messages.set(i, temp);
+                            }
+        
+                        }
+                        
                     }
-
+                    Message m = new Message();
+                    m.setToUser(chatUser);
+                    m.setContent(messages.get(messages.size() - 1).getContent());
+                    m.setSendDate(messages.get(messages.size() - 1).getSendDate());
+                    messages1.add(m);
+                    
+                } else {
+                    
                 }
-                
+                messages.clear();
             }
-            Message m = new Message();
-            m.setToUser(chatUser);
-            m.setContent(messages.get(messages.size() - 1).getContent());
-            messages1.add(m);
         }
+        
 
         return messages1;
     }

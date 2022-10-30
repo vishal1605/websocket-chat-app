@@ -16,6 +16,7 @@ const messageSection = document.getElementById('section-of-message');
 const messageHeaderLabel = document.getElementById('message-header-label');
 const submitMessage = document.getElementById('submit-message');
 const messageArea = document.getElementById('message-area');
+const profileMoreOptions = document.getElementById('profile-more-options');
 
 //Global variable
 let active = [];
@@ -198,51 +199,65 @@ function getAllFriends(id) {
 			requestData: id
 		},
 		success: function (responseObject) {
-			$.ajax({
-				type: "GET",
-				url: "/get-last-message",
-				data: {
-					requestData: JSON.stringify(responseObject),
-					myId: id
-				}
-				,
-				success: function (lastMessages) {
-					console.log(lastMessages);
-					allFriendsUsers = [...responseObject]
+			allFriendsUsers = [...responseObject]
 
-					if (responseObject.length != 0) {
-						responseObject.forEach((e) => {
-							friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" style="background-color:aqua;position:relative" id="${e.user_id}">
+			if (responseObject.length != 0) {
+				$.ajax({
+					type: "GET",
+					url: "/get-last-message",
+					data: {
+						requestData: JSON.stringify(responseObject),
+						myId: id
+					}
+					,
+					success: function (lastMessages) {
+						lastMessages.forEach((e) => {
+							var sendDate = new Date(e.sendDate);
+							if (+sendDate.getDate() === +new Date().getDate()) {
+
+								document.getElementById(e.toUser.user_id).children[3].children[0].innerText = `${sendDate.getHours()}:${sendDate.getMinutes()}`;
+							} else {
+								document.getElementById(e.toUser.user_id).children[3].children[0].innerText = `${sendDate.getDate()}/${sendDate.getMonth()}/${sendDate.getFullYear().toString().substring(2)}`;
+							}
+							document.getElementById(e.toUser.user_id).children[2].children[1].innerText = e.content.substring(0, 10) + "...";
+						})
+
+
+					}
+
+				})
+				responseObject.forEach((e) => {
+					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}')"
+							 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user_id}">
 												
 												<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 												<div class="user-photo">
 													<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
 												</div>
-												<div class="user-detail" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}')" style="cursor:pointer">
-													<h5 class="m-0">${e.userName}</h5>
-													<p class="m-0">vybbubythbub</p>
+												<div class="user-detail">
+													<h6 class="m-0">${e.userName}</h6>
+													<small class="m-0" style="font-size:13px">no msg</small>
 												</div>
-												<div class="user-remove shadow" onclick="removeFriend(event)" data-id="${e.user_id}">
-													<i class="fa-solid fa-x"></i>
+												<div class="last-time">
+													<small>3:45</small>
 												</div>
 											</li>`;
-						});
-						// lastMessages.forEach((e)=>{
-						// 	document.getElementById(e.toUser.user_id).children[2].children[1].innerText = e.content;
-						// })
-					} else {
-						friendList.innerHTML = `<li class="border border-1 border-dark" style="height:40px; background-color:green;">Sorry! no friends</li>`;
-					}
-					getAllChatUsers();
-				}
-			});
-			// 
+				});
+
+			} else {
+				friendList.innerHTML = `<li class="border border-1 border-dark" id="no-friends-list" style="height:40px; background-color:green;">Sorry! no friends</li>`;
+			}
+			getAllChatUsers();
+
 
 		}
 	});
 }
 
 function addFriend(e) {
+	if (document.getElementById('no-friends-list') != null) {
+		document.getElementById('no-friends-list').remove()
+	}
 	var friendId = e.target.parentElement.getAttribute('data-id');
 	$.ajax({
 		type: "GET",
@@ -254,17 +269,22 @@ function addFriend(e) {
 			var list = document.createElement('li');
 			list.className = 'list-of-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'aqua';
+			list.style.position = 'relative';
+			list.style.cursor = 'pointer'
+			list.setAttribute('onclick', `showMessageOfSpecificUser(${username},${responseObject.user_id},'${responseObject.userName}')`)
 			list.id = responseObject.user_id;
-			list.innerHTML = `<div class="user-photo">
+			list.innerHTML = `<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
+							  <div class="user-photo">
 								<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
 							  </div>
 								<div class="user-detail">
-									<h5 class="m-0">${responseObject.userName}</h5>
-									<p class="m-0">vybbubythbub</p>
+									<h6 class="m-0">${responseObject.userName}</h6>
+									<small class="m-0" style="font-size:13px">no msg</small>
 								</div>
-								<div class="user-remove shadow" onclick="removeFriend(event)" data-id="${responseObject.user_id}">
-									<i class="fa-solid fa-x"></i>
-								</div>`;
+								<div class="last-time">
+									<small>3:45</small>
+								</div>
+								`;
 
 
 			friendList.append(list);
@@ -342,6 +362,7 @@ function unit8ToString(bytes) {
 }
 
 function showMessageOfSpecificUser(u_id, f_id, friendName) {
+	//console.log("running");
 	document.getElementById(f_id).children[0].textContent = 0;
 	friend_id = f_id;
 	$.ajax({
@@ -354,27 +375,48 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 		success: function (response) {
 			messageSection.innerHTML = '';
 			messageHeaderLabel.innerText = friendName;
+			profileMoreOptions.innerHTML = `<i class="fa-solid fa-ellipsis-vertical"></i>`;
 			response.sort((a, b) => {
 				var date1 = new Date(a.sendDate)
 				var date2 = new Date(b.sendDate)
 				return date1 - date2;
 			});
 			response.forEach((e) => {
-
+				var labelTime = new Date(e.sendDate)
 				var parentDiv = document.createElement('div');
 				var childDiv = document.createElement('div');
+				var timeLabel = document.createElement('label');
+
 				if (e.toUser.user_id == username) {
 					parentDiv.className = 'left-div';
 					childDiv.className = 'left-msg';
+					timeLabel.className = 'left-time';
+					timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
+					parentDiv.append(timeLabel);
 					parentDiv.append(childDiv);
 					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`;
 					messageSection.append(parentDiv);
+					// if (+labelTime.getDate()!==+new Date().getDate()) {
+					// 	var dateTimeStamp = document.createElement('div');
+					// 	dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+					// 	dateTimeStamp.innerHTML = `<h6 style="background-color: red;color:white">${labelTime.getDate()}/${labelTime.getMonth()}/${labelTime.getFullYear().toString().substring(2)}</h6>`;
+					// 	messageSection.append(dateTimeStamp)
+					// }
 				} else {
 					parentDiv.className = 'right-div';
 					childDiv.className = 'right-msg';
+					timeLabel.className = 'right-time';
+					timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
+					parentDiv.append(timeLabel);
 					parentDiv.append(childDiv);
 					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`;
 					messageSection.append(parentDiv);
+					// if (+labelTime.getDate()!==+new Date().getDate()) {
+					// 	var dateTimeStamp = document.createElement('div');
+					// 	dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+					// 	dateTimeStamp.innerHTML = `<h6 style="background-color: red;color:white">${labelTime.getDate()}/${labelTime.getMonth()}/${labelTime.getFullYear().toString().substring(2)}</h6>`;
+					// 	messageSection.append(dateTimeStamp)
+					// }
 
 				}
 

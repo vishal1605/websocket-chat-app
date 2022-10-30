@@ -118,15 +118,28 @@
 }
 .left-div .left-msg{
     min-width: 20%;
-    max-width: 75%;
+    max-width: 70%;
     background-color: red;
     border-radius: 18px;
     padding: 5px;
     padding-left: 10px;
     float: left;
     box-shadow: 4px 3px 3px 2px gray;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     
+}
+.left-div .left-time{
+    color: white;
+    background-color: rgb(229, 223, 223);
+    float: left;
+    height: 25px;
+    width: 33px;
+    padding: 2px;
+    border-radius: 50%;
+    margin-left: 3px;
+    margin-right: 4px;
+    font-size: 12px;
+    overflow: hidden;
 }
 
 #chat-main .message-section .right-div{
@@ -137,12 +150,25 @@
 
 .right-div .right-msg{
     min-width: 20%;
-    max-width: 75%;
+    max-width: 70%;
     background-color: rgb(23, 209, 32);
     border-radius: 18px;
     padding: 5px;
     padding-left: 10px;
     float: right;
     box-shadow: 4px 3px 3px 2px gray;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+}
+.right-div .right-time{
+    color: white;
+    background-color: rgb(229, 223, 223);
+    float: right;
+    height: 25px;
+    width: 33px;
+    padding: 2px;
+    border-radius: 50%;
+    margin-left: 4px;
+    margin-right: 3px;
+    font-size: 12px;
+    overflow: hidden;
 }

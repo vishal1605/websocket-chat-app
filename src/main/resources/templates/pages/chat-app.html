@@ -39,7 +39,7 @@
         </div>
         <div class="col-10 chat m-auto shadow">
             <div class="row">
-                <div class="col-4 p-0 border border-1 d-flex flex-column justify-content-between" style="height:550px">
+                <div class="col-3 p-0 border border-1 d-flex flex-column justify-content-between" style="height:550px">
                     <div class="friends-selection-section" style="height: 510px;overflow:auto">
                         <div class="rfs-btn d-flex justify-content-between align-items-center mb-2 px-2"
                             style="background-color: #f76b2a;">
@@ -71,35 +71,45 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-8 border border-1 p-0" id="chat-main">
-                    <div class="message-section-header bg-primary" style="height: 55px;">
-                        <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" height="45px" style="border-radius: 50%;">
-                        <small id="message-header-label">
-                            
-                        </small>
-                        
+                <div class="col-9 border border-1 p-0" id="chat-main">
+                    <div class="message-section-header bg-primary d-flex align-items-center justify-content-between px-3"
+                        style="height: 55px;">
+                        <div>
+                            <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" height="45px"
+                                style="border-radius: 50%;">
+                            <small id="message-header-label">
+
+                            </small>
+                        </div>
+                        <label for="" style="cursor: pointer;" id="profile-more-options"></label>
+
                     </div>
                     <div class="message-section" id="section-of-message">
                         <!-- <div class="left-div">
+                            <label class="left-time">3:25</label>
                             <div class="left-msg">
                                 <small>Hello</small>
                             </div>
                         </div>
+                        <div class="d-flex align-items-center justify-content-center" id="date-time-stamp">
+                            <h6 style="background-color: red;color:white">29/10/2022</h6>
+                        </div>
                         <div class="right-div">
-                            <div class="right-msg d-flex justify-content-between align-items-center">
+                            <label class="right-time">3:25</label>
+                            <div class="right-msg">
                                 <small>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consectetur quia
                                     repellendus omnis aspernatur earum quae, aliquam quidem modi aperiam expedita
                                     doloremque illo nemo. Sint aliquam laboriosam eveniet incidunt dolorum sunt officiis
                                     voluptatibus asperiores, possimus, rem maxime eos fuga tempora quasi blanditiis
                                     beatae nemo temporibus fugit illo itaque. Ducimus, eos error.</small>
-                                <p class="bg-warning">3:25</p>
                             </div>
                         </div> -->
-                        
+
                     </div>
                     <div class="message-input-section bg-warning">
                         <form action="" class="d-flex align-items-center" id="submit-message">
-                            <input type="text" class="form-control w-50 me-2 my-1" name="message" id="message-area" required>
+                            <input type="text" class="form-control w-50 me-2 my-1" name="message" id="message-area"
+                                required>
                             <button type="submit" class="btn btn-primary">send</button>
                             <!-- <input type="file" class="form-control"> -->
                         </form>
