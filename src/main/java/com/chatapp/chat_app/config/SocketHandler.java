@@ -37,7 +37,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
         sessions.add(session);
         // System.out.println(session.getHandshakeHeaders().get("sec-websocket-key")+"connect");
         ConnectBroadcast();
-        // System.out.println(users.toString());
+        System.out.println(users.toString());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
         users.remove(session.getId());
         ConnectBroadcast();
         disconnectBroadcast(user);
-        // System.out.println(users.toString());
+        System.out.println(users.toString());
 
     }
 

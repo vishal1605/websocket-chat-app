@@ -89,13 +89,18 @@ function connect() {
 				console.log(count);
 				for (let key in count) {
 					document.getElementById(key).children[0].textContent = count[key];
+					document.getElementById(key).children[0].style.display = 'block';
 				}
 			} else {
-
+				var labelTime = new Date();
 				var parentDiv = document.createElement('div');
 				var childDiv = document.createElement('div');
+				var timeLabel = document.createElement('label');
 				parentDiv.className = 'left-div';
-				childDiv.className = 'left-msg';
+				childDiv.className = 'left-msg';timeLabel.className = 'left-time';
+				timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
+				parentDiv.append(timeLabel);
+
 				parentDiv.append(childDiv);
 				childDiv.innerHTML = `<small class="text-light">${activeUser.content}</small>`;
 				messageSection.append(parentDiv);
@@ -243,6 +248,7 @@ function getAllFriends(id) {
 												</div>
 											</li>`;
 				});
+				document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none');
 
 			} else {
 				friendList.innerHTML = `<li class="border border-1 border-dark" id="no-friends-list" style="height:40px; background-color:green;">Sorry! no friends</li>`;
@@ -365,6 +371,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 	//console.log("running");
 	document.getElementById(f_id).children[0].textContent = 0;
 	friend_id = f_id;
+	var storeDate = [];
 	$.ajax({
 		type: "GET",
 		url: "/get-message",
@@ -388,6 +395,25 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 				var timeLabel = document.createElement('label');
 
 				if (e.toUser.user_id == username) {
+					if (+labelTime.getDate() !== +new Date().getDate()) {
+						if (storeDate.indexOf(labelTime.getDate()) == -1) {
+
+							storeDate.push(labelTime.getDate())
+							var dateTimeStamp = document.createElement('div');
+							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">${labelTime.getDate()}/${labelTime.getMonth()}/${labelTime.getFullYear().toString().substring(2)}</h6>`;
+							messageSection.append(dateTimeStamp)
+						}
+
+					} else {
+						if (storeDate.indexOf(labelTime.getDate()) == -1) {
+							storeDate.push(labelTime.getDate());
+							var dateTimeStamp = document.createElement('div');
+							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+							messageSection.append(dateTimeStamp)
+						}
+					}
 					parentDiv.className = 'left-div';
 					childDiv.className = 'left-msg';
 					timeLabel.className = 'left-time';
@@ -396,13 +422,26 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 					parentDiv.append(childDiv);
 					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`;
 					messageSection.append(parentDiv);
-					// if (+labelTime.getDate()!==+new Date().getDate()) {
-					// 	var dateTimeStamp = document.createElement('div');
-					// 	dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-					// 	dateTimeStamp.innerHTML = `<h6 style="background-color: red;color:white">${labelTime.getDate()}/${labelTime.getMonth()}/${labelTime.getFullYear().toString().substring(2)}</h6>`;
-					// 	messageSection.append(dateTimeStamp)
-					// }
+
 				} else {
+					if (+labelTime.getDate() !== +new Date().getDate()) {
+						if (storeDate.indexOf(labelTime.getDate()) == -1) {
+
+							storeDate.push(labelTime.getDate())
+							var dateTimeStamp = document.createElement('div');
+							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">${labelTime.getDate()}/${labelTime.getMonth()}/${labelTime.getFullYear().toString().substring(2)}</h6>`;
+							messageSection.append(dateTimeStamp)
+						}
+					} else {
+						if (storeDate.indexOf(labelTime.getDate()) == -1) {
+							storeDate.push(labelTime.getDate())
+							var dateTimeStamp = document.createElement('div');
+							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+							messageSection.append(dateTimeStamp)
+						}
+					}
 					parentDiv.className = 'right-div';
 					childDiv.className = 'right-msg';
 					timeLabel.className = 'right-time';
@@ -411,22 +450,22 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 					parentDiv.append(childDiv);
 					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`;
 					messageSection.append(parentDiv);
-					// if (+labelTime.getDate()!==+new Date().getDate()) {
-					// 	var dateTimeStamp = document.createElement('div');
-					// 	dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-					// 	dateTimeStamp.innerHTML = `<h6 style="background-color: red;color:white">${labelTime.getDate()}/${labelTime.getMonth()}/${labelTime.getFullYear().toString().substring(2)}</h6>`;
-					// 	messageSection.append(dateTimeStamp)
-					// }
+
 
 				}
 
 			})
+			while (storeDate.length > 0) {
+				storeDate.pop();
+			}
+
 		}
 	});
 }
 
 function preocessMessage(e) {
 	e.preventDefault();
+	var storeDate = [];
 	var formData = new FormData(e.target);
 	let myMessage = formData.get('message');
 	if (friend_id != 0) {
@@ -442,12 +481,26 @@ function preocessMessage(e) {
 			}));
 			var parentDiv = document.createElement('div');
 			var childDiv = document.createElement('div');
+			var timeLabel = document.createElement('label');
+			var labelTime = new Date()
+			// if (storeDate.indexOf(labelTime.getDate()) == -1) {
+
+			// 	storeDate.push(labelTime.getDate())
+			// 	var dateTimeStamp = document.createElement('div');
+			// 	dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+			// 	dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">${labelTime.getDate()}/${labelTime.getMonth()}/${labelTime.getFullYear().toString().substring(2)}</h6>`;
+			// 	messageSection.append(dateTimeStamp)
+			// }
 			parentDiv.className = 'right-div';
 			childDiv.className = 'right-msg';
+			timeLabel.className = 'right-time';
+			timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
+			parentDiv.append(timeLabel);
 			parentDiv.append(childDiv);
 			childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
 			messageSection.append(parentDiv);
 			messageArea.value = "";
+			console.log(storeDate);
 		} else {
 			alert("sorry you are not online")
 		}
@@ -456,19 +509,19 @@ function preocessMessage(e) {
 		alert("please select user")
 
 	}
-	$.ajax({
-		type: "POST",
-		url: "/send-message",
-		data: {
-			requestData: JSON.stringify({
-				username, friend_id, myMessage
-			})
-		},
+	// $.ajax({
+	// 	type: "POST",
+	// 	url: "/send-message",
+	// 	data: {
+	// 		requestData: JSON.stringify({
+	// 			username, friend_id, myMessage
+	// 		})
+	// 	},
 
-		success: function (response) {
-			//console.log(response);
-		}
-	});
+	// 	success: function (response) {
+	// 		//console.log(response);
+	// 	}
+	// });
 
 
 
