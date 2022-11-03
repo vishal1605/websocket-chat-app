@@ -17,6 +17,7 @@ const messageHeaderLabel = document.getElementById('message-header-label');
 const submitMessage = document.getElementById('submit-message');
 const messageArea = document.getElementById('message-area');
 const profileMoreOptions = document.getElementById('profile-more-options');
+const moreOptions = document.getElementById('more-option');
 
 //Global variable
 let active = [];
@@ -52,6 +53,7 @@ function initialFunct(param) {
 	myFriends.style.background = 'gray';
 	profilePic.addEventListener('change', trackProfilePic);
 	submitMessage.addEventListener('submit', preocessMessage);
+	profileMoreOptions.addEventListener('click', openMoreOptions);
 }
 
 function connect() {
@@ -313,7 +315,15 @@ function addFriend(e) {
 
 }
 function removeFriend(e) {
-	var friendId = e.target.parentElement.getAttribute('data-id');
+	var friendId = e.target.getAttribute('data-id');
+	console.log(friendId);
+	messageSection.innerHTML = '';
+	messageHeaderLabel.innerText = '';
+	profileMoreOptions.innerHTML = ``;
+	moreOptions.children[0].removeAttribute('data-id');
+	moreOptions.children[0].removeEventListener('click',removeFriend)
+	moreOptions.style.transform = 'scale(0,0)';
+	friend_id = 0;
 	$.ajax({
 		type: "GET",
 		url: "/removeFriend",
@@ -340,7 +350,7 @@ function removeFriend(e) {
 
 		}
 	});
-	document.getElementById(e.target.parentElement.getAttribute('data-id')).remove();
+	document.getElementById(friendId).remove();
 
 }
 function openEditProfileModel(e) {
@@ -381,8 +391,10 @@ function unit8ToString(bytes) {
 }
 
 function showMessageOfSpecificUser(u_id, f_id, friendName) {
-	//console.log("running");
+	var zro = messageArray.filter(e => e == f_id);
+	zro.forEach(e => messageArray.splice(messageArray.indexOf(e), 1))
 	document.getElementById(f_id).children[0].textContent = 0;
+	document.getElementById(f_id).children[0].style.display = 'none';
 	friend_id = f_id;
 	var storeDate = [];
 	$.ajax({
@@ -403,12 +415,14 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 			messageSection.innerHTML = '';
 			messageHeaderLabel.innerText = friendName;
 			profileMoreOptions.innerHTML = `<i class="fa-solid fa-ellipsis-vertical"></i>`;
+			moreOptions.children[0].setAttribute("data-id", f_id);
+			moreOptions.children[0].addEventListener('click', removeFriend)
 			response.sort((a, b) => {
 				var date1 = new Date(a.sendDate)
 				var date2 = new Date(b.sendDate)
 				return date1 - date2;
 			});
-			
+
 			response.forEach((e) => {
 				var labelTime = new Date(e.sendDate)
 				var parentDiv = document.createElement('div');
@@ -545,7 +559,16 @@ function preocessMessage(e) {
 	});
 
 
-
+}
+var i = 0;
+function openMoreOptions(e) {
+	if (i == 0) {
+		moreOptions.style.transform = 'scale(1,1)';
+		i = 1;
+	} else {
+		moreOptions.style.transform = 'scale(0,0)';
+		i = 0;
+	}
 }
 
 
