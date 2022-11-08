@@ -60,7 +60,7 @@ function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
 	ws.onmessage = function (event) {
 		var activeUser = JSON.parse(event.data);
-		console.log(activeUser);
+		//console.log(activeUser);
 		if ('user_id' in activeUser) {
 			if (activeUser.isActive == true) {
 				let exist = active.some((e) => {
@@ -86,10 +86,10 @@ function connect() {
 			if (friend_id != activeUser.toUser.friends[0].user_id) {
 
 				messageArray.push(activeUser.toUser.friends[0].user_id)
-				console.log(messageArray);
+				//console.log(messageArray);
 				var count = {};
 				messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
-				console.log(count);
+				//console.log(count);
 				for (let key in count) {
 					document.getElementById(key).children[0].textContent = count[key];
 					document.getElementById(key).children[0].style.display = 'block';
@@ -97,9 +97,9 @@ function connect() {
 			} else {
 				var labelTime = new Date();
 
-				if (globalDate.indexOf(labelTime.getDate()) == -1) {
+				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
-					globalDate.push(labelTime.getDate())
+					globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
 					var dateTimeStamp = document.createElement('div');
 					dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
 					dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
@@ -120,6 +120,7 @@ function connect() {
 		}
 
 
+		// whoOnline();
 	}
 
 }
@@ -152,7 +153,7 @@ function whoOnline() {
 			var elem = [...friendList.children].find((e) => {
 				return e.id == on.user_id;
 			})
-			console.log(elem);
+			//console.log(elem);
 			if (!(elem === undefined)) {
 
 				elem.style.background = "green";
@@ -232,9 +233,9 @@ function getAllFriends(id) {
 							var sendDate = new Date(e.sendDate);
 							if (+sendDate.getDate() === +new Date().getDate()) {
 
-								document.getElementById(e.toUser.user_id).children[3].children[0].innerText = `${sendDate.getHours()}:${sendDate.getMinutes()}`;
+								document.getElementById(e.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
 							} else {
-								document.getElementById(e.toUser.user_id).children[3].children[0].innerText = `${sendDate.getDate()}/${sendDate.getMonth()}/${sendDate.getFullYear().toString().substring(2)}`;
+								document.getElementById(e.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
 							}
 							document.getElementById(e.toUser.user_id).children[2].children[1].innerText = e.content.substring(0, 10) + "...";
 						})
@@ -316,7 +317,6 @@ function addFriend(e) {
 }
 function removeFriend(e) {
 	var friendId = e.target.getAttribute('data-id');
-	console.log(friendId);
 	messageSection.innerHTML = '';
 	messageHeaderLabel.innerText = '';
 	profileMoreOptions.innerHTML = ``;
@@ -368,9 +368,9 @@ function trackProfilePic(e) {
 		fileToArray(imgFile).then((e) => {
 			var strImg = unit8ToString(e);
 			//profileDemo.src = 'data:image/png;base64,' + strImg;
-			console.log(strImg);
+			
 		})
-		console.log(e.target.value.trim().split("\\").at(-1).trim().split(".").at(-1));
+		// console.log(e.target.value.trim().split("\\").at(-1).trim().split(".").at(-1));
 	}
 
 }
@@ -405,13 +405,12 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 		},
 
 		success: function (response) {
-			// if (response.length == 0); {
-			// 	var showDate = new Date();
-			// 	if (globalDate.indexOf(showDate.getDate()) == -1) {
-			// 		globalDate.push(showDate.getDate())
-			// 	}
-			// 	console.log("inserted");
-			// }
+			if (response.length !== 0) {
+				var showDate = new Date();
+				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
+					globalDate.push(moment(showDate).format("DD/MM/YYYY"))
+				}
+			}
 			messageSection.innerHTML = '';
 			messageHeaderLabel.innerText = friendName;
 			profileMoreOptions.innerHTML = `<i class="fa-solid fa-ellipsis-vertical"></i>`;
@@ -428,21 +427,19 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 				var parentDiv = document.createElement('div');
 				var childDiv = document.createElement('div');
 				var timeLabel = document.createElement('label');
-
 				if (e.toUser.user_id == username) {
-					if (+labelTime.getDate() !== +new Date().getDate()) {
-						if (storeDate.indexOf(labelTime.getDate()) == -1) {
-
-							storeDate.push(labelTime.getDate())
+					if (!(moment(moment(labelTime).format("DD/MM/YYYY")).isSame(moment(moment(new Date()).format("DD/MM/YYYY"))))) {
+						if (storeDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+							storeDate.push(moment(labelTime).format("DD/MM/YYYY"))
 							var dateTimeStamp = document.createElement('div');
 							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">${labelTime.getDate()}/${labelTime.getMonth()}/${labelTime.getFullYear().toString().substring(2)}</h6>`;
+							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">${moment(labelTime).format("DD/MM/YYYY")}</h6>`;
 							messageSection.append(dateTimeStamp)
 						}
 
 					} else {
-						if (storeDate.indexOf(labelTime.getDate()) == -1) {
-							storeDate.push(labelTime.getDate());
+						if (storeDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+							storeDate.push(moment(labelTime).format("DD/MM/YYYY"));
 							var dateTimeStamp = document.createElement('div');
 							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
 							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
@@ -452,25 +449,25 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 					parentDiv.className = 'left-div';
 					childDiv.className = 'left-msg';
 					timeLabel.className = 'left-time';
-					timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
+					timeLabel.innerText = `${moment(labelTime).format("h:mm")}`;
 					parentDiv.append(timeLabel);
 					parentDiv.append(childDiv);
 					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`;
 					messageSection.append(parentDiv);
 
 				} else {
-					if (+labelTime.getDate() !== +new Date().getDate()) {
-						if (storeDate.indexOf(labelTime.getDate()) == -1) {
+					if (!(moment(moment(labelTime).format("DD/MM/YYYY")).isSame(moment(moment(new Date()).format("DD/MM/YYYY"))))) {
+						if (storeDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
-							storeDate.push(labelTime.getDate())
+							storeDate.push(moment(labelTime).format("DD/MM/YYYY"))
 							var dateTimeStamp = document.createElement('div');
 							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">${labelTime.getDate()}/${labelTime.getMonth()}/${labelTime.getFullYear().toString().substring(2)}</h6>`;
+							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">${moment(labelTime).format("DD/MM/YYYY")}</h6>`;
 							messageSection.append(dateTimeStamp)
 						}
 					} else {
-						if (storeDate.indexOf(labelTime.getDate()) == -1) {
-							storeDate.push(labelTime.getDate())
+						if (storeDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+							storeDate.push(moment(labelTime).format("DD/MM/YYYY"))
 							var dateTimeStamp = document.createElement('div');
 							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
 							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
@@ -480,7 +477,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 					parentDiv.className = 'right-div';
 					childDiv.className = 'right-msg';
 					timeLabel.className = 'right-time';
-					timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
+					timeLabel.innerText = `${moment(labelTime).format("h:mm")}`;
 					parentDiv.append(timeLabel);
 					parentDiv.append(childDiv);
 					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`;
@@ -489,10 +486,11 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 
 				}
 
-			})
-			while (storeDate.length > 0) {
-				storeDate.pop();
-			}
+			});
+			//console.log(storeDate);
+			// while (storeDate.length > 0) {
+			// 	storeDate.pop();
+			// }
 
 		}
 	});
@@ -518,9 +516,9 @@ function preocessMessage(e) {
 			var childDiv = document.createElement('div');
 			var timeLabel = document.createElement('label');
 			var labelTime = new Date()
-			if (globalDate.indexOf(labelTime.getDate()) == -1) {
+			if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
-				globalDate.push(labelTime.getDate())
+				globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
 				var dateTimeStamp = document.createElement('div');
 				dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
 				dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
@@ -535,7 +533,7 @@ function preocessMessage(e) {
 			childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
 			messageSection.append(parentDiv);
 			messageArea.value = "";
-			console.log(storeDate);
+			
 		} else {
 			alert("sorry you are not online")
 		}
