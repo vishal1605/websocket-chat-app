@@ -93,10 +93,13 @@ function connect() {
 				for (let key in count) {
 					document.getElementById(key).children[0].textContent = count[key];
 					document.getElementById(key).children[0].style.display = 'block';
+					document.getElementById(key).children[2].children[1].innerText = activeUser.content.substring(0, 10)+'...';
+					document.getElementById(key).children[3].children[0].innerText = moment(activeUser.sendDate).format('h:mm a');
+									
 				}
 			} else {
 				var labelTime = new Date();
-
+				console.log(globalDate);
 				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
 					globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
@@ -542,19 +545,19 @@ function preocessMessage(e) {
 		alert("please select user")
 
 	}
-	$.ajax({
-		type: "POST",
-		url: "/send-message",
-		data: {
-			requestData: JSON.stringify({
-				username, friend_id, myMessage
-			})
-		},
+	// $.ajax({
+	// 	type: "POST",
+	// 	url: "/send-message",
+	// 	data: {
+	// 		requestData: JSON.stringify({
+	// 			username, friend_id, myMessage
+	// 		})
+	// 	},
 
-		success: function (response) {
-			//console.log(response);
-		}
-	});
+	// 	success: function (response) {
+	// 		//console.log(response);
+	// 	}
+	// });
 
 
 }
