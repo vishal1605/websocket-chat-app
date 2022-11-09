@@ -15,15 +15,17 @@
     <div class="row profile-change-div bg-warning" style="position: relative;">
         <div class="col-4 shadow profile-change-model m-auto border border-1 border-dark py-2"
             style="transform: scale(0,0);" id="profile-pop-up">
-            <div class="profile-model-header" id="close-profile-div" style="text-align: right;">
+			<div class="alert alert-danger m-0 p-0 fade" role="alert" id="alert-msg">Please select image!</div>
+			<div class="profile-model-header" id="close-profile-div" style="text-align: right;">
                 <i class="fa-solid fa-x" id="close-profile-model" style="cursor: pointer;"></i>
             </div>
             <div class="mb-3">
                 <label for="formFile" class="form-label text-light">select image</label>
                 <input class="form-control" type="file" id="form-file" th:attr="data-user_id=${session.user.user_id}">
             </div>
-            <img src="" alt="demo" width="150px" height="150px" class="mb-2" id="profile-demo" style="display: none;">
-            <button class="btn btn-primary">Save</button>
+            <button class="btn btn-primary" disabled="disabled" id="submit-profile-pic">Save</button><br />
+            <img src="" alt="demo" width="150px" height="150px" class="mt-1 fade m-auto" id="profile-demo">
+            
         </div>
     </div>
     <div class="row chat-section">

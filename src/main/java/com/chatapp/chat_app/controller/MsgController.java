@@ -1,7 +1,9 @@
 package com.chatapp.chat_app.controller;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -20,7 +22,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.chatapp.chat_app.model.ChatUser;
@@ -229,6 +233,19 @@ public class MsgController {
         list.addAll(mDao.getFriendMessages(user_id, f_id));
         list.addAll(mDao.getFriendMessages(f_id, user_id));
         return list;
+    }
+    
+    @PostMapping("/upload-profile-pic")
+    public String uploadProfilePic(@RequestParam("file") MultipartFile uploadfile) {
+        //System.out.println(uploadfile.getOriginalFilename());
+        try {
+			byte[] bytes = uploadfile.getBytes();
+			System.out.println(bytes);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return "done";
     }
 
 }

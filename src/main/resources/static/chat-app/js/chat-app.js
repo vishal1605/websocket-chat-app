@@ -18,6 +18,8 @@ const submitMessage = document.getElementById('submit-message');
 const messageArea = document.getElementById('message-area');
 const profileMoreOptions = document.getElementById('profile-more-options');
 const moreOptions = document.getElementById('more-option');
+const alertMsg = document.getElementById('alert-msg');
+const submitProfilePicBtn = document.getElementById('submit-profile-pic');
 
 //Global variable
 let active = [];
@@ -54,6 +56,7 @@ function initialFunct(param) {
 	profilePic.addEventListener('change', trackProfilePic);
 	submitMessage.addEventListener('submit', preocessMessage);
 	profileMoreOptions.addEventListener('click', openMoreOptions);
+	submitProfilePicBtn.addEventListener('click', submitProfilePic)
 }
 
 function connect() {
@@ -362,35 +365,66 @@ function openEditProfileModel(e) {
 
 closePopUpProfileModel.onclick = function (e) {
 	popUpProfileModel.style.transform = 'scale(0,0)'
+	profilePic.value = '';
+	if(alertMsg.classList.contains('show')){
+		alertMsg.classList.remove('show');
+	}
+	if(profileDemo.classList.contains('show')){
+		profileDemo.classList.remove('show');
+	}
+	submitProfilePicBtn.setAttribute('disabled', 'disabled');
 }
 
 function trackProfilePic(e) {
-	//console.log(e.target.getAttribute('data-user_id'));
+	
 	var imgFile = e.target.files[0];
 	if (imgFile.type == 'image/png' || imgFile.type == 'image/jpeg') {
-		fileToArray(imgFile).then((e) => {
-			var strImg = unit8ToString(e);
-			//profileDemo.src = 'data:image/png;base64,' + strImg;
-			
-		})
+		fileTobyte(imgFile).then((e) => {
+        var base64 = btoa(uint8ToString(e))
+        profileDemo.src = 'data:image/png;base64,' + base64;
+        profileDemo.classList.add('show');
+        submitProfilePicBtn.removeAttribute('disabled');
+       
+    })
+		
 		// console.log(e.target.value.trim().split("\\").at(-1).trim().split(".").at(-1));
+		alertMsg.classList.remove('show')
+	}else{
+		alertMsg.classList.add('show')
 	}
 
 }
-async function fileToArray(file) {
-	const buffer = await file.arrayBuffer();
-	let byteArray = new Uint8Array(buffer);
-	return byteArray;
-
+async function fileTobyte(file) {
+    let arrayFile = await file.arrayBuffer();
+    let bytes = new Uint8Array(arrayFile);
+    return bytes;
+}
+function uint8ToString(buf) {
+    var i, length, out = '';
+    for (i = 0, length = buf.length; i < length; i += 1) {
+        out += String.fromCharCode(buf[i]);
+    }
+    return out;
 }
 
-function unit8ToString(bytes) {
-	var out;
-	for (let i = 0; i < bytes.length; i++) {
-		out += String.fromCharCode(bytes[i]);
+function submitProfilePic() {
+	let formData = new FormData(); 
+  formData.append("file", profilePic.files[0]);
+	$.ajax({
+		type: "POST",
+		url: "/upload-profile-pic",
+		contentType: false,
+		processData: false,
+		data: formData,
+		success: function(response) {
+			console.log(response)
+		 }
+	});
 
-	}
-	return out;
+	profilePic.value = '';
+	profileDemo.classList.remove('show');
+	submitProfilePicBtn.setAttribute('disabled', 'disabled');
+
 }
 
 function showMessageOfSpecificUser(u_id, f_id, friendName) {
@@ -545,19 +579,19 @@ function preocessMessage(e) {
 		alert("please select user")
 
 	}
-	// $.ajax({
-	// 	type: "POST",
-	// 	url: "/send-message",
-	// 	data: {
-	// 		requestData: JSON.stringify({
-	// 			username, friend_id, myMessage
-	// 		})
-	// 	},
+	$.ajax({
+		type: "POST",
+		url: "/send-message",
+		data: {
+			requestData: JSON.stringify({
+				username, friend_id, myMessage
+			})
+		},
 
-	// 	success: function (response) {
-	// 		//console.log(response);
-	// 	}
-	// });
+		success: function (response) {
+			//console.log(response);
+		}
+	});
 
 
 }

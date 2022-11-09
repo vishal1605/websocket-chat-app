@@ -97,7 +97,7 @@
     background-color: rgb(218, 212, 212);
     position: absolute;
     transform-origin: center;
-    transition: transform ease-in-out 0.9s;
+    transition: transform ease-in-out 0.5s;
 }
 
 /* ///////////////////////////////////Chat section starts here//////////////////////////// */
@@ -171,4 +171,12 @@
     margin-right: 3px;
     font-size: 12px;
     overflow: hidden;
+}
+/* ///////////////////ALert///////////////////////////////// */
+
+.fade{
+	display: none;
+}
+.show{
+	display: block;
 }
