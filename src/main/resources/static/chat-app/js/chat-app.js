@@ -20,6 +20,7 @@ const profileMoreOptions = document.getElementById('profile-more-options');
 const moreOptions = document.getElementById('more-option');
 const alertMsg = document.getElementById('alert-msg');
 const submitProfilePicBtn = document.getElementById('submit-profile-pic');
+const myProfilePic = document.getElementById('profile-pic');
 
 //Global variable
 let active = [];
@@ -49,14 +50,29 @@ notMyFriends.onclick = function (e) {
 
 ///Init function
 initialFunct();
-function initialFunct(param) {
+function initialFunct() {
 
 	getAllFriends(username);
 	myFriends.style.background = 'gray';
+	getMyProfilePicture();
 	profilePic.addEventListener('change', trackProfilePic);
 	submitMessage.addEventListener('submit', preocessMessage);
 	profileMoreOptions.addEventListener('click', openMoreOptions);
 	submitProfilePicBtn.addEventListener('click', submitProfilePic)
+}
+
+function getMyProfilePicture(){
+	$.ajax({
+		type: "GET",
+		url: "/get-profile-pic",
+		data:{
+			requestData: username
+		},
+		success: function (responseObject) {
+			myProfilePic.src = 'data:image/png;base64,' + responseObject;
+		}
+		
+	});
 }
 
 function connect() {
@@ -224,13 +240,31 @@ function getAllFriends(id) {
 		},
 		success: function (responseObject) {
 			allFriendsUsers = [...responseObject]
-
+			console.log(allFriendsUsers)
 			if (responseObject.length != 0) {
+				responseObject.forEach((e) => {
+					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}')"
+							 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user_id}">
+												
+												<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
+												<div class="user-photo">
+													<img src="${(e.profile_img==null)?'/assets/img_avatar.png': 'data:image/png;base64,'+e.profile_img}" alt="" width="45px" style="border-radius: 50%;">
+												</div>
+												<div class="user-detail">
+													<h6 class="m-0">${e.userName}</h6>
+													<small class="m-0" style="font-size:13px">no msg</small>
+												</div>
+												<div class="last-time">
+													<small>3:45</small>
+												</div>
+											</li>`;
+				});
+				//responseObject.forEach((e)=>{e.profile_img=null})
 				$.ajax({
 					type: "GET",
 					url: "/get-last-message",
 					data: {
-						requestData: JSON.stringify(responseObject),
+						requestData: JSON.stringify([]),
 						myId: id
 					}
 					,
@@ -249,30 +283,15 @@ function getAllFriends(id) {
 
 					}
 
-				})
-				responseObject.forEach((e) => {
-					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}')"
-							 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user_id}">
-												
-												<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
-												<div class="user-photo">
-													<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
-												</div>
-												<div class="user-detail">
-													<h6 class="m-0">${e.userName}</h6>
-													<small class="m-0" style="font-size:13px">no msg</small>
-												</div>
-												<div class="last-time">
-													<small>3:45</small>
-												</div>
-											</li>`;
 				});
+				
 				document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none');
 
 			} else {
 				friendList.innerHTML = `<li class="border border-1 border-dark" id="no-friends-list" style="height:40px; background-color:green;">Sorry! no friends</li>`;
 			}
 			getAllChatUsers();
+			console.log(allFriendsUsers)
 
 
 		}
@@ -417,7 +436,8 @@ function submitProfilePic() {
 		processData: false,
 		data: formData,
 		success: function(response) {
-			console.log(response)
+			myProfilePic.src = 'data:image/png;base64,' + response;
+			
 		 }
 	});
 

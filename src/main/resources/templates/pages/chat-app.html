@@ -36,7 +36,7 @@
             <a th:href="@{/logout}" class="btn btn-danger me-2">Logout</a>
             <div class="my-profile-pic" style="width: 35px; height: 35px; cursor: pointer;">
                 <img th:src="@{/assets/img_avatar.png}" alt="" th:attr="data-user=${session.user.user_id}" width="100%"
-                    style="border-radius: 50%;" onclick="openEditProfileModel(event)">
+                    style="border-radius: 50%;" onclick="openEditProfileModel(event)" id="profile-pic">
             </div>
         </div>
         <div class="col-10 chat m-auto shadow">

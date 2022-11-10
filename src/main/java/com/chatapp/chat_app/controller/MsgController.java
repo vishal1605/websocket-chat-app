@@ -3,7 +3,6 @@ package com.chatapp.chat_app.controller;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -14,6 +13,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,212 +40,217 @@ import com.google.gson.reflect.TypeToken;
 @RestController
 public class MsgController {
 
-    @Autowired
-    private UserDao dao;
+	@Autowired
+	private UserDao dao;
 
-    @Autowired
-    private MessageDao mDao;
+	@Autowired
+	private MessageDao mDao;
 
-    private List<ChatUser> listOfUsers = new ArrayList<>();
+	private List<ChatUser> listOfUsers = new ArrayList<>();
 
-    @GetMapping("/")
-    public ModelAndView home(HttpSession session, Model m) {
-        ModelAndView mv = new ModelAndView();
-        var s = session.getAttribute("successMsg");
-        m.addAttribute("succMsg", s);
-        session.removeAttribute("successMsg");
-        mv.setViewName("pages/register");
-        return mv;
+	@GetMapping("/")
+	public ModelAndView home(HttpSession session, Model m) {
+		ModelAndView mv = new ModelAndView();
+		var s = session.getAttribute("successMsg");
+		m.addAttribute("succMsg", s);
+		session.removeAttribute("successMsg");
+		mv.setViewName("pages/register");
+		return mv;
 
-    }
+	}
 
-    @PostMapping("/register")
-    public ModelAndView registerProcess(ChatUser user, HttpSession session) {
-        ModelAndView mv = new ModelAndView();
-        boolean success = false;
-        ChatUser u = dao.saveUser(user);
+	@PostMapping("/register")
+	public ModelAndView registerProcess(ChatUser user, HttpSession session) {
+		ModelAndView mv = new ModelAndView();
+		boolean success = false;
+		ChatUser u = dao.saveUser(user);
 
-        System.out.println(u);
-        session.setAttribute("successMsg", success);
-        mv.setViewName("redirect:/");
-        return mv;
-    }
+		System.out.println(u);
+		session.setAttribute("successMsg", success);
+		mv.setViewName("redirect:/");
+		return mv;
+	}
 
-    @GetMapping("/login-form")
-    public ModelAndView login() {
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("pages/login");
-        return mv;
+	@GetMapping("/login-form")
+	public ModelAndView login() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("pages/login");
+		return mv;
 
-    }
+	}
 
-    @PostMapping("/login")
-    public ModelAndView loginProcess(ChatUser user, HttpSession session) {
-        ModelAndView mv = new ModelAndView();
-        ChatUser u = dao.login(user.getUserName());
-        if (u == null) {
-            mv.setViewName("redirect:/login-form");
-            return mv;
-        }
-        u.getFriends().clear();
-        u.getMessages().clear();
-        session.setAttribute("user", u);
-        mv.setViewName("redirect:/dashboard/" + u.getUserName());
-        return mv;
-    }
-
-    @GetMapping("/logout")
-    public ModelAndView logoutProcess(HttpSession session) {
-        ModelAndView mv = new ModelAndView();
-        session.removeAttribute("user");
-        mv.setViewName("redirect:/login-form");
-        return mv;
-    }
-
-    @GetMapping("/dashboard/{name}")
-    public ModelAndView dashboard(@PathVariable("name") String name) {
-        ModelAndView mv = new ModelAndView();
-        // System.out.println(name+"dash");
-        mv.setViewName("pages/dashboard");
-        return mv;
-
-    }
-
-    @GetMapping("/dashboard/chat/{name}")
-    public ModelAndView chat(@PathVariable("name") String name, Model m, HttpSession session) {
-        ModelAndView mv = new ModelAndView();
-        m.addAttribute("username", name);
-        // System.out.println(name+"dash");
-        ChatUser c = (ChatUser) session.getAttribute("user");
-        // c.setActive(true);
-        mv.setViewName("pages/chat-app");
-        return mv;
-
-    }
-
-    @GetMapping("/active-users")
-    public String activeUsers(String requestData, HttpSession session, ChatUser u)
-            throws JsonMappingException, JsonProcessingException {
-        System.out.println(requestData);
-        Gson gson = new Gson(); // Or use new GsonBuilder().create();
-        ChatUser user = gson.fromJson(requestData, ChatUser.class);
-        listOfUsers.add(user);
-        System.out.println(user);
-
-        String json = new Gson().toJson(listOfUsers);
-
-        return json;
-
-    }
-
-    @GetMapping("/getAllFriends")
-    public List<ChatUser> getAllFriends(String requestData) {
-        List<ChatUser> friends = dao.getAllFriends(Long.parseLong(requestData));
-
-        return friends;
-
-    }
-
-    @GetMapping("/get-last-message")
-    public List<Message> getLastMessage(String requestData, String myId) {
-        TypeToken<List<ChatUser>> token = new TypeToken<List<ChatUser>>() {
-        };
-        List<ChatUser> friends = new Gson().fromJson(requestData, token.getType());
-        List<Message> messages1 = new ArrayList<>();
-        if(friends.size()!=0){
-            List<Message> messages = new ArrayList<>();
-            for (ChatUser chatUser : friends) {
-                messages.addAll(mDao.getFriendMessages(Long.parseLong(myId), chatUser.getUser_id()));
-                messages.addAll(mDao.getFriendMessages(chatUser.getUser_id(), Long.parseLong(myId)));
-                // System.out.println(messages);
-                if (messages.size()!=0) {
-                    for (int i = 0; i < messages.size(); i++) {
-                        for (int j = i + 1; j < messages.size(); j++) {
-                            if (LocalDateTime.parse(messages.get(i).getSendDate())
-                                    .isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
-                                Message temp = messages.get(j);
-                                messages.set(j, messages.get(i));
-                                messages.set(i, temp);
-                            }
-        
-                        }
-                        
-                    }
-                    Message m = new Message();
-                    m.setToUser(chatUser);
-                    m.setContent(messages.get(messages.size() - 1).getContent());
-                    m.setSendDate(messages.get(messages.size() - 1).getSendDate());
-                    messages1.add(m);
-                    
-                } else {
-                    
-                }
-                messages.clear();
-            }
-        }
-        
-
-        return messages1;
-    }
-
-    @GetMapping("/makeFriend")
-    public ChatUser makeFriends(String requestData, HttpSession session) {
-
-        ChatUser c = (ChatUser) session.getAttribute("user");
-        ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
-        dao.saveMyFriend(c.getUser_id(), friend.getUser_id());
-        return friend;
-
-    }
-
-    @GetMapping("/removeFriend")
-    public ChatUser removeFriend(String requestData, HttpSession session) {
-        ChatUser c = (ChatUser) session.getAttribute("user");
-        ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
-        dao.deleteSingleFriend(c.getUser_id(), Long.parseLong(requestData));
-        return friend;
-    }
-
-    @GetMapping("/getAllChatUsers")
-    public List<ChatUser> getAllChatUsers() {
-        return dao.getAllChatUser();
-    }
-
-    @PostMapping("/send-message")
-    public String saveUserMessage(String requestData) {
-        JSONObject json = new JSONObject(requestData);
-        long user_id = json.getLong("username");
-        long f_id = json.getLong("friend_id");
-        String message = json.getString("myMessage");
-        ChatUser f = dao.getSingleUser(f_id);
-        Set<Message> set = new HashSet<Message>();
-        set.add(mDao.saveMessage(user_id,
-                new Message(f, message, LocalDateTime.now().toString(), LocalDateTime.now().toString())));
-        return "done";
-    }
-
-    @GetMapping("/get-message")
-    public List<Message> fetchMessage(String requestData) {
-        JSONObject json = new JSONObject(requestData);
-        long user_id = json.getLong("u_id");
-        long f_id = json.getLong("f_id");
-        List<Message> list = new ArrayList<>();
-        list.addAll(mDao.getFriendMessages(user_id, f_id));
-        list.addAll(mDao.getFriendMessages(f_id, user_id));
-        return list;
-    }
-    
-    @PostMapping("/upload-profile-pic")
-    public String uploadProfilePic(@RequestParam("file") MultipartFile uploadfile) {
-        //System.out.println(uploadfile.getOriginalFilename());
-        try {
-			byte[] bytes = uploadfile.getBytes();
-			System.out.println(bytes);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	@PostMapping("/login")
+	public ModelAndView loginProcess(ChatUser user, HttpSession session) {
+		ModelAndView mv = new ModelAndView();
+		ChatUser u = dao.login(user.getUserName());
+		if (u == null) {
+			mv.setViewName("redirect:/login-form");
+			return mv;
 		}
-        return "done";
-    }
+		u.getFriends().clear();
+		u.getMessages().clear();
+		session.setAttribute("user", u);
+		mv.setViewName("redirect:/dashboard/" + u.getUserName());
+		return mv;
+	}
+
+	@GetMapping("/logout")
+	public ModelAndView logoutProcess(HttpSession session) {
+		ModelAndView mv = new ModelAndView();
+		session.removeAttribute("user");
+		mv.setViewName("redirect:/login-form");
+		return mv;
+	}
+
+	@GetMapping("/dashboard/{name}")
+	public ModelAndView dashboard(@PathVariable("name") String name) {
+		ModelAndView mv = new ModelAndView();
+		// System.out.println(name+"dash");
+		mv.setViewName("pages/dashboard");
+		return mv;
+
+	}
+
+	@GetMapping("/dashboard/chat/{name}")
+	public ModelAndView chat(@PathVariable("name") String name, Model m, HttpSession session) {
+		ModelAndView mv = new ModelAndView();
+		m.addAttribute("username", name);
+		// System.out.println(name+"dash");
+		ChatUser c = (ChatUser) session.getAttribute("user");
+		// c.setActive(true);
+		mv.setViewName("pages/chat-app");
+		return mv;
+
+	}
+
+	@GetMapping("/active-users")
+	public String activeUsers(String requestData, HttpSession session, ChatUser u)
+			throws JsonMappingException, JsonProcessingException {
+		System.out.println(requestData);
+		Gson gson = new Gson(); // Or use new GsonBuilder().create();
+		ChatUser user = gson.fromJson(requestData, ChatUser.class);
+		listOfUsers.add(user);
+		System.out.println(user);
+
+		String json = new Gson().toJson(listOfUsers);
+
+		return json;
+
+	}
+
+	@GetMapping("/getAllFriends")
+	public List<ChatUser> getAllFriends(String requestData) {
+		List<ChatUser> friends = dao.getAllFriends(Long.parseLong(requestData));
+
+		return friends;
+
+	}
+
+	@GetMapping("/get-last-message")
+	public List<Message> getLastMessage(String requestData, String myId) {
+		System.out.println(requestData);
+		TypeToken<List<ChatUser>> token = new TypeToken<List<ChatUser>>() {
+		};
+		List<ChatUser> friends = new Gson().fromJson(requestData, token.getType());
+		List<Message> messages1 = new ArrayList<>();
+		if (friends.size() != 0) {
+			List<Message> messages = new ArrayList<>();
+			for (ChatUser chatUser : friends) {
+				messages.addAll(mDao.getFriendMessages(Long.parseLong(myId), chatUser.getUser_id()));
+				messages.addAll(mDao.getFriendMessages(chatUser.getUser_id(), Long.parseLong(myId)));
+				// System.out.println(messages);
+				if (messages.size() != 0) {
+					for (int i = 0; i < messages.size(); i++) {
+						for (int j = i + 1; j < messages.size(); j++) {
+							if (LocalDateTime.parse(messages.get(i).getSendDate())
+									.isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
+								Message temp = messages.get(j);
+								messages.set(j, messages.get(i));
+								messages.set(i, temp);
+							}
+
+						}
+
+					}
+					Message m = new Message();
+					m.setToUser(chatUser);
+					m.setContent(messages.get(messages.size() - 1).getContent());
+					m.setSendDate(messages.get(messages.size() - 1).getSendDate());
+					messages1.add(m);
+
+				} else {
+
+				}
+				messages.clear();
+			}
+		}
+
+		return messages1;
+	}
+
+	@GetMapping("/makeFriend")
+	public ChatUser makeFriends(String requestData, HttpSession session) {
+
+		ChatUser c = (ChatUser) session.getAttribute("user");
+		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+		dao.saveMyFriend(c.getUser_id(), friend.getUser_id());
+		return friend;
+
+	}
+
+	@GetMapping("/removeFriend")
+	public ChatUser removeFriend(String requestData, HttpSession session) {
+		ChatUser c = (ChatUser) session.getAttribute("user");
+		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+		dao.deleteSingleFriend(c.getUser_id(), Long.parseLong(requestData));
+		return friend;
+	}
+
+	@GetMapping("/getAllChatUsers")
+	public List<ChatUser> getAllChatUsers() {
+		return dao.getAllChatUser();
+	}
+
+	@PostMapping("/send-message")
+	public String saveUserMessage(String requestData) {
+		JSONObject json = new JSONObject(requestData);
+		long user_id = json.getLong("username");
+		long f_id = json.getLong("friend_id");
+		String message = json.getString("myMessage");
+		ChatUser f = dao.getSingleUser(f_id);
+		Set<Message> set = new HashSet<Message>();
+		set.add(mDao.saveMessage(user_id,
+				new Message(f, message, LocalDateTime.now().toString(), LocalDateTime.now().toString())));
+		return "done";
+	}
+
+	@GetMapping("/get-message")
+	public List<Message> fetchMessage(String requestData) {
+		JSONObject json = new JSONObject(requestData);
+		long user_id = json.getLong("u_id");
+		long f_id = json.getLong("f_id");
+		List<Message> list = new ArrayList<>();
+		list.addAll(mDao.getFriendMessages(user_id, f_id));
+		list.addAll(mDao.getFriendMessages(f_id, user_id));
+		return list;
+	}
+
+	@PostMapping("/upload-profile-pic")
+	public byte[] uploadProfilePic(@RequestParam("file") MultipartFile uploadfile, HttpSession session)
+			throws IOException {
+		ChatUser c = (ChatUser) session.getAttribute("user");
+		dao.uploadProfilePic(uploadfile.getBytes(), c.getUser_id());
+		byte[] encodeBase64 = Base64.encodeBase64(uploadfile.getBytes());
+
+		return encodeBase64;
+	}
+
+	@GetMapping("/get-profile-pic")
+	public byte[] uploadProfilePic(String requestData) throws IOException {
+		byte[] loggedInPic = dao.getLoggedInPic(Long.parseLong(requestData));
+		byte[] profilePic = Base64.encodeBase64(loggedInPic);
+
+		return profilePic;
+	}
 
 }
