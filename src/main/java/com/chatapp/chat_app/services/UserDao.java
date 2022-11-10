@@ -66,4 +66,13 @@ public class UserDao {
 
     }
     
+    public void uploadProfilePic(byte[] profileImg, long user_id) {
+    	userRepo.updateProfilePic(profileImg, user_id);
+    }
+    
+    public byte[] getLoggedInPic(long user_id) {
+    	byte[] profilePic = userRepo.getProfilePic(user_id);
+    	return profilePic;
+    }
+    
 }

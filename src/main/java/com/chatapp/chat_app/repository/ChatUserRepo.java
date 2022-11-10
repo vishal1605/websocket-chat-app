@@ -28,6 +28,14 @@ public interface ChatUserRepo extends JpaRepository<ChatUser, Long>{
     @Transactional
     @Query(value = "delete from chat_user_friends where chat_user_user_id = :user_id and friends_user_id = :f_id", nativeQuery = true)
     public void deleteMyFriend(@Param("user_id") long userId, @Param("f_id") long fId);
+    
+    @Modifying
+    @Transactional
+    @Query(value = "update chat_user set profile_img = ?1 where user_id = ?2", nativeQuery = true)
+    public void updateProfilePic(byte[] profileImg, long user_id);
+    
+    @Query(value = "select profile_img from chat_user where user_id = ?", nativeQuery = true)
+    public byte[] getProfilePic(long user_id);
 
     
 }

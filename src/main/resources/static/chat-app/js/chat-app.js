@@ -18,6 +18,9 @@ const submitMessage = document.getElementById('submit-message');
 const messageArea = document.getElementById('message-area');
 const profileMoreOptions = document.getElementById('profile-more-options');
 const moreOptions = document.getElementById('more-option');
+const alertMsg = document.getElementById('alert-msg');
+const submitProfilePicBtn = document.getElementById('submit-profile-pic');
+const myProfilePic = document.getElementById('profile-pic');
 
 //Global variable
 let active = [];
@@ -47,13 +50,29 @@ notMyFriends.onclick = function (e) {
 
 ///Init function
 initialFunct();
-function initialFunct(param) {
+function initialFunct() {
 
 	getAllFriends(username);
 	myFriends.style.background = 'gray';
+	getMyProfilePicture();
 	profilePic.addEventListener('change', trackProfilePic);
 	submitMessage.addEventListener('submit', preocessMessage);
 	profileMoreOptions.addEventListener('click', openMoreOptions);
+	submitProfilePicBtn.addEventListener('click', submitProfilePic)
+}
+
+function getMyProfilePicture(){
+	$.ajax({
+		type: "GET",
+		url: "/get-profile-pic",
+		data:{
+			requestData: username
+		},
+		success: function (responseObject) {
+			myProfilePic.src = 'data:image/png;base64,' + responseObject;
+		}
+		
+	});
 }
 
 function connect() {
@@ -93,10 +112,13 @@ function connect() {
 				for (let key in count) {
 					document.getElementById(key).children[0].textContent = count[key];
 					document.getElementById(key).children[0].style.display = 'block';
+					document.getElementById(key).children[2].children[1].innerText = activeUser.content.substring(0, 10)+'...';
+					document.getElementById(key).children[3].children[0].innerText = moment(activeUser.sendDate).format('h:mm a');
+									
 				}
 			} else {
 				var labelTime = new Date();
-
+				console.log(globalDate);
 				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
 					globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
@@ -218,13 +240,31 @@ function getAllFriends(id) {
 		},
 		success: function (responseObject) {
 			allFriendsUsers = [...responseObject]
-
+			console.log(allFriendsUsers)
 			if (responseObject.length != 0) {
+				responseObject.forEach((e) => {
+					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}')"
+							 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user_id}">
+												
+												<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
+												<div class="user-photo">
+													<img src="${(e.profile_img==null)?'/assets/img_avatar.png': 'data:image/png;base64,'+e.profile_img}" alt="" width="45px" style="border-radius: 50%;">
+												</div>
+												<div class="user-detail">
+													<h6 class="m-0">${e.userName}</h6>
+													<small class="m-0" style="font-size:13px">no msg</small>
+												</div>
+												<div class="last-time">
+													<small>3:45</small>
+												</div>
+											</li>`;
+				});
+				//responseObject.forEach((e)=>{e.profile_img=null})
 				$.ajax({
 					type: "GET",
 					url: "/get-last-message",
 					data: {
-						requestData: JSON.stringify(responseObject),
+						requestData: JSON.stringify([]),
 						myId: id
 					}
 					,
@@ -243,30 +283,15 @@ function getAllFriends(id) {
 
 					}
 
-				})
-				responseObject.forEach((e) => {
-					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}')"
-							 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user_id}">
-												
-												<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
-												<div class="user-photo">
-													<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
-												</div>
-												<div class="user-detail">
-													<h6 class="m-0">${e.userName}</h6>
-													<small class="m-0" style="font-size:13px">no msg</small>
-												</div>
-												<div class="last-time">
-													<small>3:45</small>
-												</div>
-											</li>`;
 				});
+				
 				document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none');
 
 			} else {
 				friendList.innerHTML = `<li class="border border-1 border-dark" id="no-friends-list" style="height:40px; background-color:green;">Sorry! no friends</li>`;
 			}
 			getAllChatUsers();
+			console.log(allFriendsUsers)
 
 
 		}
@@ -359,35 +384,67 @@ function openEditProfileModel(e) {
 
 closePopUpProfileModel.onclick = function (e) {
 	popUpProfileModel.style.transform = 'scale(0,0)'
+	profilePic.value = '';
+	if(alertMsg.classList.contains('show')){
+		alertMsg.classList.remove('show');
+	}
+	if(profileDemo.classList.contains('show')){
+		profileDemo.classList.remove('show');
+	}
+	submitProfilePicBtn.setAttribute('disabled', 'disabled');
 }
 
 function trackProfilePic(e) {
-	//console.log(e.target.getAttribute('data-user_id'));
+	
 	var imgFile = e.target.files[0];
 	if (imgFile.type == 'image/png' || imgFile.type == 'image/jpeg') {
-		fileToArray(imgFile).then((e) => {
-			var strImg = unit8ToString(e);
-			//profileDemo.src = 'data:image/png;base64,' + strImg;
-			
-		})
+		fileTobyte(imgFile).then((e) => {
+        var base64 = btoa(uint8ToString(e))
+        profileDemo.src = 'data:image/png;base64,' + base64;
+        profileDemo.classList.add('show');
+        submitProfilePicBtn.removeAttribute('disabled');
+       
+    })
+		
 		// console.log(e.target.value.trim().split("\\").at(-1).trim().split(".").at(-1));
+		alertMsg.classList.remove('show')
+	}else{
+		alertMsg.classList.add('show')
 	}
 
 }
-async function fileToArray(file) {
-	const buffer = await file.arrayBuffer();
-	let byteArray = new Uint8Array(buffer);
-	return byteArray;
-
+async function fileTobyte(file) {
+    let arrayFile = await file.arrayBuffer();
+    let bytes = new Uint8Array(arrayFile);
+    return bytes;
+}
+function uint8ToString(buf) {
+    var i, length, out = '';
+    for (i = 0, length = buf.length; i < length; i += 1) {
+        out += String.fromCharCode(buf[i]);
+    }
+    return out;
 }
 
-function unit8ToString(bytes) {
-	var out;
-	for (let i = 0; i < bytes.length; i++) {
-		out += String.fromCharCode(bytes[i]);
+function submitProfilePic() {
+	let formData = new FormData(); 
+  formData.append("file", profilePic.files[0]);
+	$.ajax({
+		type: "POST",
+		url: "/upload-profile-pic",
+		contentType: false,
+		processData: false,
+		data: formData,
+		success: function(response) {
+			myProfilePic.src = 'data:image/png;base64,' + response;
+			
+		 }
+	});
 
-	}
-	return out;
+	profilePic.value = '';
+	profileDemo.classList.remove('show');
+	submitProfilePicBtn.setAttribute('disabled', 'disabled');
+
 }
 
 function showMessageOfSpecificUser(u_id, f_id, friendName) {
