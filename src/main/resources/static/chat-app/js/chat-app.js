@@ -1,3 +1,4 @@
+///Global Dom//////////////////////////////////////////
 var ws;
 const session = document.getElementById('unique-name');
 const online = document.getElementById('online');
@@ -21,6 +22,7 @@ const moreOptions = document.getElementById('more-option');
 const alertMsg = document.getElementById('alert-msg');
 const submitProfilePicBtn = document.getElementById('submit-profile-pic');
 const myProfilePic = document.getElementById('profile-pic');
+const msgHeaderProfilePic = document.getElementById('message-header-profile-pic');
 
 //Global variable
 let active = [];
@@ -60,7 +62,7 @@ function initialFunct() {
 	profileMoreOptions.addEventListener('click', openMoreOptions);
 	submitProfilePicBtn.addEventListener('click', submitProfilePic)
 }
-
+///////////////////////////////Fetch Logged in User Profile/////////////////////////////////////
 function getMyProfilePicture(){
 	$.ajax({
 		type: "GET",
@@ -69,12 +71,17 @@ function getMyProfilePicture(){
 			requestData: username
 		},
 		success: function (responseObject) {
-			myProfilePic.src = 'data:image/png;base64,' + responseObject;
+			if(responseObject == ""){
+			}else{
+				console.log("Not empty");
+				myProfilePic.src = 'data:image/png;base64,' + responseObject;
+			}
 		}
 		
 	});
 }
 
+///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
 	ws.onmessage = function (event) {
@@ -146,12 +153,15 @@ function connect() {
 	}
 
 }
+
+//////////////////////////////Disconnected User from websocket connection/////////////////////////////////////
 function disconnect() {
 	ws.close();
 
 
 }
 
+//////////////////////////////////Toggle User to Online OR Offline/////////////////////////////////////////
 online.addEventListener('change', (e) => {
 	if (e.target.checked) {
 		connect();
@@ -163,6 +173,7 @@ online.addEventListener('change', (e) => {
 	}
 });
 
+//////////////////////////////////// Check User Which Friend is online////////////////////////////////////////////
 function whoOnline() {
 	//console.log(active);
 	if (!active.length == 0) {
@@ -198,6 +209,7 @@ function whoOnline() {
 
 //setInterval(()=>whoOnline(),2000);
 
+////////////////////////////////////////Get All Chat User Who is registered with this chat-app///////////////////////////////////
 function getAllChatUsers() {
 	$.ajax({
 		type: "GET",
@@ -214,7 +226,7 @@ function getAllChatUsers() {
 						notFriendList.innerHTML += `<li class="list-of-no-friend border border-1 border-dark mb-1" style="background-color: #fc0d05;" id="${e.user_id}">
 
 														<div class="user-photo">
-															<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
+															<img src="${(e.profile_img==null)?'/assets/img_avatar.png': 'data:image/png;base64,'+e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 														</div>
 														<div class="user-detail">
 															<h5 class="m-0">${e.userName}</h5>
@@ -231,6 +243,7 @@ function getAllChatUsers() {
 	});
 }
 
+///////////////////////////////////////Get All Your friends In FriendList///////////////////////////////////////////////
 function getAllFriends(id) {
 	$.ajax({
 		type: "GET",
@@ -240,15 +253,14 @@ function getAllFriends(id) {
 		},
 		success: function (responseObject) {
 			allFriendsUsers = [...responseObject]
-			console.log(allFriendsUsers)
 			if (responseObject.length != 0) {
 				responseObject.forEach((e) => {
-					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}')"
+					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}',this)"
 							 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user_id}">
 												
 												<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 												<div class="user-photo">
-													<img src="${(e.profile_img==null)?'/assets/img_avatar.png': 'data:image/png;base64,'+e.profile_img}" alt="" width="45px" style="border-radius: 50%;">
+													<img src="${(e.profile_img==null)?'/assets/img_avatar.png': 'data:image/png;base64,'+e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 												</div>
 												<div class="user-detail">
 													<h6 class="m-0">${e.userName}</h6>
@@ -259,12 +271,12 @@ function getAllFriends(id) {
 												</div>
 											</li>`;
 				});
-				//responseObject.forEach((e)=>{e.profile_img=null})
+				let modifiedFriendList = responseObject.map((u) => ({ ...u, profile_img: null }));
 				$.ajax({
 					type: "GET",
 					url: "/get-last-message",
 					data: {
-						requestData: JSON.stringify([]),
+						requestData: JSON.stringify(modifiedFriendList),
 						myId: id
 					}
 					,
@@ -291,13 +303,13 @@ function getAllFriends(id) {
 				friendList.innerHTML = `<li class="border border-1 border-dark" id="no-friends-list" style="height:40px; background-color:green;">Sorry! no friends</li>`;
 			}
 			getAllChatUsers();
-			console.log(allFriendsUsers)
 
 
 		}
 	});
 }
 
+////////////////////////////////////////// Add More Friends In Your Friend List///////////////////////////////////////////
 function addFriend(e) {
 	if (document.getElementById('no-friends-list') != null) {
 		document.getElementById('no-friends-list').remove()
@@ -315,11 +327,11 @@ function addFriend(e) {
 			list.style.backgroundColor = 'aqua';
 			list.style.position = 'relative';
 			list.style.cursor = 'pointer'
-			list.setAttribute('onclick', `showMessageOfSpecificUser(${username},${responseObject.user_id},'${responseObject.userName}')`)
+			list.setAttribute('onclick', `showMessageOfSpecificUser(${username},${responseObject.user_id},'${responseObject.userName}', this)`)
 			list.id = responseObject.user_id;
 			list.innerHTML = `<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 							  <div class="user-photo">
-								<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
+								<img src="${(responseObject.profile_img==null)?'/assets/img_avatar.png': 'data:image/png;base64,'+responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 							  </div>
 								<div class="user-detail">
 									<h6 class="m-0">${responseObject.userName}</h6>
@@ -340,11 +352,14 @@ function addFriend(e) {
 	document.getElementById(e.target.parentElement.getAttribute('data-id')).remove();
 
 }
+
+//////////////////////////////////////////////Remove Your Friend From Friend List OR Unfriend///////////////////////////////////////
 function removeFriend(e) {
 	var friendId = e.target.getAttribute('data-id');
 	messageSection.innerHTML = '';
 	messageHeaderLabel.innerText = '';
 	profileMoreOptions.innerHTML = ``;
+	msgHeaderProfilePic.src = "/assets/img_avatar.png"
 	moreOptions.children[0].removeAttribute('data-id');
 	moreOptions.children[0].removeEventListener('click',removeFriend)
 	moreOptions.style.transform = 'scale(0,0)';
@@ -361,7 +376,7 @@ function removeFriend(e) {
 			list.style.backgroundColor = 'red';
 			list.id = responseObject.user_id;
 			list.innerHTML = `<div class="user-photo">
-								<img src="/assets/img_avatar.png" alt="" width="45px" style="border-radius: 50%;">
+								<img src="${(responseObject.profile_img==null)?'/assets/img_avatar.png': 'data:image/png;base64,'+responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 							</div>
 							<div class="user-detail">
 								<h5 class="m-0">${responseObject.userName}</h5>
@@ -378,10 +393,13 @@ function removeFriend(e) {
 	document.getElementById(friendId).remove();
 
 }
+
+////////////////////////////////////////////////Open Model for Update Your Profile pic ////////////////////////////////////////////////
 function openEditProfileModel(e) {
 	popUpProfileModel.style.transform = 'scale(1,1)'
 }
 
+////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
 closePopUpProfileModel.onclick = function (e) {
 	popUpProfileModel.style.transform = 'scale(0,0)'
 	profilePic.value = '';
@@ -394,6 +412,7 @@ closePopUpProfileModel.onclick = function (e) {
 	submitProfilePicBtn.setAttribute('disabled', 'disabled');
 }
 
+////////////////////////////////////Check Selected File For upload is Image or not/////////////////////////////////////////////////
 function trackProfilePic(e) {
 	
 	var imgFile = e.target.files[0];
@@ -426,6 +445,7 @@ function uint8ToString(buf) {
     return out;
 }
 
+//////////////////////////////////////Updating Your Profile Picture//////////////////////////////////////////////////////////
 function submitProfilePic() {
 	let formData = new FormData(); 
   formData.append("file", profilePic.files[0]);
@@ -447,7 +467,9 @@ function submitProfilePic() {
 
 }
 
-function showMessageOfSpecificUser(u_id, f_id, friendName) {
+////////////////////////////////////////////Show Your Specfic Friend Older Chat with You & Start more Chat///////////////////////////
+function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
+	//console.log(element.children[1].children[0].src);
 	var zro = messageArray.filter(e => e == f_id);
 	zro.forEach(e => messageArray.splice(messageArray.indexOf(e), 1))
 	document.getElementById(f_id).children[0].textContent = 0;
@@ -469,6 +491,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 				}
 			}
 			messageSection.innerHTML = '';
+			msgHeaderProfilePic.src = element.children[1].children[0].src;
 			messageHeaderLabel.innerText = friendName;
 			profileMoreOptions.innerHTML = `<i class="fa-solid fa-ellipsis-vertical"></i>`;
 			moreOptions.children[0].setAttribute("data-id", f_id);
@@ -553,6 +576,8 @@ function showMessageOfSpecificUser(u_id, f_id, friendName) {
 	});
 }
 
+
+//////////////////////////////////////////Send Message To Your Friend////////////////////////////////////////////////////
 function preocessMessage(e) {
 	e.preventDefault();
 	var storeDate = [];
@@ -615,6 +640,8 @@ function preocessMessage(e) {
 
 
 }
+
+///////////////////////////////////////////////Select Specfic Friend of more Option three dot///////////////////////////////////////
 var i = 0;
 function openMoreOptions(e) {
 	if (i == 0) {

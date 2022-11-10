@@ -35,7 +35,7 @@
 
             <a th:href="@{/logout}" class="btn btn-danger me-2">Logout</a>
             <div class="my-profile-pic" style="width: 35px; height: 35px; cursor: pointer;">
-                <img th:src="@{/assets/img_avatar.png}" alt="" th:attr="data-user=${session.user.user_id}" width="100%"
+                <img th:src="@{/assets/img_avatar.png}" alt="" th:attr="data-user=${session.user.user_id}" width="100%" height="35px"
                     style="border-radius: 50%;" onclick="openEditProfileModel(event)" id="profile-pic">
             </div>
         </div>
@@ -78,7 +78,7 @@
                         style="height: 55px;position: relative;">
                         <div>
                             <img th:src="@{/assets/img_avatar.png}" alt="" width="45px" height="45px"
-                                style="border-radius: 50%;">
+                                style="border-radius: 50%;" id="message-header-profile-pic">
                             <small id="message-header-label">
 
                             </small>

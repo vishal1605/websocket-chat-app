@@ -126,11 +126,11 @@ public class MsgController {
 	@GetMapping("/active-users")
 	public String activeUsers(String requestData, HttpSession session, ChatUser u)
 			throws JsonMappingException, JsonProcessingException {
-		System.out.println(requestData);
+		//System.out.println(requestData);
 		Gson gson = new Gson(); // Or use new GsonBuilder().create();
 		ChatUser user = gson.fromJson(requestData, ChatUser.class);
 		listOfUsers.add(user);
-		System.out.println(user);
+		//System.out.println(user);
 
 		String json = new Gson().toJson(listOfUsers);
 
@@ -148,7 +148,7 @@ public class MsgController {
 
 	@GetMapping("/get-last-message")
 	public List<Message> getLastMessage(String requestData, String myId) {
-		System.out.println(requestData);
+		//System.out.println(requestData);
 		TypeToken<List<ChatUser>> token = new TypeToken<List<ChatUser>>() {
 		};
 		List<ChatUser> friends = new Gson().fromJson(requestData, token.getType());
