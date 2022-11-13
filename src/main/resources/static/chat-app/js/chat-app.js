@@ -9,8 +9,7 @@ const friendList = document.getElementById('friend-list');
 const notFriendList = document.getElementById('not-friend-list');
 const myFriends = document.getElementById('my-friends');
 const notMyFriends = document.getElementById('not-my-friends');
-//const popUpProfileModel = document.getElementById('profile-pop-up');
-//const closePopUpProfileModel = document.getElementById('close-profile-model');
+const closePopUpProfileModel = document.getElementById('close-profile-model');
 const profilePic = document.getElementById('form-file');
 const profileDemo = document.getElementById('profile-demo');
 const messageSection = document.getElementById('section-of-message');
@@ -401,23 +400,17 @@ function removeFriend(e) {
 
 }
 
-////////////////////////////////////////////////Open Model for Update Your Profile pic ////////////////////////////////////////////////
-// function openEditProfileModel(e) {
-// 	popUpProfileModel.style.transform = 'scale(1,1)'
-// }
-
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-// closePopUpProfileModel.onclick = function(e) {
-// 	popUpProfileModel.style.transform = 'scale(0,0)'
-// 	profilePic.value = '';
-// 	if (alertMsg.classList.contains('show')) {
-// 		alertMsg.classList.remove('show');
-// 	}
-// 	if (profileDemo.classList.contains('show')) {
-// 		profileDemo.classList.remove('show');
-// 	}
-// 	submitProfilePicBtn.setAttribute('disabled', 'disabled');
-// }
+closePopUpProfileModel.onclick = function(e) {
+	profilePic.value = '';
+	if (alertMsg.classList.contains('show')) {
+		alertMsg.classList.remove('show');
+	}
+	if (profileDemo.classList.contains('show')) {
+		profileDemo.classList.remove('show');
+	}
+	submitProfilePicBtn.setAttribute('disabled', 'disabled');
+}
 
 ////////////////////////////////////Check Selected File For upload is Image or not/////////////////////////////////////////////////
 function trackProfilePic(e) {
@@ -432,7 +425,6 @@ function trackProfilePic(e) {
 
 		})
 
-		// console.log(e.target.value.trim().split("\\").at(-1).trim().split(".").at(-1));
 		alertMsg.classList.remove('show')
 	} else {
 		alertMsg.classList.add('show')

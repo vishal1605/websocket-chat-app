@@ -11,41 +11,25 @@
 
 </head>
 
-<body>
-    <!-- Button trigger modal -->
-  
-  <!-- Modal -->
-  
-    <div class="row profile-change-div bg-warning" style="position: relative;">
-        <div class="col-4 shadow profile-change-model m-auto border border-1 border-dark py-2"
-            style="transform: scale(0,0);" id="profile-pop-up">
-			<div class="alert alert-danger m-0 p-0 fade" role="alert" id="alert-msg">Please select image!</div>
-			<div class="profile-model-header" id="close-profile-div" style="text-align: right;">
-                <i class="fa-solid fa-x" id="close-profile-model" style="cursor: pointer;"></i>
-            </div>
-            <div class="mb-3">
-                <label for="formFile" class="form-label text-light">select image</label>
-                <input class="form-control" type="file" id="form-file" th:attr="data-user_id=${session.user.user_id}">
-            </div>
-            <button class="btn btn-primary" disabled="disabled" id="submit-profile-pic">Save</button><br />
-            <img src="" alt="demo" width="150px" height="150px" class="mt-1 fade m-auto" id="profile-demo">
-            
-        </div>
-    </div>
+<body>  
     <div class="row chat-section">
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  <h5 class="modal-title" id="staticBackdropLabel">Change Profile photo</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-profile-model"></button>
                 </div>
                 <div class="modal-body">
-                  ...
+                    <div class="alert alert-danger m-0 p-0 fade" role="alert" id="alert-msg">Please select image!</div>
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label text-light">select image</label>
+                        <input class="form-control" type="file" id="form-file" th:attr="data-user_id=${session.user.user_id}">
+                    </div>
+                    <img src="" alt="demo" width="150px" height="150px" class="mt-1 fade m-auto" id="profile-demo">
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary">Understood</button>
+                  <button type="button" disabled="disabled" id="submit-profile-pic" class="btn btn-primary">Save</button>
                 </div>
               </div>
             </div>
