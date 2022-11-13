@@ -9,8 +9,8 @@ const friendList = document.getElementById('friend-list');
 const notFriendList = document.getElementById('not-friend-list');
 const myFriends = document.getElementById('my-friends');
 const notMyFriends = document.getElementById('not-my-friends');
-const popUpProfileModel = document.getElementById('profile-pop-up');
-const closePopUpProfileModel = document.getElementById('close-profile-model');
+//const popUpProfileModel = document.getElementById('profile-pop-up');
+//const closePopUpProfileModel = document.getElementById('close-profile-model');
 const profilePic = document.getElementById('form-file');
 const profileDemo = document.getElementById('profile-demo');
 const messageSection = document.getElementById('section-of-message');
@@ -75,7 +75,7 @@ function getMyProfilePicture() {
 		success: function(responseObject) {
 			if (responseObject == "") {
 			} else {
-				console.log("Not empty");
+				
 				myProfilePic.src = 'data:image/png;base64,' + responseObject;
 			}
 		}
@@ -402,22 +402,22 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Open Model for Update Your Profile pic ////////////////////////////////////////////////
-function openEditProfileModel(e) {
-	popUpProfileModel.style.transform = 'scale(1,1)'
-}
+// function openEditProfileModel(e) {
+// 	popUpProfileModel.style.transform = 'scale(1,1)'
+// }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function(e) {
-	popUpProfileModel.style.transform = 'scale(0,0)'
-	profilePic.value = '';
-	if (alertMsg.classList.contains('show')) {
-		alertMsg.classList.remove('show');
-	}
-	if (profileDemo.classList.contains('show')) {
-		profileDemo.classList.remove('show');
-	}
-	submitProfilePicBtn.setAttribute('disabled', 'disabled');
-}
+// closePopUpProfileModel.onclick = function(e) {
+// 	popUpProfileModel.style.transform = 'scale(0,0)'
+// 	profilePic.value = '';
+// 	if (alertMsg.classList.contains('show')) {
+// 		alertMsg.classList.remove('show');
+// 	}
+// 	if (profileDemo.classList.contains('show')) {
+// 		profileDemo.classList.remove('show');
+// 	}
+// 	submitProfilePicBtn.setAttribute('disabled', 'disabled');
+// }
 
 ////////////////////////////////////Check Selected File For upload is Image or not/////////////////////////////////////////////////
 function trackProfilePic(e) {
@@ -515,7 +515,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 				var childDiv = document.createElement('div');
 				var timeLabel = document.createElement('label');
 				if (e.toUser.user_id == username) {
-					if (!(moment(moment(labelTime).format("DD/MM/YYYY")).isSame(moment(moment(new Date()).format("DD/MM/YYYY"))))) {
+					if (!(moment(labelTime).startOf('day').isSame(moment().startOf('day')))) {
 						if (storeDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 							storeDate.push(moment(labelTime).format("DD/MM/YYYY"))
 							var dateTimeStamp = document.createElement('div');
@@ -543,7 +543,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 					messageSection.append(parentDiv);
 
 				} else {
-					if (!(moment(moment(labelTime).format("DD/MM/YYYY")).isSame(moment(moment(new Date()).format("DD/MM/YYYY"))))) {
+					if (!(moment(labelTime).startOf('day').isSame(moment().startOf('day')))) {
 						if (storeDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
 							storeDate.push(moment(labelTime).format("DD/MM/YYYY"))
@@ -574,10 +574,12 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 				}
 
 			});
-			//console.log(storeDate);
-			// while (storeDate.length > 0) {
-			// 	storeDate.pop();
-			// }
+			if(storeDate.indexOf(globalDate[0])==-1){
+				console.log("aaj ki date nahi hai");
+				globalDate.shift();
+			}else{
+				console.log("hai date aaj ki");
+			}
 
 		}
 	});

@@ -124,10 +124,10 @@ public class SocketHandler extends AbstractWebSocketHandler {
 
     }
 
-	@Override
-	protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
-		System.out.println("Binary Message");
-		super.handleBinaryMessage(session, message);
-	}
+	// @Override
+	// protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+	// 	System.out.println("Binary Message");
+	// 	super.handleBinaryMessage(session, message);
+	// }
 
 }

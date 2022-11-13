@@ -12,6 +12,10 @@
 </head>
 
 <body>
+    <!-- Button trigger modal -->
+  
+  <!-- Modal -->
+  
     <div class="row profile-change-div bg-warning" style="position: relative;">
         <div class="col-4 shadow profile-change-model m-auto border border-1 border-dark py-2"
             style="transform: scale(0,0);" id="profile-pop-up">
@@ -29,6 +33,23 @@
         </div>
     </div>
     <div class="row chat-section">
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  ...
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Understood</button>
+                </div>
+              </div>
+            </div>
+          </div>
         <div class="col-12 chat-header mb-3 text-light d-flex" style="background-color: #f76b2a;">
             <h6 class="mb-0 me-2" th:text="${session.user.user_id}" id="unique-name" style="display: none;"></h6>
             <h6 class="mb-0 me-2" th:text="${session.user.userName}" id="myame"></h6>
@@ -36,8 +57,9 @@
             <a th:href="@{/logout}" class="btn btn-danger me-2">Logout</a>
             <div class="my-profile-pic" style="width: 35px; height: 35px; cursor: pointer;">
                 <img th:src="@{/assets/img_avatar.png}" alt="" th:attr="data-user=${session.user.user_id}" width="100%" height="35px"
-                    style="border-radius: 50%;" onclick="openEditProfileModel(event)" id="profile-pic">
+                    style="border-radius: 50%;" id="profile-pic" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
             </div>
+            
         </div>
         <div class="col-10 chat m-auto shadow">
             <div class="row">
