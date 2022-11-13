@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.websocket.EncodeException;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -122,5 +123,11 @@ public class SocketHandler extends AbstractWebSocketHandler {
         }
 
     }
+
+	@Override
+	protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+		System.out.println("Binary Message");
+		super.handleBinaryMessage(session, message);
+	}
 
 }

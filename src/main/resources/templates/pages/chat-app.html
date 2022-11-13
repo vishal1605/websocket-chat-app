@@ -120,20 +120,19 @@
                         <form action="" class="d-flex align-items-center" id="submit-message">
                             <input type="text" class="form-control w-50 me-2 my-1" name="message" id="message-area"
                                 required>
-                            <button type="submit" class="btn btn-primary">send</button>
-                            <!-- <input type="file" class="form-control"> -->
+                            <button type="submit" class="btn btn-primary me-2">send</button>
+                            <label for="send-file" style="cursor: pointer; font-size:20px" id="send-file-label" class="shadow rounded"><i class="fa-solid fa-paperclip"></i></label>
+                            <input type="file" class="" id="send-file" hidden="hidden">
                         </form>
                     </div>
                     <!-- <h1>Hello</h1>
                     <button class="btn btn-warning" id="send-message" th:value="${session.user.user_id}" onclick="sendMessage(event)">Send</button> -->
                 </div>
             </div>
-
-
-
         </div>
 
     </div>
+    
     <script th:inline="javascript" th:src="@{/chat-app/js/chat-app.js}"></script>
 </body>
 

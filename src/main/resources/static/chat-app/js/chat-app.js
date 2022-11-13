@@ -23,6 +23,7 @@ const alertMsg = document.getElementById('alert-msg');
 const submitProfilePicBtn = document.getElementById('submit-profile-pic');
 const myProfilePic = document.getElementById('profile-pic');
 const msgHeaderProfilePic = document.getElementById('message-header-profile-pic');
+const fileToSendAsChat = document.getElementById('send-file');
 
 //Global variable
 let active = [];
@@ -36,14 +37,14 @@ var username = session.innerHTML;
 
 ////Event Listners
 refresh.addEventListener('click', whoOnline);
-myFriends.onclick = function (e) {
+myFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'gray';
 	notMyFriends.style.background = '#f76b2a';
 }
 
-notMyFriends.onclick = function (e) {
+notMyFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#f76b2a';
@@ -61,30 +62,31 @@ function initialFunct() {
 	submitMessage.addEventListener('submit', preocessMessage);
 	profileMoreOptions.addEventListener('click', openMoreOptions);
 	submitProfilePicBtn.addEventListener('click', submitProfilePic)
+	fileToSendAsChat.addEventListener('change', trackFileToBeSendInChat)
 }
 ///////////////////////////////Fetch Logged in User Profile/////////////////////////////////////
-function getMyProfilePicture(){
+function getMyProfilePicture() {
 	$.ajax({
 		type: "GET",
 		url: "/get-profile-pic",
-		data:{
+		data: {
 			requestData: username
 		},
-		success: function (responseObject) {
-			if(responseObject == ""){
-			}else{
+		success: function(responseObject) {
+			if (responseObject == "") {
+			} else {
 				console.log("Not empty");
 				myProfilePic.src = 'data:image/png;base64,' + responseObject;
 			}
 		}
-		
+
 	});
 }
 
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function (event) {
+	ws.onmessage = function(event) {
 		var activeUser = JSON.parse(event.data);
 		//console.log(activeUser);
 		if ('user_id' in activeUser) {
@@ -114,14 +116,14 @@ function connect() {
 				messageArray.push(activeUser.toUser.friends[0].user_id)
 				//console.log(messageArray);
 				var count = {};
-				messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+				messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
 				//console.log(count);
 				for (let key in count) {
 					document.getElementById(key).children[0].textContent = count[key];
 					document.getElementById(key).children[0].style.display = 'block';
-					document.getElementById(key).children[2].children[1].innerText = activeUser.content.substring(0, 10)+'...';
+					document.getElementById(key).children[2].children[1].innerText = activeUser.content.substring(0, 10) + '...';
 					document.getElementById(key).children[3].children[0].innerText = moment(activeUser.sendDate).format('h:mm a');
-									
+
 				}
 			} else {
 				var labelTime = new Date();
@@ -200,7 +202,9 @@ function whoOnline() {
 	} else {
 		[...friendList.children].forEach((e) => {
 
-			e.style.background = "aqua";
+			if (e.id != "no-friends-list") {
+				e.style.background = "aqua";
+			}
 		})
 
 	}
@@ -215,7 +219,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function (responseObject) {
+		success: function(responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -226,7 +230,7 @@ function getAllChatUsers() {
 						notFriendList.innerHTML += `<li class="list-of-no-friend border border-1 border-dark mb-1" style="background-color: #fc0d05;" id="${e.user_id}">
 
 														<div class="user-photo">
-															<img src="${(e.profile_img==null)?'/assets/img_avatar.png': 'data:image/png;base64,'+e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
+															<img src="${(e.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 														</div>
 														<div class="user-detail">
 															<h5 class="m-0">${e.userName}</h5>
@@ -251,7 +255,7 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
 				responseObject.forEach((e) => {
@@ -260,7 +264,7 @@ function getAllFriends(id) {
 												
 												<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 												<div class="user-photo">
-													<img src="${(e.profile_img==null)?'/assets/img_avatar.png': 'data:image/png;base64,'+e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
+													<img src="${(e.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 												</div>
 												<div class="user-detail">
 													<h6 class="m-0">${e.userName}</h6>
@@ -280,7 +284,7 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function (lastMessages) {
+					success: function(lastMessages) {
 						lastMessages.forEach((e) => {
 							var sendDate = new Date(e.sendDate);
 							if (+sendDate.getDate() === +new Date().getDate()) {
@@ -296,7 +300,7 @@ function getAllFriends(id) {
 					}
 
 				});
-				
+
 				document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none');
 
 			} else {
@@ -321,7 +325,7 @@ function addFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'aqua';
@@ -331,7 +335,7 @@ function addFriend(e) {
 			list.id = responseObject.user_id;
 			list.innerHTML = `<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 							  <div class="user-photo">
-								<img src="${(responseObject.profile_img==null)?'/assets/img_avatar.png': 'data:image/png;base64,'+responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
+								<img src="${(responseObject.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 							  </div>
 								<div class="user-detail">
 									<h6 class="m-0">${responseObject.userName}</h6>
@@ -361,7 +365,7 @@ function removeFriend(e) {
 	profileMoreOptions.innerHTML = ``;
 	msgHeaderProfilePic.src = "/assets/img_avatar.png"
 	moreOptions.children[0].removeAttribute('data-id');
-	moreOptions.children[0].removeEventListener('click',removeFriend)
+	moreOptions.children[0].removeEventListener('click', removeFriend)
 	moreOptions.style.transform = 'scale(0,0)';
 	friend_id = 0;
 	$.ajax({
@@ -370,13 +374,13 @@ function removeFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
 			list.id = responseObject.user_id;
 			list.innerHTML = `<div class="user-photo">
-								<img src="${(responseObject.profile_img==null)?'/assets/img_avatar.png': 'data:image/png;base64,'+responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
+								<img src="${(responseObject.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 							</div>
 							<div class="user-detail">
 								<h5 class="m-0">${responseObject.userName}</h5>
@@ -391,6 +395,9 @@ function removeFriend(e) {
 		}
 	});
 	document.getElementById(friendId).remove();
+	if (friendList.innerHTML == "") {
+		friendList.innerHTML = `<li class="border border-1 border-dark" id="no-friends-list" style="height:40px; background-color:green;">Sorry! no friends</li>`;
+	}
 
 }
 
@@ -400,13 +407,13 @@ function openEditProfileModel(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function (e) {
+closePopUpProfileModel.onclick = function(e) {
 	popUpProfileModel.style.transform = 'scale(0,0)'
 	profilePic.value = '';
-	if(alertMsg.classList.contains('show')){
+	if (alertMsg.classList.contains('show')) {
 		alertMsg.classList.remove('show');
 	}
-	if(profileDemo.classList.contains('show')){
+	if (profileDemo.classList.contains('show')) {
 		profileDemo.classList.remove('show');
 	}
 	submitProfilePicBtn.setAttribute('disabled', 'disabled');
@@ -414,41 +421,41 @@ closePopUpProfileModel.onclick = function (e) {
 
 ////////////////////////////////////Check Selected File For upload is Image or not/////////////////////////////////////////////////
 function trackProfilePic(e) {
-	
+
 	var imgFile = e.target.files[0];
 	if (imgFile.type == 'image/png' || imgFile.type == 'image/jpeg') {
 		fileTobyte(imgFile).then((e) => {
-        var base64 = btoa(uint8ToString(e))
-        profileDemo.src = 'data:image/png;base64,' + base64;
-        profileDemo.classList.add('show');
-        submitProfilePicBtn.removeAttribute('disabled');
-       
-    })
-		
+			var base64 = btoa(uint8ToString(e))
+			profileDemo.src = 'data:image/png;base64,' + base64;
+			profileDemo.classList.add('show');
+			submitProfilePicBtn.removeAttribute('disabled');
+
+		})
+
 		// console.log(e.target.value.trim().split("\\").at(-1).trim().split(".").at(-1));
 		alertMsg.classList.remove('show')
-	}else{
+	} else {
 		alertMsg.classList.add('show')
 	}
 
 }
 async function fileTobyte(file) {
-    let arrayFile = await file.arrayBuffer();
-    let bytes = new Uint8Array(arrayFile);
-    return bytes;
+	let arrayFile = await file.arrayBuffer();
+	let bytes = new Uint8Array(arrayFile);
+	return bytes;
 }
 function uint8ToString(buf) {
-    var i, length, out = '';
-    for (i = 0, length = buf.length; i < length; i += 1) {
-        out += String.fromCharCode(buf[i]);
-    }
-    return out;
+	var i, length, out = '';
+	for (i = 0, length = buf.length; i < length; i += 1) {
+		out += String.fromCharCode(buf[i]);
+	}
+	return out;
 }
 
 //////////////////////////////////////Updating Your Profile Picture//////////////////////////////////////////////////////////
 function submitProfilePic() {
-	let formData = new FormData(); 
-  formData.append("file", profilePic.files[0]);
+	let formData = new FormData();
+	formData.append("file", profilePic.files[0]);
 	$.ajax({
 		type: "POST",
 		url: "/upload-profile-pic",
@@ -457,8 +464,8 @@ function submitProfilePic() {
 		data: formData,
 		success: function(response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
-			
-		 }
+
+		}
 	});
 
 	profilePic.value = '';
@@ -483,7 +490,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function (response) {
+		success: function(response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -615,7 +622,7 @@ function preocessMessage(e) {
 			childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
 			messageSection.append(parentDiv);
 			messageArea.value = "";
-			
+
 		} else {
 			alert("sorry you are not online")
 		}
@@ -633,7 +640,7 @@ function preocessMessage(e) {
 			})
 		},
 
-		success: function (response) {
+		success: function(response) {
 			//console.log(response);
 		}
 	});
@@ -653,4 +660,17 @@ function openMoreOptions(e) {
 	}
 }
 
+
+//////////////////////////////////////////////File send in chat////////////////////////////////////////////////////////////
+
+function trackFileToBeSendInChat(e) {
+	messageArea.value = e.target.value.split("\\")[2];
+	let sendMyFile = e.target.files[0]
+	console.log(sendMyFile)
+	fileTobyte(sendMyFile).then((e) => {
+			var base64Img = btoa(uint8ToString(e))
+			console.log(base64Img)
+
+		})
+}
 
