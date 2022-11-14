@@ -625,19 +625,7 @@ function preocessMessage(e) {
 		alert("please select user")
 
 	}
-	$.ajax({
-		type: "POST",
-		url: "/send-message",
-		data: {
-			requestData: JSON.stringify({
-				username, friend_id, myMessage
-			})
-		},
-
-		success: function(response) {
-			//console.log(response);
-		}
-	});
+	
 
 
 }

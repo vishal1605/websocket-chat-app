@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
@@ -56,13 +57,16 @@ public class SocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        Message m = new Gson().fromJson(message.getPayload(), Message.class);
-        // System.out.println(m);
-        sendMessageToOneUser(m);
-        //System.out.println(getSessionId(m.getToUser()));
-
-    }
+	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+    	if (message instanceof TextMessage) {
+            Message m = new Gson().fromJson((String) message.getPayload(), Message.class);
+            sendMessageToOneUser(m);
+		}else if (message instanceof BinaryMessage) {
+			System.out.println(message.getPayload());
+			//System.out.printf("Binary Message", message.getPayload());
+		}
+    	
+	}
 
     private static void sendMessageToOneUser(Message message) throws IOException,
             EncodeException {
