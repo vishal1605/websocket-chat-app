@@ -33,17 +33,18 @@ let messageArray = [];
 let globalDate = [];
 let friend_id = 0;
 var username = session.innerHTML;
+let fileString = "";
 
 ////Event Listners
 refresh.addEventListener('click', whoOnline);
-myFriends.onclick = function(e) {
+myFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'gray';
 	notMyFriends.style.background = '#f76b2a';
 }
 
-notMyFriends.onclick = function(e) {
+notMyFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#f76b2a';
@@ -71,10 +72,10 @@ function getMyProfilePicture() {
 		data: {
 			requestData: username
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			if (responseObject == "") {
 			} else {
-				
+
 				myProfilePic.src = 'data:image/png;base64,' + responseObject;
 			}
 		}
@@ -85,7 +86,7 @@ function getMyProfilePicture() {
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function(event) {
+	ws.onmessage = function (event) {
 		var activeUser = JSON.parse(event.data);
 		//console.log(activeUser);
 		if ('user_id' in activeUser) {
@@ -115,7 +116,7 @@ function connect() {
 				messageArray.push(activeUser.toUser.friends[0].user_id)
 				//console.log(messageArray);
 				var count = {};
-				messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+				messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 				//console.log(count);
 				for (let key in count) {
 					document.getElementById(key).children[0].textContent = count[key];
@@ -218,7 +219,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function(responseObject) {
+		success: function (responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -254,7 +255,7 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
 				responseObject.forEach((e) => {
@@ -283,7 +284,7 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function(lastMessages) {
+					success: function (lastMessages) {
 						lastMessages.forEach((e) => {
 							var sendDate = new Date(e.sendDate);
 							if (+sendDate.getDate() === +new Date().getDate()) {
@@ -324,7 +325,7 @@ function addFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'aqua';
@@ -373,7 +374,7 @@ function removeFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
@@ -401,7 +402,7 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function(e) {
+closePopUpProfileModel.onclick = function (e) {
 	profilePic.value = '';
 	if (alertMsg.classList.contains('show')) {
 		alertMsg.classList.remove('show');
@@ -454,7 +455,7 @@ function submitProfilePic() {
 		contentType: false,
 		processData: false,
 		data: formData,
-		success: function(response) {
+		success: function (response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
 
 		}
@@ -482,7 +483,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function(response) {
+		success: function (response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -566,10 +567,10 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 				}
 
 			});
-			if(storeDate.indexOf(globalDate[0])==-1){
-				console.log("aaj ki date nahi hai");
+			if (storeDate.indexOf(globalDate[0]) == -1) {
+				
 				globalDate.shift();
-			}else{
+			} else {
 				console.log("hai date aaj ki");
 			}
 
@@ -582,40 +583,97 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 function preocessMessage(e) {
 	e.preventDefault();
 	var storeDate = [];
-	var formData = new FormData(e.target);
-	let myMessage = formData.get('message');
+	var labelTime = new Date()
 	if (friend_id != 0) {
 		if (online.checked) {
-			ws.send(JSON.stringify({
-				toUser: {
-					user_id: friend_id,
-					friends: [{ user_id: username }]
-				},
-				content: myMessage,
-				sendDate: new Date().toString(),
-				recievedDate: new Date().toString(),
-			}));
-			var parentDiv = document.createElement('div');
-			var childDiv = document.createElement('div');
-			var timeLabel = document.createElement('label');
-			var labelTime = new Date()
-			if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+			if (fileToSendAsChat.value != "") {
+				var parentDiv = document.createElement('div');
+				var childDiv = document.createElement('div');
+				var timeLabel = document.createElement('label');
+				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
-				globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
-				var dateTimeStamp = document.createElement('div');
-				dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-				dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-				messageSection.append(dateTimeStamp)
+					globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+					var dateTimeStamp = document.createElement('div');
+					dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+					dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+					messageSection.append(dateTimeStamp)
+				}
+				if (fileToSendAsChat.files[0].type == 'image/png' || fileToSendAsChat.files[0].type == 'image/jpeg') {
+
+					parentDiv.className = 'right-div';
+					childDiv.className = 'right-msg';
+					timeLabel.className = 'right-time';
+					timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
+					parentDiv.append(timeLabel);
+					parentDiv.append(childDiv);
+					childDiv.innerHTML = `<img src="${'data:image/png;base64,' + fileString}" alt="" width="100px" height="120px" style:"cursor:pointer">`;
+
+					messageSection.append(parentDiv);
+
+				} else {
+					parentDiv.className = 'right-div';
+					childDiv.className = 'right-msg';
+					timeLabel.className = 'right-time';
+					timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
+					parentDiv.append(timeLabel);
+					parentDiv.append(childDiv);
+					switch (fileToSendAsChat.files[0].type) {
+						case 'application/pdf':
+							childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px; color:red"></i>&nbsp;<span>${fileToSendAsChat.files[0].name}</span>`;
+
+							break;
+
+						case 'application/x-zip-compressed':
+							childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span>${fileToSendAsChat.files[0].name}</span>`;
+							break;
+
+						case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+							childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span>${fileToSendAsChat.files[0].name}</span>`;
+							break;
+
+						default:
+							break;
+					}
+
+					messageSection.append(parentDiv);
+				}
+			} else {
+				var formData = new FormData(e.target);
+				let myMessage = formData.get('message');
+				ws.send(JSON.stringify({
+					toUser: {
+						user_id: friend_id,
+						friends: [{ user_id: username }]
+					},
+					content: myMessage,
+					sendDate: new Date().toString(),
+					recievedDate: new Date().toString(),
+				}));
+				var parentDiv = document.createElement('div');
+				var childDiv = document.createElement('div');
+				var timeLabel = document.createElement('label');
+
+				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+
+					globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+					var dateTimeStamp = document.createElement('div');
+					dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+					dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+					messageSection.append(dateTimeStamp)
+				}
+				parentDiv.className = 'right-div';
+				childDiv.className = 'right-msg';
+				timeLabel.className = 'right-time';
+				timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
+				parentDiv.append(timeLabel);
+				parentDiv.append(childDiv);
+				childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
+				messageSection.append(parentDiv);
+
 			}
-			parentDiv.className = 'right-div';
-			childDiv.className = 'right-msg';
-			timeLabel.className = 'right-time';
-			timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
-			parentDiv.append(timeLabel);
-			parentDiv.append(childDiv);
-			childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
-			messageSection.append(parentDiv);
+
 			messageArea.value = "";
+			fileToSendAsChat.value = "";
 
 		} else {
 			alert("sorry you are not online")
@@ -625,8 +683,6 @@ function preocessMessage(e) {
 		alert("please select user")
 
 	}
-	
-
 
 }
 
@@ -648,11 +704,9 @@ function openMoreOptions(e) {
 function trackFileToBeSendInChat(e) {
 	messageArea.value = e.target.value.split("\\")[2];
 	let sendMyFile = e.target.files[0]
-	console.log(sendMyFile)
 	fileTobyte(sendMyFile).then((e) => {
-			var base64Img = btoa(uint8ToString(e))
-			console.log(base64Img)
+		fileString = btoa(uint8ToString(e))
 
-		})
+	})
 }
 
