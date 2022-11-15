@@ -88,8 +88,12 @@ function getMyProfilePicture() {
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
 	ws.onmessage = function (event) {
+		if(typeof(event.data)=== 'object'){
+			
+		}else{
+			
 		var activeUser = JSON.parse(event.data);
-		//console.log(activeUser);
+		}
 		if ('user_id' in activeUser) {
 			if (activeUser.isActive == true) {
 				let exist = active.some((e) => {
@@ -588,8 +592,7 @@ function preocessMessage(e) {
 	if (friend_id != 0) {
 		if (online.checked) {
 			if (fileToSendAsChat.value != "") {
-				ws.binaryType = "arraybuffer"
-				ws.send(fileToSendAsChat.files[0]);
+				//ws.binaryType = "arraybuffer"
 				ws.send(JSON.stringify({
 					toUser: {
 						user_id: friend_id,
@@ -599,6 +602,7 @@ function preocessMessage(e) {
 					sendDate: new Date().toString(),
 					recievedDate: new Date().toString(),
 				}))
+				ws.send(fileToSendAsChat.files[0]);
 				
 				var parentDiv = document.createElement('div');
 				var childDiv = document.createElement('div');
