@@ -66,16 +66,10 @@ public class SocketHandler extends AbstractWebSocketHandler {
     	if (message instanceof TextMessage) {
     		System.out.println("Text Message");
             m = new Gson().fromJson((String) message.getPayload(), Message.class);
-            //sendMessageToOneUser(m);
+            sendMessageToOneUser(m);
 		}else if (message instanceof BinaryMessage) {
 			ByteBuffer b = (ByteBuffer) message.getPayload();
-			System.out.println(b.array().length);
-//			File outputFile = new File("C:\\Users\\vishalg\\Desktop\\Html\\myfile.jpg");
-//			try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-//			    outputStream.write(b.array());
-//			}
-			//sendByteToOneUser(m, b.array());
-			//System.out.printf("Binary Message", message.getPayload());
+			sendByteToOneUser(m, b.array());
 		}
     	
 	}
@@ -88,10 +82,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
                     System.out.println("send successfully");
                     endpoint.sendMessage(new TextMessage(new Gson().toJson(message)));
                 }
-                // else{
-                //     System.out.println("error");
-                //     endpoint.sendMessage(new TextMessage(new Gson().toJson("error")));
-                // }
+                
             }
         }
     }
@@ -120,6 +111,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         // TODO Auto-generated method stub
+        System.out.println(exception);
         super.handleTransportError(session, exception);
     }
 

@@ -88,72 +88,118 @@ function getMyProfilePicture() {
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
 	ws.onmessage = function (event) {
-		if(typeof(event.data)=== 'object'){
-			
-		}else{
-			
-		var activeUser = JSON.parse(event.data);
-		}
-		if ('user_id' in activeUser) {
-			if (activeUser.isActive == true) {
-				let exist = active.some((e) => {
-					return e.user_id == activeUser.user_id;
-				})
-				if (!exist) {
-					if (parseInt(username) != activeUser.user_id) {
+		if (typeof (event.data) === 'object') {
+			var labelTime = new Date();
+			if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
-						active.push(activeUser)
-					}
-				}
-
-			} else {
-				var removeUser = active.find((e) => {
-					return e.user_id == activeUser.user_id;
-				})
-				//console.log(removeUser);
-				active.splice(active.indexOf(removeUser), 1);
-
+				globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+				var dateTimeStamp = document.createElement('div');
+				dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+				dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+				messageSection.append(dateTimeStamp)
 			}
-
-		} else {
-			if (friend_id != activeUser.toUser.friends[0].user_id) {
-
-				messageArray.push(activeUser.toUser.friends[0].user_id)
-				//console.log(messageArray);
-				var count = {};
-				messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
-				//console.log(count);
-				for (let key in count) {
-					document.getElementById(key).children[0].textContent = count[key];
-					document.getElementById(key).children[0].style.display = 'block';
-					document.getElementById(key).children[2].children[1].innerText = activeUser.content.substring(0, 10) + '...';
-					document.getElementById(key).children[3].children[0].innerText = moment(activeUser.sendDate).format('h:mm a');
-
-				}
-			} else {
-				var labelTime = new Date();
-				console.log(globalDate);
-				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
-
-					globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
-					var dateTimeStamp = document.createElement('div');
-					dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-					dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-					messageSection.append(dateTimeStamp)
-				}
+			var reader = new FileReader();
+			reader.readAsDataURL(event.data);
+			reader.onloadend = function () {
+				var base64String = reader.result;
 				var parentDiv = document.createElement('div');
 				var childDiv = document.createElement('div');
 				var timeLabel = document.createElement('label');
 				parentDiv.className = 'left-div';
-				childDiv.className = 'left-msg'; timeLabel.className = 'left-time';
-				timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
+				childDiv.className = 'left-msg-img';
+				timeLabel.className = 'left-time';
+				timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
 				parentDiv.append(timeLabel);
 
 				parentDiv.append(childDiv);
-				childDiv.innerHTML = `<small class="text-light">${activeUser.content}</small>`;
+				childDiv.innerHTML = `<img src="${base64String}"
+				alt="" width="100%" style="cursor: pointer;">`;
 				messageSection.append(parentDiv);
 			}
+		} else {
+
+			var activeUser = JSON.parse(event.data);
+			if ('user_id' in activeUser) {
+				if (activeUser.isActive == true) {
+					let exist = active.some((e) => {
+						return e.user_id == activeUser.user_id;
+					})
+					if (!exist) {
+						if (parseInt(username) != activeUser.user_id) {
+
+							active.push(activeUser)
+						}
+					}
+
+				} else {
+					var removeUser = active.find((e) => {
+						return e.user_id == activeUser.user_id;
+					})
+					//console.log(removeUser);
+					active.splice(active.indexOf(removeUser), 1);
+
+				}
+
+			} else {
+				if (friend_id != activeUser.toUser.friends[0].user_id) {
+					if (activeUser.content == "binarydta") {
+						messageArray.push(activeUser.toUser.friends[0].user_id)
+					//console.log(messageArray);
+					var count = {};
+					messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+					//console.log(count);
+					for (let key in count) {
+						document.getElementById(key).children[0].textContent = count[key];
+						document.getElementById(key).children[0].style.display = 'block';
+						document.getElementById(key).children[2].children[1].innerText = 'Conte...';
+						document.getElementById(key).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
+
+					}
+					} else {
+						messageArray.push(activeUser.toUser.friends[0].user_id)
+						//console.log(messageArray);
+						var count = {};
+						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+						//console.log(count);
+						for (let key in count) {
+							document.getElementById(key).children[0].textContent = count[key];
+							document.getElementById(key).children[0].style.display = 'block';
+							document.getElementById(key).children[2].children[1].innerText = activeUser.content.substring(0, 10) + '...';
+							document.getElementById(key).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
+
+						}
+					}
+
+				} else {
+					if (activeUser.content == "binarydta") {
+
+					} else {
+						var labelTime = new Date();
+						console.log(globalDate);
+						if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+
+							globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+							var dateTimeStamp = document.createElement('div');
+							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+							messageSection.append(dateTimeStamp)
+						}
+						var parentDiv = document.createElement('div');
+						var childDiv = document.createElement('div');
+						var timeLabel = document.createElement('label');
+						parentDiv.className = 'left-div';
+						childDiv.className = 'left-msg'; timeLabel.className = 'left-time';
+						timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
+						parentDiv.append(timeLabel);
+
+						parentDiv.append(childDiv);
+						childDiv.innerHTML = `<small class="text-light">${activeUser.content}</small>`;
+						messageSection.append(parentDiv);
+					}
+				}
+			}
 		}
+
 
 
 		// whoOnline();
@@ -573,7 +619,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 
 			});
 			if (storeDate.indexOf(globalDate[0]) == -1) {
-				
+
 				globalDate.shift();
 			} else {
 				console.log("hai date aaj ki");
@@ -598,12 +644,12 @@ function preocessMessage(e) {
 						user_id: friend_id,
 						friends: [{ user_id: username }]
 					},
-					content: "",
+					content: "binarydta",
 					sendDate: new Date().toString(),
 					recievedDate: new Date().toString(),
 				}))
 				ws.send(fileToSendAsChat.files[0]);
-				
+
 				var parentDiv = document.createElement('div');
 				var childDiv = document.createElement('div');
 				var timeLabel = document.createElement('label');
@@ -648,7 +694,7 @@ function preocessMessage(e) {
 						case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
 							childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
 							break;
-							
+
 						case 'application/zip':
 							childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
 							break;
@@ -691,6 +737,19 @@ function preocessMessage(e) {
 				parentDiv.append(childDiv);
 				childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
 				messageSection.append(parentDiv);
+				// $.ajax({
+				// 	type: "POST",
+				// 	url: "/send-message",
+				// 	data: {
+				// 		requestData: JSON.stringify({
+				// 			username, friend_id, myMessage
+				// 		})
+				// 	},
+			
+				// 	success: function (response) {
+				// 		//console.log(response);
+				// 	}
+				// });
 
 			}
 
@@ -705,6 +764,7 @@ function preocessMessage(e) {
 		alert("please select user")
 
 	}
+	
 
 }
 
