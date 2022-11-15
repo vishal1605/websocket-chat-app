@@ -34,7 +34,6 @@ let globalDate = [];
 let friend_id = 0;
 var username = session.innerHTML;
 let fileString = "";
-let fileByteArray = [];
 
 ////Event Listners
 refresh.addEventListener('click', whoOnline);
@@ -88,12 +87,8 @@ function getMyProfilePicture() {
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
 	ws.onmessage = function (event) {
-		if(typeof(event.data)=== 'object'){
-			
-		}else{
-			
 		var activeUser = JSON.parse(event.data);
-		}
+		//console.log(activeUser);
 		if ('user_id' in activeUser) {
 			if (activeUser.isActive == true) {
 				let exist = active.some((e) => {
@@ -592,18 +587,6 @@ function preocessMessage(e) {
 	if (friend_id != 0) {
 		if (online.checked) {
 			if (fileToSendAsChat.value != "") {
-				//ws.binaryType = "arraybuffer"
-				ws.send(JSON.stringify({
-					toUser: {
-						user_id: friend_id,
-						friends: [{ user_id: username }]
-					},
-					content: "",
-					sendDate: new Date().toString(),
-					recievedDate: new Date().toString(),
-				}))
-				ws.send(fileToSendAsChat.files[0]);
-				
 				var parentDiv = document.createElement('div');
 				var childDiv = document.createElement('div');
 				var timeLabel = document.createElement('label');
@@ -618,13 +601,12 @@ function preocessMessage(e) {
 				if (fileToSendAsChat.files[0].type == 'image/png' || fileToSendAsChat.files[0].type == 'image/jpeg') {
 
 					parentDiv.className = 'right-div';
-					childDiv.className = 'right-msg-img';
+					childDiv.className = 'right-msg';
 					timeLabel.className = 'right-time';
 					timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
 					parentDiv.append(timeLabel);
 					parentDiv.append(childDiv);
-					childDiv.innerHTML = `<img src="${'data:image/png;base64,' + fileString}"
-					 alt="" width="100%" style="cursor: pointer;">`;
+					childDiv.innerHTML = `<img src="${'data:image/png;base64,' + fileString}" alt="" width="100px" height="120px" style:"cursor:pointer">`;
 
 					messageSection.append(parentDiv);
 
@@ -637,20 +619,16 @@ function preocessMessage(e) {
 					parentDiv.append(childDiv);
 					switch (fileToSendAsChat.files[0].type) {
 						case 'application/pdf':
-							childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px; color:red"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+							childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px; color:red"></i>&nbsp;<span>${fileToSendAsChat.files[0].name}</span>`;
 
 							break;
 
 						case 'application/x-zip-compressed':
-							childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+							childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span>${fileToSendAsChat.files[0].name}</span>`;
 							break;
 
 						case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-							childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
-							break;
-							
-						case 'application/zip':
-							childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+							childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span>${fileToSendAsChat.files[0].name}</span>`;
 							break;
 
 						default:
@@ -727,7 +705,6 @@ function trackFileToBeSendInChat(e) {
 	messageArea.value = e.target.value.split("\\")[2];
 	let sendMyFile = e.target.files[0]
 	fileTobyte(sendMyFile).then((e) => {
-		fileByteArray = e;
 		fileString = btoa(uint8ToString(e))
 
 	})

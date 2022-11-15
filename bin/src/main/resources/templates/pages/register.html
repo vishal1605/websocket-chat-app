@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::.row},~{::title},~{},~{})">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    
+</head>
+
+<body>
+    <div class="row register-section mt-5">
+        <div class="col-4 register m-auto shadow py-1">
+          <div th:if="${succMsg}" class="alert alert-success" role="alert">
+            This is a success alert—check it out!
+          </div>
+            <h1 class="text-center">Register</h1>
+            <form class="mb-3" action="register" method="post">
+                <div class="mb-3">
+                  <label for="exampleInputUserName" class="form-label">Username</label>
+                  <input type="text" class="form-control" name="userName" id="exampleInputUserName" aria-describedby="emailHelp">
+                  
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputEmail" class="form-label">Email</label>
+                  <input type="email" class="form-control" name="email" id="exampleInputEmail" aria-describedby="emailHelp">
+                  
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">Password</label>
+                  <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Register</button>
+              </form>
+              <div class="section text-center">
+                <p class="m-0">already user pls <a th:href="@{/login-form}">login</a></p>
+              </div>
+        </div>
+               
+    </div>
+
+</body>
+
+</html>

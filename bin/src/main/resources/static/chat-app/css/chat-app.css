@@ -128,15 +128,6 @@
     margin-bottom: 6px;
     
 }
-.left-div .left-msg-img{
-	width: 110px;
-	max-height: 130px;
-    padding: 3px;
-    overflow: hidden;
-    float: left;
-    box-shadow: 4px 3px 3px 2px gray;
-    margin-bottom: 6px;
-}
 .left-div .left-time{
     color: white;
     background-color: rgb(229, 223, 223);
@@ -180,16 +171,6 @@
     margin-right: 3px;
     font-size: 12px;
     overflow: hidden;
-}
-
-.right-div .right-msg-img{
-	width: 110px;
-	max-height: 130px;
-    padding: 3px;
-    overflow: hidden;
-    float: right;
-    box-shadow: 4px 3px 3px 2px gray;
-    margin-bottom: 6px;
 }
 /* ///////////////////ALert///////////////////////////////// */
 

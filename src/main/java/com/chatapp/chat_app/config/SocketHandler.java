@@ -1,6 +1,10 @@
 package com.chatapp.chat_app.config;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +31,7 @@ import com.google.gson.Gson;
 public class SocketHandler extends AbstractWebSocketHandler {
     static List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     private static Map<String, ChatUser> users = new HashMap<>();
+    Message m = null;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -59,10 +64,17 @@ public class SocketHandler extends AbstractWebSocketHandler {
     @Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
     	if (message instanceof TextMessage) {
-            Message m = new Gson().fromJson((String) message.getPayload(), Message.class);
-            sendMessageToOneUser(m);
+    		System.out.println("Text Message");
+            m = new Gson().fromJson((String) message.getPayload(), Message.class);
+            //sendMessageToOneUser(m);
 		}else if (message instanceof BinaryMessage) {
-			System.out.println(message.getPayload());
+			ByteBuffer b = (ByteBuffer) message.getPayload();
+			System.out.println(b.array().length);
+//			File outputFile = new File("C:\\Users\\vishalg\\Desktop\\Html\\myfile.jpg");
+//			try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+//			    outputStream.write(b.array());
+//			}
+			//sendByteToOneUser(m, b.array());
 			//System.out.printf("Binary Message", message.getPayload());
 		}
     	
@@ -83,6 +95,17 @@ public class SocketHandler extends AbstractWebSocketHandler {
             }
         }
     }
+    private static void sendByteToOneUser(Message message, byte[] b) throws IOException, EncodeException {
+		for (WebSocketSession endpoint : sessions) {
+			synchronized (endpoint) {
+				if (endpoint.getId().equals(getSessionId(message.getToUser()))) {
+					System.out.println("send binary");
+					endpoint.sendMessage(new BinaryMessage(b));
+				}
+				
+			}
+		}
+	}
 
     private static String getSessionId(ChatUser to) {
         Map<String, ChatUser> map = users.entrySet().stream()
