@@ -1,0 +1,111 @@
+.container-fluid .dashboard-section .logo{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.container-fluid .dashboard-section .logo .chat{
+    position: relative;
+}
+.container-fluid .dashboard-section .logo .chat span::before{
+    content: "Chat Start";
+    position: absolute;
+    bottom: 110px;
+    left: -80px;
+    color: black;
+    background-color: rgb(240, 239, 239);
+    font-size: 20px;
+    padding: 3px 5px;
+    box-shadow: 3px 3px 3px 2px rgb(218, 216, 216);
+    font-weight: 600;
+    border-radius: 5px;
+    opacity: .7;
+    /* display: none; */
+
+}
+.container-fluid .dashboard-section .logo .chat:hover .chat span::before
+{
+    color: red;
+}
+
+/* ///////////////////////////////////Chat section starts here//////////////////////////// */
+
+/* .container-fluid .chat-section .chat .chat-app{
+    display: flex;
+    height: 550px;
+} */
+/* .container-fluid .chat-section .chat .chat-app .chat-sidebar{
+    width: 35%;
+    border: 1px solid black !important;
+} */
+/* .container-fluid .chat-section .chat .chat-app .chat-sidebar .chat-list-user{
+    list-style: none;
+    padding: 0;
+} */
+/* .chat-sidebar .chat-list-user li{    
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 10px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3px;
+    margin: 0 3px;
+}
+.container-fluid .chat-section .chat .chat-app .chat-main{
+    width: 65%;
+    display: flex;
+    flex-direction: column;
+} */
+/* .container-fluid .chat-section .chat .chat-app .chat-main .message-section{
+    height: 550px;
+    border: 1px solid black;
+}
+.chat-app .chat-main .message-section .left-div{
+    border: 1px solid black;
+    margin-bottom: 5px;
+    overflow:auto;    
+    
+}
+.left-div .left-msg{
+    min-width: 20%;
+    max-width: 75%;
+    background-color: red;
+    border-radius: 18px;
+    padding: 5px;
+    padding-left: 10px;
+    float: left;
+    box-shadow: 4px 3px 3px 2px gray;
+    margin-bottom: 4px;
+    
+}
+.chat-app .chat-main .message-section .right-div{
+    border: 1px solid black;
+    margin-bottom: 5px;
+    overflow:auto;
+}
+.right-div .right-msg{
+    min-width: 20%;
+    max-width: 75%;
+    background-color: rgb(23, 209, 32);
+    border-radius: 18px;
+    padding: 5px;
+    padding-left: 10px;
+    float: right;
+    box-shadow: 4px 3px 3px 2px gray;
+    margin-bottom: 4px;
+}
+.container-fluid .chat-section .chat .chat-app .chat-main .message-input-section{
+    height: 50px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+.chat-main .message-input-section form input{
+    width: 460px;
+    outline: none;
+    
+} */
+
+/* ///////////////////////////////////Chat section end here//////////////////////////// */

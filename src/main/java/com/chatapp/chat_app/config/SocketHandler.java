@@ -1,6 +1,10 @@
 package com.chatapp.chat_app.config;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,10 +63,16 @@ public class SocketHandler extends AbstractWebSocketHandler {
     @Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
     	if (message instanceof TextMessage) {
+    		System.out.println("Text Message");
             Message m = new Gson().fromJson((String) message.getPayload(), Message.class);
-            sendMessageToOneUser(m);
+            //sendMessageToOneUser(m);
 		}else if (message instanceof BinaryMessage) {
-			System.out.println(message.getPayload());
+			ByteBuffer b = (ByteBuffer) message.getPayload();
+			System.out.println(b.array().length);
+			File outputFile = new File("C:\\Users\\vishalg\\Desktop\\Html\\myfile.jpg");
+			try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+			    outputStream.write(b.array());
+			}
 			//System.out.printf("Binary Message", message.getPayload());
 		}
     	

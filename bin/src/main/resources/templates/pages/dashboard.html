@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::.row},~{::title},~{},~{})">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    
+</head>
+
+<body>
+    <div class="row dashboard-section mt-5">
+        <div class="col-9 dashboard m-auto shadow">
+            <div class="row">
+                <div class="logo">
+                    <a th:href="@{'/dashboard/chat/'+${session.user.userName}}" class="chat"><span><i class="fa-regular fa-comment-dots" style="font-size: 150px;"></i></span></a>
+                    <a href=""><i class="fa-solid fa-video" style="font-size: 150px;"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-3 text-center">
+            <a th:href="@{/logout}" class="btn btn-danger">Logout</a>
+        </div>
+               
+    </div>
+
+</body>
+
+</html>

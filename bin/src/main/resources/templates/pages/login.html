@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::.row},~{::title},~{},~{})">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    
+</head>
+
+<body>
+    <div class="row login-section mt-5">
+        <div class="col-4 login m-auto shadow py-1">
+            <h1 class="text-center">Login</h1>
+            <form class="mb-3" action="login" method="post">
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">Username</label>
+                  <input type="text" class="form-control" name="userName" id="exampleInputEmail1" aria-describedby="emailHelp">
+                  
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Connect</button>
+              </form>
+              <div class="section text-center">
+                <p class="m-0">new user pls <a th:href="@{/}">Register</a></p>
+              </div>
+        </div>
+               
+    </div>
+
+</body>
+
+</html>
