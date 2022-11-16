@@ -35,17 +35,19 @@ let friend_id = 0;
 var username = session.innerHTML;
 let fileString = "";
 let fileByteArray = [];
+let contentType = "";
+let holdBinaryMessageDetails = [];
 
 ////Event Listners
 refresh.addEventListener('click', whoOnline);
-myFriends.onclick = function (e) {
+myFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'gray';
 	notMyFriends.style.background = '#f76b2a';
 }
 
-notMyFriends.onclick = function (e) {
+notMyFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#f76b2a';
@@ -73,7 +75,7 @@ function getMyProfilePicture() {
 		data: {
 			requestData: username
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			if (responseObject == "") {
 			} else {
 
@@ -87,9 +89,17 @@ function getMyProfilePicture() {
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function (event) {
+	ws.onmessage = function(event) {
+		var parentDiv = document.createElement('div');
+		var childDiv = document.createElement('div');
+		var timeLabel = document.createElement('label');
+		parentDiv.className = 'left-div';
+		timeLabel.className = 'left-time';
+		timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
 		if (typeof (event.data) === 'object') {
-			var labelTime = new Date();
+			let userOpenToTakeMsg = holdBinaryMessageDetails[0]
+			if (friend_id == userOpenToTakeMsg.toUser.friends[0].user_id) {
+				var labelTime = new Date();
 			if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
 				globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
@@ -100,21 +110,47 @@ function connect() {
 			}
 			var reader = new FileReader();
 			reader.readAsDataURL(event.data);
-			reader.onloadend = function () {
+			reader.onloadend = function() {
 				var base64String = reader.result;
-				var parentDiv = document.createElement('div');
-				var childDiv = document.createElement('div');
-				var timeLabel = document.createElement('label');
-				parentDiv.className = 'left-div';
-				childDiv.className = 'left-msg-img';
-				timeLabel.className = 'left-time';
-				timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
-				parentDiv.append(timeLabel);
+				switch (contentType) {
+					case 'application/pdf':
+						childDiv.className = 'left-msg';
+						childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.pdf</span>`;
 
+						break;
+
+					case 'image/png':
+						childDiv.className = 'left-msg-img';
+						childDiv.innerHTML = `<img src="${base64String}"
+											  alt="" width="100%" style="cursor: pointer;">`;
+						break;
+
+					case 'image/jpeg':
+						childDiv.className = 'left-msg-img';
+						childDiv.innerHTML = `<img src="${base64String}"
+											  alt="" width="100%" style="cursor: pointer;">`;
+						break;
+
+					case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+						childDiv.className = 'left-msg';
+						childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.xlsx</span>`;
+						break;
+
+					case 'application/zip':
+						childDiv.className = 'left-msg';
+						childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.zip</span>`;
+						break;
+
+					default:
+						break;
+				}
+				parentDiv.append(timeLabel);
 				parentDiv.append(childDiv);
-				childDiv.innerHTML = `<img src="${base64String}"
-				alt="" width="100%" style="cursor: pointer;">`;
 				messageSection.append(parentDiv);
+				holdBinaryMessageDetails.shift();
+			}
+			}else{
+				holdBinaryMessageDetails.shift();
 			}
 		} else {
 
@@ -142,24 +178,26 @@ function connect() {
 
 			} else {
 				if (friend_id != activeUser.toUser.friends[0].user_id) {
-					if (activeUser.content == "binarydta") {
+					if (activeUser.content.split(',')[0] == "binarydta") {
+						holdBinaryMessageDetails.push(activeUser)
+						contentType = activeUser.content.split(',')[1];
 						messageArray.push(activeUser.toUser.friends[0].user_id)
-					//console.log(messageArray);
-					var count = {};
-					messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
-					//console.log(count);
-					for (let key in count) {
-						document.getElementById(key).children[0].textContent = count[key];
-						document.getElementById(key).children[0].style.display = 'block';
-						document.getElementById(key).children[2].children[1].innerText = 'Conte...';
-						document.getElementById(key).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
+						//console.log(messageArray);
+						var count = {};
+						messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+						//console.log(count);
+						for (let key in count) {
+							document.getElementById(key).children[0].textContent = count[key];
+							document.getElementById(key).children[0].style.display = 'block';
+							document.getElementById(key).children[2].children[1].innerText = 'Conte...';
+							document.getElementById(key).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 
-					}
+						}
 					} else {
 						messageArray.push(activeUser.toUser.friends[0].user_id)
 						//console.log(messageArray);
 						var count = {};
-						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+						messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
 						//console.log(count);
 						for (let key in count) {
 							document.getElementById(key).children[0].textContent = count[key];
@@ -171,8 +209,8 @@ function connect() {
 					}
 
 				} else {
-					if (activeUser.content == "binarydta") {
-
+					if (activeUser.content.split(',')[0] == "binarydta") {
+						contentType = activeUser.content.split(',')[1];
 					} else {
 						var labelTime = new Date();
 						console.log(globalDate);
@@ -184,16 +222,11 @@ function connect() {
 							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
 							messageSection.append(dateTimeStamp)
 						}
-						var parentDiv = document.createElement('div');
-						var childDiv = document.createElement('div');
-						var timeLabel = document.createElement('label');
-						parentDiv.className = 'left-div';
-						childDiv.className = 'left-msg'; timeLabel.className = 'left-time';
-						timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
-						parentDiv.append(timeLabel);
-
-						parentDiv.append(childDiv);
+						childDiv.className = 'left-msg';
 						childDiv.innerHTML = `<small class="text-light">${activeUser.content}</small>`;
+
+						parentDiv.append(timeLabel);
+						parentDiv.append(childDiv);
 						messageSection.append(parentDiv);
 					}
 				}
@@ -270,7 +303,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function (responseObject) {
+		success: function(responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -306,7 +339,7 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
 				responseObject.forEach((e) => {
@@ -335,7 +368,7 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function (lastMessages) {
+					success: function(lastMessages) {
 						lastMessages.forEach((e) => {
 							var sendDate = new Date(e.sendDate);
 							if (+sendDate.getDate() === +new Date().getDate()) {
@@ -376,7 +409,7 @@ function addFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'aqua';
@@ -425,7 +458,7 @@ function removeFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
@@ -453,7 +486,7 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function (e) {
+closePopUpProfileModel.onclick = function(e) {
 	profilePic.value = '';
 	if (alertMsg.classList.contains('show')) {
 		alertMsg.classList.remove('show');
@@ -506,7 +539,7 @@ function submitProfilePic() {
 		contentType: false,
 		processData: false,
 		data: formData,
-		success: function (response) {
+		success: function(response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
 
 		}
@@ -534,7 +567,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function (response) {
+		success: function(response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -644,9 +677,10 @@ function preocessMessage(e) {
 						user_id: friend_id,
 						friends: [{ user_id: username }]
 					},
-					content: "binarydta",
+					content: "binarydta," + fileToSendAsChat.files[0].type,
 					sendDate: new Date().toString(),
 					recievedDate: new Date().toString(),
+
 				}))
 				ws.send(fileToSendAsChat.files[0]);
 
@@ -745,7 +779,7 @@ function preocessMessage(e) {
 				// 			username, friend_id, myMessage
 				// 		})
 				// 	},
-			
+
 				// 	success: function (response) {
 				// 		//console.log(response);
 				// 	}
@@ -764,7 +798,7 @@ function preocessMessage(e) {
 		alert("please select user")
 
 	}
-	
+
 
 }
 

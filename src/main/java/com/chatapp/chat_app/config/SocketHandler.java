@@ -52,7 +52,6 @@ public class SocketHandler extends AbstractWebSocketHandler {
         // System.out.println("Connection closed");
         sessions.remove(session);
         ChatUser user = (ChatUser) session.getAttributes().get("log");
-        // String username = session.getUri().toString().split("/")[4];
         user.setActive(false);
         users.remove(session.getId());
         ConnectBroadcast();
@@ -143,10 +142,5 @@ public class SocketHandler extends AbstractWebSocketHandler {
 
     }
 
-	// @Override
-	// protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
-	// 	System.out.println("Binary Message");
-	// 	super.handleBinaryMessage(session, message);
-	// }
 
 }
