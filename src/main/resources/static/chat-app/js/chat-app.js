@@ -40,14 +40,14 @@ let holdBinaryMessageDetails = [];
 
 ////Event Listners
 refresh.addEventListener('click', whoOnline);
-myFriends.onclick = function(e) {
+myFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'gray';
 	notMyFriends.style.background = '#f76b2a';
 }
 
-notMyFriends.onclick = function(e) {
+notMyFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#f76b2a';
@@ -75,7 +75,7 @@ function getMyProfilePicture() {
 		data: {
 			requestData: username
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			if (responseObject == "") {
 			} else {
 
@@ -89,7 +89,7 @@ function getMyProfilePicture() {
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function(event) {
+	ws.onmessage = function (event) {
 		var parentDiv = document.createElement('div');
 		var childDiv = document.createElement('div');
 		var timeLabel = document.createElement('label');
@@ -112,7 +112,7 @@ function connect() {
 				}
 				var reader = new FileReader();
 				reader.readAsDataURL(event.data);
-				reader.onloadend = function() {
+				reader.onloadend = function () {
 					var base64String = reader.result;
 					switch (contentType) {
 						case 'application/pdf':
@@ -188,7 +188,7 @@ function connect() {
 						messageArray.push(activeUser.toUser.friends[0].user_id)
 						//console.log(messageArray);
 						var count = {};
-						messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 						//console.log(count);
 						for (let key in count) {
 							document.getElementById(key).children[0].textContent = count[key];
@@ -201,7 +201,7 @@ function connect() {
 						messageArray.push(activeUser.toUser.friends[0].user_id)
 						//console.log(messageArray);
 						var count = {};
-						messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 						//console.log(count);
 						for (let key in count) {
 							document.getElementById(key).children[0].textContent = count[key];
@@ -213,7 +213,7 @@ function connect() {
 					}
 
 				} else {
-					
+
 					if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
 						holdBinaryMessageDetails.push(activeUser)
 						contentType = bin2String(activeUser.content).split(',')[1];
@@ -246,7 +246,7 @@ function connect() {
 
 }
 function bin2String(array) {
-  return String.fromCharCode.apply(String, array);
+	return String.fromCharCode.apply(String, array);
 }
 
 //////////////////////////////Disconnected User from websocket connection/////////////////////////////////////
@@ -312,7 +312,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function(responseObject) {
+		success: function (responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -348,7 +348,7 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
 				responseObject.forEach((e) => {
@@ -377,7 +377,7 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function(lastMessages) {
+					success: function (lastMessages) {
 						lastMessages.forEach((e) => {
 							var sendDate = new Date(e.sendDate);
 							var decodedString = atob(e.content);
@@ -419,7 +419,7 @@ function addFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'aqua';
@@ -468,7 +468,7 @@ function removeFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
@@ -496,7 +496,7 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function(e) {
+closePopUpProfileModel.onclick = function (e) {
 	profilePic.value = '';
 	if (alertMsg.classList.contains('show')) {
 		alertMsg.classList.remove('show');
@@ -549,7 +549,7 @@ function submitProfilePic() {
 		contentType: false,
 		processData: false,
 		data: formData,
-		success: function(response) {
+		success: function (response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
 
 		}
@@ -577,7 +577,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function(response) {
+		success: function (response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -720,20 +720,22 @@ function preocessMessage(e) {
 					 alt="" width="100%" style="cursor: pointer;">`;
 
 					messageSection.append(parentDiv);
-					// $.ajax({
-				// 	type: "POST",
-				// 	url: "/send-message",
-				// 	data: {
-				// 		requestData: JSON.stringify({
-				// 			username, friend_id, myMessage
-				// 		})
-				// 	},
 
-				// 	success: function (response) {
-				// 		//console.log(response);
-				// 	}
-				// });
-					
+					let formFile = new FormData();
+					formFile.append('msgFile', fileToSendAsChat.files[0])
+					formFile.append('username', username)
+					formFile.append('friend_id', friend_id)
+					$.ajax({
+						type: "POST",
+						url: "/send-file",
+						contentType: false,
+						processData: false,
+						data: formFile,
+						success: function (response) {
+							console.log(response);
+						}
+					});
+
 
 				} else {
 					parentDiv.className = 'right-div';
@@ -799,19 +801,19 @@ function preocessMessage(e) {
 				parentDiv.append(childDiv);
 				childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
 				messageSection.append(parentDiv);
-				// $.ajax({
-				// 	type: "POST",
-				// 	url: "/send-message",
-				// 	data: {
-				// 		requestData: JSON.stringify({
-				// 			username, friend_id, myMessage
-				// 		})
-				// 	},
+				$.ajax({
+					type: "POST",
+					url: "/send-message",
+					data: {
+						requestData: JSON.stringify({
+							username, friend_id, myMessage
+						})
+					},
 
-				// 	success: function (response) {
-				// 		//console.log(response);
-				// 	}
-				// });
+					success: function (response) {
+						//console.log(response);
+					}
+				});
 
 			}
 
