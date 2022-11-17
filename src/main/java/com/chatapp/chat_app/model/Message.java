@@ -21,7 +21,7 @@ public class Message {
     private ChatUser toUser;
 
     @Lob
-    private String content;
+    private byte[] content;
     private String sendDate;
     private String recievedDate;
     public long getMessage_id() {
@@ -36,10 +36,10 @@ public class Message {
     public void setToUser(ChatUser toUser) {
         this.toUser = toUser;
     }
-    public String getContent() {
+    public byte[] getContent() {
         return content;
     }
-    public void setContent(String content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
     public String getSendDate() {
@@ -55,7 +55,7 @@ public class Message {
         this.recievedDate = recievedDate;
     }
     
-    public Message(ChatUser toUser, String content, String sendDate, String recievedDate) {
+    public Message(ChatUser toUser, byte[] content, String sendDate, String recievedDate) {
         this.toUser = toUser;
         this.content = content;
         this.sendDate = sendDate;

@@ -220,7 +220,20 @@ public class MsgController {
 		ChatUser f = dao.getSingleUser(f_id);
 		Set<Message> set = new HashSet<Message>();
 		set.add(mDao.saveMessage(user_id,
-				new Message(f, message, LocalDateTime.now().toString(), LocalDateTime.now().toString())));
+				new Message(f, message.getBytes(), LocalDateTime.now().toString(), LocalDateTime.now().toString())));
+		return "done";
+	}
+	
+	@PostMapping("/send-file")
+	public String saveUserFileMessage(@RequestParam("msgFile") MultipartFile myMultipartFile,
+		    @RequestParam("username") int myId,@RequestParam("friend_id") int friend_id) {
+		System.out.println(myMultipartFile.getOriginalFilename());
+		System.out.println(myId);
+		System.out.println(friend_id);
+		
+//		Set<Message> set = new HashSet<Message>();
+//		set.add(mDao.saveMessage(user_id,
+//				new Message(f, message.getBytes(), LocalDateTime.now().toString(), LocalDateTime.now().toString())));
 		return "done";
 	}
 

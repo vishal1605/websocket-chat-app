@@ -96,65 +96,68 @@ function connect() {
 		parentDiv.className = 'left-div';
 		timeLabel.className = 'left-time';
 		timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
+		console.log(typeof event.data)
 		if (typeof (event.data) === 'object') {
 			let userOpenToTakeMsg = holdBinaryMessageDetails[0]
+			console.log(userOpenToTakeMsg)
 			if (friend_id == userOpenToTakeMsg.toUser.friends[0].user_id) {
 				var labelTime = new Date();
-			if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
-				globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
-				var dateTimeStamp = document.createElement('div');
-				dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-				dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-				messageSection.append(dateTimeStamp)
-			}
-			var reader = new FileReader();
-			reader.readAsDataURL(event.data);
-			reader.onloadend = function() {
-				var base64String = reader.result;
-				switch (contentType) {
-					case 'application/pdf':
-						childDiv.className = 'left-msg';
-						childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.pdf</span>`;
-
-						break;
-
-					case 'image/png':
-						childDiv.className = 'left-msg-img';
-						childDiv.innerHTML = `<img src="${base64String}"
-											  alt="" width="100%" style="cursor: pointer;">`;
-						break;
-
-					case 'image/jpeg':
-						childDiv.className = 'left-msg-img';
-						childDiv.innerHTML = `<img src="${base64String}"
-											  alt="" width="100%" style="cursor: pointer;">`;
-						break;
-
-					case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-						childDiv.className = 'left-msg';
-						childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.xlsx</span>`;
-						break;
-
-					case 'application/zip':
-						childDiv.className = 'left-msg';
-						childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.zip</span>`;
-						break;
-
-					default:
-						break;
+					globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+					var dateTimeStamp = document.createElement('div');
+					dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+					dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+					messageSection.append(dateTimeStamp)
 				}
-				parentDiv.append(timeLabel);
-				parentDiv.append(childDiv);
-				messageSection.append(parentDiv);
-				holdBinaryMessageDetails.shift();
-			}
-			}else{
+				var reader = new FileReader();
+				reader.readAsDataURL(event.data);
+				reader.onloadend = function() {
+					var base64String = reader.result;
+					switch (contentType) {
+						case 'application/pdf':
+							childDiv.className = 'left-msg';
+							childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.pdf</span>`;
+
+							break;
+
+						case 'image/png':
+							childDiv.className = 'left-msg-img';
+							childDiv.innerHTML = `<img src="${base64String}"
+											  alt="" width="100%" style="cursor: pointer;">`;
+							break;
+
+						case 'image/jpeg':
+							childDiv.className = 'left-msg-img';
+							childDiv.innerHTML = `<img src="${base64String}"
+											  alt="" width="100%" style="cursor: pointer;">`;
+							break;
+
+						case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+							childDiv.className = 'left-msg';
+							childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.xlsx</span>`;
+							break;
+
+						case 'application/zip':
+							childDiv.className = 'left-msg';
+							childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.zip</span>`;
+							break;
+
+						default:
+							break;
+					}
+					parentDiv.append(timeLabel);
+					parentDiv.append(childDiv);
+					messageSection.append(parentDiv);
+					holdBinaryMessageDetails.shift();
+				}
+			} else {
 				holdBinaryMessageDetails.shift();
 			}
 		} else {
 
 			var activeUser = JSON.parse(event.data);
+			console.log(activeUser)
 			if ('user_id' in activeUser) {
 				if (activeUser.isActive == true) {
 					let exist = active.some((e) => {
@@ -178,9 +181,10 @@ function connect() {
 
 			} else {
 				if (friend_id != activeUser.toUser.friends[0].user_id) {
-					if (activeUser.content.split(',')[0] == "binarydta") {
+					if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
 						holdBinaryMessageDetails.push(activeUser)
-						contentType = activeUser.content.split(',')[1];
+						console.log(holdBinaryMessageDetails[0], "Its A Image")
+						contentType = bin2String(activeUser.content).split(',')[1];
 						messageArray.push(activeUser.toUser.friends[0].user_id)
 						//console.log(messageArray);
 						var count = {};
@@ -202,18 +206,20 @@ function connect() {
 						for (let key in count) {
 							document.getElementById(key).children[0].textContent = count[key];
 							document.getElementById(key).children[0].style.display = 'block';
-							document.getElementById(key).children[2].children[1].innerText = activeUser.content.substring(0, 10) + '...';
+							document.getElementById(key).children[2].children[1].innerText = bin2String(activeUser.content).substring(0, 10) + '...';
 							document.getElementById(key).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 
 						}
 					}
 
 				} else {
-					if (activeUser.content.split(',')[0] == "binarydta") {
-						contentType = activeUser.content.split(',')[1];
+					
+					if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
+						holdBinaryMessageDetails.push(activeUser)
+						contentType = bin2String(activeUser.content).split(',')[1];
 					} else {
 						var labelTime = new Date();
-						console.log(globalDate);
+						console.log(activeUser);
 						if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
 							globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
@@ -223,7 +229,7 @@ function connect() {
 							messageSection.append(dateTimeStamp)
 						}
 						childDiv.className = 'left-msg';
-						childDiv.innerHTML = `<small class="text-light">${activeUser.content}</small>`;
+						childDiv.innerHTML = `<small class="text-light">${bin2String(activeUser.content)}</small>`;
 
 						parentDiv.append(timeLabel);
 						parentDiv.append(childDiv);
@@ -238,6 +244,9 @@ function connect() {
 		// whoOnline();
 	}
 
+}
+function bin2String(array) {
+  return String.fromCharCode.apply(String, array);
 }
 
 //////////////////////////////Disconnected User from websocket connection/////////////////////////////////////
@@ -371,13 +380,14 @@ function getAllFriends(id) {
 					success: function(lastMessages) {
 						lastMessages.forEach((e) => {
 							var sendDate = new Date(e.sendDate);
+							var decodedString = atob(e.content);
 							if (+sendDate.getDate() === +new Date().getDate()) {
 
 								document.getElementById(e.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
 							} else {
 								document.getElementById(e.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
 							}
-							document.getElementById(e.toUser.user_id).children[2].children[1].innerText = e.content.substring(0, 10) + "...";
+							document.getElementById(e.toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
 						})
 
 
@@ -610,13 +620,15 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 							messageSection.append(dateTimeStamp)
 						}
 					}
+					var decodedString = atob(e.content);
+
 					parentDiv.className = 'left-div';
 					childDiv.className = 'left-msg';
 					timeLabel.className = 'left-time';
 					timeLabel.innerText = `${moment(labelTime).format("h:mm")}`;
 					parentDiv.append(timeLabel);
 					parentDiv.append(childDiv);
-					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`;
+					childDiv.innerHTML = `<small class="text-light">${decodedString}</small>`;
 					messageSection.append(parentDiv);
 
 				} else {
@@ -638,13 +650,14 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 							messageSection.append(dateTimeStamp)
 						}
 					}
+					var decodedString = atob(e.content);
 					parentDiv.className = 'right-div';
 					childDiv.className = 'right-msg';
 					timeLabel.className = 'right-time';
 					timeLabel.innerText = `${moment(labelTime).format("h:mm")}`;
 					parentDiv.append(timeLabel);
 					parentDiv.append(childDiv);
-					childDiv.innerHTML = `<small class="text-light">${e.content}</small>`;
+					childDiv.innerHTML = `<small class="text-light">${decodedString}</small>`;
 					messageSection.append(parentDiv);
 
 
@@ -677,7 +690,7 @@ function preocessMessage(e) {
 						user_id: friend_id,
 						friends: [{ user_id: username }]
 					},
-					content: "binarydta," + fileToSendAsChat.files[0].type,
+					content: unpack("binarydta," + fileToSendAsChat.files[0].type),
 					sendDate: new Date().toString(),
 					recievedDate: new Date().toString(),
 
@@ -707,6 +720,20 @@ function preocessMessage(e) {
 					 alt="" width="100%" style="cursor: pointer;">`;
 
 					messageSection.append(parentDiv);
+					// $.ajax({
+				// 	type: "POST",
+				// 	url: "/send-message",
+				// 	data: {
+				// 		requestData: JSON.stringify({
+				// 			username, friend_id, myMessage
+				// 		})
+				// 	},
+
+				// 	success: function (response) {
+				// 		//console.log(response);
+				// 	}
+				// });
+					
 
 				} else {
 					parentDiv.className = 'right-div';
@@ -742,12 +769,13 @@ function preocessMessage(e) {
 			} else {
 				var formData = new FormData(e.target);
 				let myMessage = formData.get('message');
+				console.log(unpack(myMessage))
 				ws.send(JSON.stringify({
 					toUser: {
 						user_id: friend_id,
 						friends: [{ user_id: username }]
 					},
-					content: myMessage,
+					content: unpack(myMessage),
 					sendDate: new Date().toString(),
 					recievedDate: new Date().toString(),
 				}));
@@ -800,6 +828,13 @@ function preocessMessage(e) {
 	}
 
 
+}
+function unpack(str) {
+	var arr = [];
+	for (var i = 0; i < str.length; i++) {
+		arr.push(str.charCodeAt(i));
+	}
+	return arr
 }
 
 ///////////////////////////////////////////////Select Specfic Friend of more Option three dot///////////////////////////////////////

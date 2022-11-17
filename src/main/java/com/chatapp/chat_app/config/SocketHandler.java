@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import javax.websocket.EncodeException;
 
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
@@ -63,11 +64,11 @@ public class SocketHandler extends AbstractWebSocketHandler {
     @Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
     	if (message instanceof TextMessage) {
-    		System.out.println("Text Message");
             m = new Gson().fromJson((String) message.getPayload(), Message.class);
             sendMessageToOneUser(m);
 		}else if (message instanceof BinaryMessage) {
 			ByteBuffer b = (ByteBuffer) message.getPayload();
+			Thread.sleep(70);
 			sendByteToOneUser(m, b.array());
 		}
     	
