@@ -22,6 +22,7 @@ public class Message {
 
     @Lob
     private byte[] content;
+    private String msgLabel;
     private String sendDate;
     private String recievedDate;
     public long getMessage_id() {
@@ -54,21 +55,29 @@ public class Message {
     public void setRecievedDate(String recievedDate) {
         this.recievedDate = recievedDate;
     }
-    
-    public Message(ChatUser toUser, byte[] content, String sendDate, String recievedDate) {
-        this.toUser = toUser;
-        this.content = content;
-        this.sendDate = sendDate;
-        this.recievedDate = recievedDate;
-    }
-    
-    public Message() {
+    public String getMsgLabel() {
+		return msgLabel;
+	}
+	public void setMsgLabel(String msgLabel) {
+		this.msgLabel = msgLabel;
+	}
+        
+    public Message(ChatUser toUser, byte[] content, String msgLabel, String sendDate, String recievedDate) {
+		super();
+		this.toUser = toUser;
+		this.content = content;
+		this.msgLabel = msgLabel;
+		this.sendDate = sendDate;
+		this.recievedDate = recievedDate;
+	}
+	public Message() {
     }
     @Override
     public String toString() {
         return "Message [message_id=" + message_id + ", toUser=" + toUser + ", content=" + content + ", sendDate="
                 + sendDate + ", recievedDate=" + recievedDate + "]";
     }
+	
     
     
 }

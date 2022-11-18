@@ -96,19 +96,17 @@ function connect() {
 		parentDiv.className = 'left-div';
 		timeLabel.className = 'left-time';
 		timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
-		console.log(typeof event.data)
 		if (typeof (event.data) === 'object') {
-			let userOpenToTakeMsg = holdBinaryMessageDetails[0]
-			console.log(userOpenToTakeMsg)
+			let userOpenToTakeMsg = holdBinaryMessageDetails[0];
 			if (friend_id == userOpenToTakeMsg.toUser.friends[0].user_id) {
 				var labelTime = new Date();
 				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
-					globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+					globalDate.push(moment(labelTime).format("DD/MM/YYYY"));
 					var dateTimeStamp = document.createElement('div');
 					dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
 					dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-					messageSection.append(dateTimeStamp)
+					messageSection.append(dateTimeStamp);
 				}
 				var reader = new FileReader();
 				reader.readAsDataURL(event.data);
@@ -157,7 +155,6 @@ function connect() {
 		} else {
 
 			var activeUser = JSON.parse(event.data);
-			console.log(activeUser)
 			if ('user_id' in activeUser) {
 				if (activeUser.isActive == true) {
 					let exist = active.some((e) => {
@@ -182,8 +179,7 @@ function connect() {
 			} else {
 				if (friend_id != activeUser.toUser.friends[0].user_id) {
 					if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
-						holdBinaryMessageDetails.push(activeUser)
-						console.log(holdBinaryMessageDetails[0], "Its A Image")
+						holdBinaryMessageDetails.push(activeUser);
 						contentType = bin2String(activeUser.content).split(',')[1];
 						messageArray.push(activeUser.toUser.friends[0].user_id)
 						//console.log(messageArray);
@@ -387,7 +383,11 @@ function getAllFriends(id) {
 							} else {
 								document.getElementById(e.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
 							}
-							document.getElementById(e.toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
+							if(e.msgLabel == ""){
+								document.getElementById(e.toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
+							}else{
+								document.getElementById(e.toUser.user_id).children[2].children[1].innerText = "document...";
+							}
 						})
 
 
@@ -595,6 +595,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 				var date2 = new Date(b.sendDate)
 				return date1 - date2;
 			});
+			
 
 			response.forEach((e) => {
 				var labelTime = new Date(e.sendDate)
@@ -620,15 +621,22 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 							messageSection.append(dateTimeStamp)
 						}
 					}
-					var decodedString = atob(e.content);
 
 					parentDiv.className = 'left-div';
-					childDiv.className = 'left-msg';
 					timeLabel.className = 'left-time';
 					timeLabel.innerText = `${moment(labelTime).format("h:mm")}`;
 					parentDiv.append(timeLabel);
 					parentDiv.append(childDiv);
+					if(e.msgLabel == ""){
+					childDiv.className = 'left-msg';
+					var decodedString = atob(e.content);
 					childDiv.innerHTML = `<small class="text-light">${decodedString}</small>`;
+						
+					}else{
+						childDiv.className = 'left-msg-img';
+						childDiv.innerHTML = `<img src="${'data:image/png;base64,' + e.content}"
+					 alt="" width="100%" style="cursor: pointer;">`;
+					}
 					messageSection.append(parentDiv);
 
 				} else {
@@ -650,14 +658,23 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 							messageSection.append(dateTimeStamp)
 						}
 					}
-					var decodedString = atob(e.content);
+					
 					parentDiv.className = 'right-div';
-					childDiv.className = 'right-msg';
+					
 					timeLabel.className = 'right-time';
 					timeLabel.innerText = `${moment(labelTime).format("h:mm")}`;
+					if(e.msgLabel==""){
+						childDiv.className = 'right-msg';
+						var decodedString = atob(e.content);
+						childDiv.innerHTML = `<small class="text-light">${decodedString}</small>`;
+					}else{
+						childDiv.className = 'right-msg-img';
+						childDiv.innerHTML = `<img src="${'data:image/png;base64,' + e.content}"
+					 alt="" width="100%" style="cursor: pointer;">`;
+					}
+					
 					parentDiv.append(timeLabel);
 					parentDiv.append(childDiv);
-					childDiv.innerHTML = `<small class="text-light">${decodedString}</small>`;
 					messageSection.append(parentDiv);
 
 

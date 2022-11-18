@@ -176,6 +176,7 @@ public class MsgController {
 					m.setToUser(chatUser);
 					m.setContent(messages.get(messages.size() - 1).getContent());
 					m.setSendDate(messages.get(messages.size() - 1).getSendDate());
+					m.setMsgLabel(messages.get(messages.size() - 1).getMsgLabel());
 					messages1.add(m);
 
 				} else {
@@ -220,7 +221,7 @@ public class MsgController {
 		ChatUser f = dao.getSingleUser(f_id);
 		Set<Message> set = new HashSet<Message>();
 		set.add(mDao.saveMessage(user_id,
-				new Message(f, message.getBytes(), LocalDateTime.now().toString(), LocalDateTime.now().toString())));
+				new Message(f, message.getBytes(),"", LocalDateTime.now().toString(), LocalDateTime.now().toString())));
 		return "done";
 	}
 	
@@ -228,12 +229,10 @@ public class MsgController {
 	public String saveUserFileMessage(@RequestParam("msgFile") MultipartFile myMultipartFile,
 		    @RequestParam("username") int myId,@RequestParam("friend_id") int friend_id) throws IOException {
 		System.out.println(myMultipartFile.getOriginalFilename());
-		System.out.println(myId);
-		System.out.println(friend_id);
 		ChatUser f = dao.getSingleUser(friend_id);
 		Set<Message> set = new HashSet<Message>();
 		set.add(mDao.saveMessage(myId,
-				new Message(f, myMultipartFile.getBytes(), LocalDateTime.now().toString(), LocalDateTime.now().toString())));
+				new Message(f, myMultipartFile.getBytes(),myMultipartFile.getOriginalFilename(), LocalDateTime.now().toString(), LocalDateTime.now().toString())));
 		return "done";
 	}
 

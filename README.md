@@ -21,7 +21,8 @@ CREATE TABLE `chat_user` (
 ```sql
 CREATE TABLE `message` (
   `message_id` bigint NOT NULL,
-  `content` longtext,
+  `content` longblob,
+  `msg_label` varchar(255) DEFAULT NULL,
   `recieved_date` varchar(255) DEFAULT NULL,
   `send_date` varchar(255) DEFAULT NULL,
   `to_user_user_id` bigint DEFAULT NULL,
@@ -29,6 +30,7 @@ CREATE TABLE `message` (
   KEY `FKqumcy6hmow228nk518uy1ayyd` (`to_user_user_id`),
   CONSTRAINT `FKqumcy6hmow228nk518uy1ayyd` FOREIGN KEY (`to_user_user_id`) REFERENCES `chat_user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 ```
 ###  3) Chat user friends table
 ```sql

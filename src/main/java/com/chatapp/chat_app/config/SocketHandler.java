@@ -68,7 +68,6 @@ public class SocketHandler extends AbstractWebSocketHandler {
             sendMessageToOneUser(m);
 		}else if (message instanceof BinaryMessage) {
 			ByteBuffer b = (ByteBuffer) message.getPayload();
-			Thread.sleep(70);
 			sendByteToOneUser(m, b.array());
 		}
     	
@@ -79,7 +78,6 @@ public class SocketHandler extends AbstractWebSocketHandler {
         for (WebSocketSession endpoint : sessions) {
             synchronized (endpoint) {
                 if (endpoint.getId().equals(getSessionId(message.getToUser()))) {
-                    System.out.println("send successfully");
                     endpoint.sendMessage(new TextMessage(new Gson().toJson(message)));
                 }
                 
@@ -90,7 +88,6 @@ public class SocketHandler extends AbstractWebSocketHandler {
 		for (WebSocketSession endpoint : sessions) {
 			synchronized (endpoint) {
 				if (endpoint.getId().equals(getSessionId(message.getToUser()))) {
-					System.out.println("send binary");
 					endpoint.sendMessage(new BinaryMessage(b));
 				}
 				
