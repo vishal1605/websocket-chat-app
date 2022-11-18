@@ -23,6 +23,8 @@ const submitProfilePicBtn = document.getElementById('submit-profile-pic');
 const myProfilePic = document.getElementById('profile-pic');
 const msgHeaderProfilePic = document.getElementById('message-header-profile-pic');
 const fileToSendAsChat = document.getElementById('send-file');
+const backDropOfLoader = document.getElementById('back-drop-of-loader');
+const myLoader = document.getElementById('my_loader');
 
 //Global variable
 let active = [];
@@ -58,9 +60,9 @@ notMyFriends.onclick = function(e) {
 initialFunct();
 function initialFunct() {
 
-	getAllFriends(username);
 	myFriends.style.background = 'gray';
 	getMyProfilePicture();
+	getAllFriends(username);
 	profilePic.addEventListener('change', trackProfilePic);
 	submitMessage.addEventListener('submit', preocessMessage);
 	profileMoreOptions.addEventListener('click', openMoreOptions);
@@ -338,6 +340,7 @@ function getAllChatUsers() {
 
 ///////////////////////////////////////Get All Your friends In FriendList///////////////////////////////////////////////
 function getAllFriends(id) {
+	showLoader()
 	$.ajax({
 		type: "GET",
 		url: "/getAllFriends",
@@ -389,8 +392,7 @@ function getAllFriends(id) {
 								document.getElementById(e.toUser.user_id).children[2].children[1].innerText = "document...";
 							}
 						})
-
-
+						hideLoader();
 					}
 
 				});
@@ -570,6 +572,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 	document.getElementById(f_id).children[0].style.display = 'none';
 	friend_id = f_id;
 	var storeDate = [];
+	showLoader();
 	$.ajax({
 		type: "GET",
 		url: "/get-message",
@@ -711,7 +714,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			} else {
 				console.log("hai date aaj ki");
 			}
-
+			hideLoader();
 		}
 	});
 }
@@ -917,5 +920,15 @@ function trackFileToBeSendInChat(e) {
 		fileString = btoa(uint8ToString(e))
 
 	})
+}
+///////////////////////////////////////////////////Loader Function /////////////////////////////////////////////////////////
+
+function showLoader(){
+	backDropOfLoader.classList.add('show');
+	myLoader.classList.add('show');
+}
+function hideLoader(){
+	backDropOfLoader.classList.remove('show');
+	myLoader.classList.remove('show');
 }
 
