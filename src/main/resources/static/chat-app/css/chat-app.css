@@ -201,12 +201,12 @@
 	margin-bottom: 6px;
 }
 /* ///////////////////ALert///////////////////////////////// */
-.fade {
-	display: none;
+.fade-model {
+	display: none !important;
 }
 
-.show {
-	display: block;
+.show-model {
+	display: block !important;
 }
 
 /* ///////////////////////////Loader////////////////////////////// */
@@ -221,6 +221,7 @@
 }
 .my-loader{
 	position: absolute;
+	width: 15%;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);

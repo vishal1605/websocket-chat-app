@@ -14,10 +14,10 @@
 <body>
 	<div class="row chat-section">
 	
-		<div class="back-drop fade" id="back-drop-of-loader">
+		<div class="back-drop fade-model" id="back-drop-of-loader">
 			
 		</div>
-		<div class="d-flex justify-content-center my-loader fade" id="my_loader">
+		<div class="my-loader fade-model" id="my_loader">
 			<div class="spinner-border" role="status" style="width: 100px; height: 100px">
 				<span class="visually-hidden">Loading...</span>
 			</div>
@@ -35,7 +35,7 @@
 							aria-label="Close" id="close-profile-model"></button>
 					</div>
 					<div class="modal-body">
-						<div class="alert alert-danger m-0 p-0 fade" role="alert"
+						<div class="alert alert-danger m-0 p-0 fade-model" role="alert"
 							id="alert-msg">Please select image!</div>
 						<div class="mb-3">
 							<label for="formFile" class="form-label text-light">select
@@ -43,7 +43,7 @@
 								th:attr="data-user_id=${session.user.user_id}">
 						</div>
 						<img src="" alt="demo" width="150px" height="150px"
-							class="mt-1 fade m-auto" id="profile-demo">
+							class="mt-1 fade-model m-auto" id="profile-demo">
 					</div>
 					<div class="modal-footer">
 						<button type="button" disabled="disabled" id="submit-profile-pic"
@@ -135,11 +135,19 @@
 					<div class="message-section" id="section-of-message">
 						<!-- <div class="left-div">
                             <label class="left-time">3:25</label>
-                            <div class="left-msg">
-                                <small>Hello</small>
+                            <div class="left-msg-img">
+                                <img th:src="@{/assets/img_avatar.png}" alt="" width="100%" style="cursor: pointer;">
+                                <label for="" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></label>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center justify-content-center" id="date-time-stamp">
+                        <div class="left-div">
+                            <label class="left-time">3:25</label>
+                            <div class="left-msg">
+                                <label for="" style="font-size:17px;"><i style="font-size:20px;" class="fa-solid fa-file-excel me-2"></i><span class="text-light">xyz.xlsx</span></label><br />
+                                <hr class="m-0"/><label for="" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></label>
+                            </div>
+                        </div> -->
+                        <!-- <div class="d-flex align-items-center justify-content-center" id="date-time-stamp">
                             <h6 style="background-color: red;color:white">29/10/2022</h6>
                         </div>
                         <div class="right-div">

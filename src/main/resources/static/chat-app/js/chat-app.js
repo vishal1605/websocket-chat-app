@@ -117,30 +117,35 @@ function connect() {
 					switch (contentType) {
 						case 'application/pdf':
 							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.pdf</span>`;
+							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-pdf me-2" style="font-size:25px;"></i><span class="text-light">xyz.pdf</span></label><br />
+                                <hr class="m-0"/><a for="" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
 							break;
 
 						case 'image/png':
 							childDiv.className = 'left-msg-img';
 							childDiv.innerHTML = `<img src="${base64String}"
-											  alt="" width="100%" style="cursor: pointer;">`;
+					 						  alt="" width="100%" height="105px" style="cursor: pointer;">
+					 						  <a style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							break;
 
 						case 'image/jpeg':
 							childDiv.className = 'left-msg-img';
 							childDiv.innerHTML = `<img src="${base64String}"
-											  alt="" width="100%" style="cursor: pointer;">`;
+					 						  alt="" width="100%" height="105px" style="cursor: pointer;">
+					 						  <a style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							break;
 
 						case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
 							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.xlsx</span>`;
+							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-excel me-2" style="font-size:25px;"></i><span class="text-light">xyz.xlsx</span></label><br />
+                                <hr class="m-0"/><a for="" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							break;
 
 						case 'application/zip':
 							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">xyz.zip</span>`;
+							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-zipper me-2" style="font-size:25px;"></i><span class="text-light">xyz.zip</span></label><br />
+                                <hr class="m-0"/><a for="" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							break;
 
 						default:
@@ -500,11 +505,11 @@ function removeFriend(e) {
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
 closePopUpProfileModel.onclick = function(e) {
 	profilePic.value = '';
-	if (alertMsg.classList.contains('show')) {
-		alertMsg.classList.remove('show');
+	if (alertMsg.classList.contains('show-model')) {
+		alertMsg.classList.remove('show-model');
 	}
-	if (profileDemo.classList.contains('show')) {
-		profileDemo.classList.remove('show');
+	if (profileDemo.classList.contains('show-model')) {
+		profileDemo.classList.remove('show-model');
 	}
 	submitProfilePicBtn.setAttribute('disabled', 'disabled');
 }
@@ -517,14 +522,14 @@ function trackProfilePic(e) {
 		fileTobyte(imgFile).then((e) => {
 			var base64 = btoa(uint8ToString(e))
 			profileDemo.src = 'data:image/png;base64,' + base64;
-			profileDemo.classList.add('show');
+			profileDemo.classList.add('show-model');
 			submitProfilePicBtn.removeAttribute('disabled');
 
 		})
 
-		alertMsg.classList.remove('show')
+		alertMsg.classList.remove('show-model')
 	} else {
-		alertMsg.classList.add('show')
+		alertMsg.classList.add('show-model')
 	}
 
 }
@@ -558,7 +563,7 @@ function submitProfilePic() {
 	});
 
 	profilePic.value = '';
-	profileDemo.classList.remove('show');
+	profileDemo.classList.remove('show-model');
 	submitProfilePicBtn.setAttribute('disabled', 'disabled');
 
 }
@@ -640,15 +645,19 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 							e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JPEG' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JFIF') {
 							childDiv.className = 'left-msg-img';
 							childDiv.innerHTML = `<img src="${'data:image/png;base64,' + e.content}"
-					 						  alt="" width="100%" style="cursor: pointer;">`;
+					 						  alt="" width="100%" height="105px" style="cursor: pointer;">
+					 						  <a download="${e.msgLabel}" href="${'data:image/png;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 						} else {
 							childDiv.className = 'left-msg';
 							if(e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'PDF'){
-								childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-pdf me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:application/pdf;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							}else if(e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'ZIP'){
-								childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-zipper me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:application/zip;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							}else if(e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'XLSX'){
-								childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-excel me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							}
 						}
 					}
@@ -924,11 +933,11 @@ function trackFileToBeSendInChat(e) {
 ///////////////////////////////////////////////////Loader Function /////////////////////////////////////////////////////////
 
 function showLoader(){
-	backDropOfLoader.classList.add('show');
-	myLoader.classList.add('show');
+	backDropOfLoader.classList.add('show-model');
+	myLoader.classList.add('show-model');
 }
 function hideLoader(){
-	backDropOfLoader.classList.remove('show');
-	myLoader.classList.remove('show');
+	backDropOfLoader.classList.remove('show-model');
+	myLoader.classList.remove('show-model');
 }
 
