@@ -42,14 +42,14 @@ let holdBinaryMessageDetails = [];
 
 ////Event Listners
 refresh.addEventListener('click', whoOnline);
-myFriends.onclick = function(e) {
+myFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'gray';
 	notMyFriends.style.background = '#f76b2a';
 }
 
-notMyFriends.onclick = function(e) {
+notMyFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#f76b2a';
@@ -77,7 +77,7 @@ function getMyProfilePicture() {
 		data: {
 			requestData: username
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			if (responseObject == "") {
 			} else {
 
@@ -91,7 +91,7 @@ function getMyProfilePicture() {
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function(event) {
+	ws.onmessage = function (event) {
 		var parentDiv = document.createElement('div');
 		var childDiv = document.createElement('div');
 		var timeLabel = document.createElement('label');
@@ -112,13 +112,14 @@ function connect() {
 				}
 				var reader = new FileReader();
 				reader.readAsDataURL(event.data);
-				reader.onloadend = function() {
+				reader.onloadend = function () {
 					var base64String = reader.result;
+					console.log(contentType);
 					switch (contentType) {
 						case 'application/pdf':
 							childDiv.className = 'left-msg';
 							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-pdf me-2" style="font-size:25px;"></i><span class="text-light">xyz.pdf</span></label><br />
-                                <hr class="m-0"/><a for="" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+                                <hr class="m-0"/><a download="xyz.pdf" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
 							break;
 
@@ -126,26 +127,32 @@ function connect() {
 							childDiv.className = 'left-msg-img';
 							childDiv.innerHTML = `<img src="${base64String}"
 					 						  alt="" width="100%" height="105px" style="cursor: pointer;">
-					 						  <a style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+					 						  <a download="xyz.png" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							break;
 
 						case 'image/jpeg':
 							childDiv.className = 'left-msg-img';
 							childDiv.innerHTML = `<img src="${base64String}"
 					 						  alt="" width="100%" height="105px" style="cursor: pointer;">
-					 						  <a style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+					 						  <a download="xyz.jpg" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							break;
 
 						case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
 							childDiv.className = 'left-msg';
 							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-excel me-2" style="font-size:25px;"></i><span class="text-light">xyz.xlsx</span></label><br />
-                                <hr class="m-0"/><a for="" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+                                <hr class="m-0"/><a download="xyz.xlsx" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							break;
 
 						case 'application/zip':
 							childDiv.className = 'left-msg';
 							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-zipper me-2" style="font-size:25px;"></i><span class="text-light">xyz.zip</span></label><br />
-                                <hr class="m-0"/><a for="" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+                                <hr class="m-0"/><a download="xyz.zip" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+							break;
+
+						case 'application/x-zip-compressed':
+							childDiv.className = 'left-msg';
+							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-zipper me-2" style="font-size:25px;"></i><span class="text-light">xyz.zip</span></label><br />
+                                <hr class="m-0"/><a download="xyz.zip" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							break;
 
 						default:
@@ -191,7 +198,7 @@ function connect() {
 						messageArray.push(activeUser.toUser.friends[0].user_id)
 						//console.log(messageArray);
 						var count = {};
-						messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 						//console.log(count);
 						for (let key in count) {
 							document.getElementById(key).children[0].textContent = count[key];
@@ -204,7 +211,7 @@ function connect() {
 						messageArray.push(activeUser.toUser.friends[0].user_id)
 						//console.log(messageArray);
 						var count = {};
-						messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 						//console.log(count);
 						for (let key in count) {
 							document.getElementById(key).children[0].textContent = count[key];
@@ -315,7 +322,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function(responseObject) {
+		success: function (responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -352,7 +359,7 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
 				responseObject.forEach((e) => {
@@ -381,7 +388,8 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function(lastMessages) {
+					success: function (lastMessages) {
+						console.log(lastMessages);
 						lastMessages.forEach((e) => {
 							var sendDate = new Date(e.sendDate);
 							var decodedString = atob(e.content);
@@ -406,6 +414,7 @@ function getAllFriends(id) {
 
 			} else {
 				friendList.innerHTML = `<li class="border border-1 border-dark" id="no-friends-list" style="height:40px; background-color:green;">Sorry! no friends</li>`;
+				hideLoader();
 			}
 			getAllChatUsers();
 
@@ -426,7 +435,7 @@ function addFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'aqua';
@@ -475,7 +484,7 @@ function removeFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
@@ -503,7 +512,7 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function(e) {
+closePopUpProfileModel.onclick = function (e) {
 	profilePic.value = '';
 	if (alertMsg.classList.contains('show-model')) {
 		alertMsg.classList.remove('show-model');
@@ -556,7 +565,7 @@ function submitProfilePic() {
 		contentType: false,
 		processData: false,
 		data: formData,
-		success: function(response) {
+		success: function (response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
 
 		}
@@ -585,7 +594,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function(response) {
+		success: function (response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -649,13 +658,13 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 					 						  <a download="${e.msgLabel}" href="${'data:image/png;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 						} else {
 							childDiv.className = 'left-msg';
-							if(e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'PDF'){
+							if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'PDF') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-pdf me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:application/pdf;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							}else if(e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'ZIP'){
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'ZIP') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-zipper me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:application/zip;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							}else if(e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'XLSX'){
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'XLSX') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-excel me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							}
@@ -699,11 +708,11 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 					 						  alt="" width="100%" style="cursor: pointer;">`;
 						} else {
 							childDiv.className = 'right-msg';
-							if(e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'PDF'){
+							if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'PDF') {
 								childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
-							}else if(e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'ZIP'){
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'ZIP') {
 								childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
-							}else if(e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'XLSX'){
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'XLSX') {
 								childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
 							}
 						}
@@ -784,7 +793,7 @@ function preocessMessage(e) {
 						contentType: false,
 						processData: false,
 						data: formFile,
-						success: function(response) {
+						success: function (response) {
 							console.log(response);
 						}
 					});
@@ -830,7 +839,7 @@ function preocessMessage(e) {
 						contentType: false,
 						processData: false,
 						data: formFile,
-						success: function(response) {
+						success: function (response) {
 							console.log(response);
 						}
 					});
@@ -877,7 +886,7 @@ function preocessMessage(e) {
 						})
 					},
 
-					success: function(response) {
+					success: function (response) {
 						//console.log(response);
 					}
 				});
@@ -932,11 +941,11 @@ function trackFileToBeSendInChat(e) {
 }
 ///////////////////////////////////////////////////Loader Function /////////////////////////////////////////////////////////
 
-function showLoader(){
+function showLoader() {
 	backDropOfLoader.classList.add('show-model');
 	myLoader.classList.add('show-model');
 }
-function hideLoader(){
+function hideLoader() {
 	backDropOfLoader.classList.remove('show-model');
 	myLoader.classList.remove('show-model');
 }
