@@ -196,6 +196,8 @@ function connect() {
 						holdBinaryMessageDetails.push(activeUser);
 						contentType = bin2String(activeUser.content).split(',')[1];
 						messageArray.push(activeUser.toUser.friends[0].user_id)
+						document.getElementById(activeUser.toUser.friends[0].user_id).children[2].children[1].innerText = 'Conte...';
+						document.getElementById(activeUser.toUser.friends[0].user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 						//console.log(messageArray);
 						var count = {};
 						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
@@ -203,23 +205,28 @@ function connect() {
 						for (let key in count) {
 							document.getElementById(key).children[0].textContent = count[key];
 							document.getElementById(key).children[0].style.display = 'block';
-							document.getElementById(key).children[2].children[1].innerText = 'Conte...';
-							document.getElementById(key).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 
 						}
+						var first = document.getElementById(activeUser.toUser.friends[0].user_id).cloneNode(true);
+						document.getElementById(activeUser.toUser.friends[0].user_id).remove();
+						friendList.prepend(first);
 					} else {
 						messageArray.push(activeUser.toUser.friends[0].user_id)
+						document.getElementById(activeUser.toUser.friends[0].user_id).children[2].children[1].innerText = bin2String(activeUser.content).substring(0, 10) + '...';
+						document.getElementById(activeUser.toUser.friends[0].user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 						//console.log(messageArray);
 						var count = {};
 						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 						//console.log(count);
 						for (let key in count) {
+							console.log("1");
 							document.getElementById(key).children[0].textContent = count[key];
 							document.getElementById(key).children[0].style.display = 'block';
-							document.getElementById(key).children[2].children[1].innerText = bin2String(activeUser.content).substring(0, 10) + '...';
-							document.getElementById(key).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 
 						}
+						var first = document.getElementById(activeUser.toUser.friends[0].user_id).cloneNode(true);
+						document.getElementById(activeUser.toUser.friends[0].user_id).remove();
+						friendList.prepend(first);
 					}
 
 				} else {
@@ -362,23 +369,6 @@ function getAllFriends(id) {
 		success: function (responseObject) {
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
-				responseObject.forEach((e) => {
-					friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}',this)"
-							 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user_id}">
-												
-												<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
-												<div class="user-photo">
-													<img src="${(e.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
-												</div>
-												<div class="user-detail">
-													<h6 class="m-0">${e.userName}</h6>
-													<small class="m-0" style="font-size:13px">no msg</small>
-												</div>
-												<div class="last-time">
-													<small>3:45</small>
-												</div>
-											</li>`;
-				});
 				let modifiedFriendList = responseObject.map((u) => ({ ...u, profile_img: null }));
 				$.ajax({
 					type: "GET",
@@ -389,7 +379,45 @@ function getAllFriends(id) {
 					}
 					,
 					success: function (lastMessages) {
-						console.log(lastMessages);
+						lastMessages.sort((a, b) => {
+							var date1 = new Date(a.sendDate)
+							var date2 = new Date(b.sendDate)
+							return date2 - date1;
+						});
+						lastMessages.reverse();
+						lastMessages.forEach((e1) => {
+							responseObject.forEach((e) => {
+								if (e1.toUser.user_id == e.user_id) {
+
+									let temp = e;
+									responseObject.splice(responseObject.indexOf(e), 1)
+									responseObject.unshift(temp)
+
+								} else {
+
+								}
+
+							});
+
+						});
+						//console.log(responseObject);
+						responseObject.forEach((e) => {
+							friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}',this)"
+									 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user_id}">
+														
+														<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
+														<div class="user-photo">
+															<img src="${(e.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
+														</div>
+														<div class="user-detail">
+															<h6 class="m-0">${e.userName}</h6>
+															<small class="m-0" style="font-size:13px">no msg</small>
+														</div>
+														<div class="last-time">
+															<small>3:45</small>
+														</div>
+													</li>`;
+						});
 						lastMessages.forEach((e) => {
 							var sendDate = new Date(e.sendDate);
 							var decodedString = atob(e.content);
@@ -406,11 +434,11 @@ function getAllFriends(id) {
 							}
 						})
 						hideLoader();
+						document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none');
 					}
 
 				});
 
-				document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none');
 
 			} else {
 				friendList.innerHTML = `<li class="border border-1 border-dark" id="no-friends-list" style="height:40px; background-color:green;">Sorry! no friends</li>`;
@@ -745,163 +773,173 @@ function preocessMessage(e) {
 	var labelTime = new Date()
 	if (friend_id != 0) {
 		if (online.checked) {
-			if (fileToSendAsChat.value != "") {
-				//ws.binaryType = "arraybuffer"
-				ws.send(JSON.stringify({
-					toUser: {
-						user_id: friend_id,
-						friends: [{ user_id: username }]
-					},
-					content: unpack("binarydta," + fileToSendAsChat.files[0].type),
-					sendDate: new Date().toString(),
-					recievedDate: new Date().toString(),
+			if (active.length != 0) {
+				let allowMsg = active.some(e => e.user_id == friend_id);
+				if(allowMsg){
+				if (fileToSendAsChat.value != "") {
+					//ws.binaryType = "arraybuffer"
+					ws.send(JSON.stringify({
+						toUser: {
+							user_id: friend_id,
+							friends: [{ user_id: username }]
+						},
+						content: unpack("binarydta," + fileToSendAsChat.files[0].type),
+						sendDate: new Date().toString(),
+						recievedDate: new Date().toString(),
 
-				}))
-				ws.send(fileToSendAsChat.files[0]);
+					}))
+					ws.send(fileToSendAsChat.files[0]);
 
-				var parentDiv = document.createElement('div');
-				var childDiv = document.createElement('div');
-				var timeLabel = document.createElement('label');
-				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+					var parentDiv = document.createElement('div');
+					var childDiv = document.createElement('div');
+					var timeLabel = document.createElement('label');
+					if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
-					globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
-					var dateTimeStamp = document.createElement('div');
-					dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-					dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-					messageSection.append(dateTimeStamp)
-				}
-				if (fileToSendAsChat.files[0].type == 'image/png' || fileToSendAsChat.files[0].type == 'image/jpeg') {
+						globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+						var dateTimeStamp = document.createElement('div');
+						dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+						dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+						messageSection.append(dateTimeStamp)
+					}
+					if (fileToSendAsChat.files[0].type == 'image/png' || fileToSendAsChat.files[0].type == 'image/jpeg') {
 
-					parentDiv.className = 'right-div';
-					childDiv.className = 'right-msg-img';
-					timeLabel.className = 'right-time';
-					timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
-					parentDiv.append(timeLabel);
-					parentDiv.append(childDiv);
-					childDiv.innerHTML = `<img src="${'data:image/png;base64,' + fileString}"
+						parentDiv.className = 'right-div';
+						childDiv.className = 'right-msg-img';
+						timeLabel.className = 'right-time';
+						timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
+						parentDiv.append(timeLabel);
+						parentDiv.append(childDiv);
+						childDiv.innerHTML = `<img src="${'data:image/png;base64,' + fileString}"
 					 alt="" width="100%" style="cursor: pointer;">`;
 
-					messageSection.append(parentDiv);
+						messageSection.append(parentDiv);
 
-					let formFile = new FormData();
-					formFile.append('msgFile', fileToSendAsChat.files[0])
-					formFile.append('username', username)
-					formFile.append('friend_id', friend_id)
-					$.ajax({
-						type: "POST",
-						url: "/send-file",
-						contentType: false,
-						processData: false,
-						data: formFile,
-						success: function (response) {
-							console.log(response);
+						let formFile = new FormData();
+						formFile.append('msgFile', fileToSendAsChat.files[0])
+						formFile.append('username', username)
+						formFile.append('friend_id', friend_id)
+						$.ajax({
+							type: "POST",
+							url: "/send-file",
+							contentType: false,
+							processData: false,
+							data: formFile,
+							success: function (response) {
+								console.log(response);
+							}
+						});
+
+
+					} else {
+						parentDiv.className = 'right-div';
+						childDiv.className = 'right-msg';
+						timeLabel.className = 'right-time';
+						timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
+						parentDiv.append(timeLabel);
+						parentDiv.append(childDiv);
+						switch (fileToSendAsChat.files[0].type) {
+							case 'application/pdf':
+								childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+
+								break;
+
+							case 'application/x-zip-compressed':
+								childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+								break;
+
+							case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+								childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+								break;
+
+							case 'application/zip':
+								childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+								break;
+
+							default:
+								break;
 						}
-					});
 
-
+						messageSection.append(parentDiv);
+						let formFile = new FormData();
+						formFile.append('msgFile', fileToSendAsChat.files[0])
+						formFile.append('username', username)
+						formFile.append('friend_id', friend_id)
+						$.ajax({
+							type: "POST",
+							url: "/send-file",
+							contentType: false,
+							processData: false,
+							data: formFile,
+							success: function (response) {
+								console.log(response);
+							}
+						});
+					}
 				} else {
+					var formData = new FormData(e.target);
+					let myMessage = formData.get('message');
+					console.log(unpack(myMessage))
+					ws.send(JSON.stringify({
+						toUser: {
+							user_id: friend_id,
+							friends: [{ user_id: username }]
+						},
+						content: unpack(myMessage),
+						sendDate: new Date().toString(),
+						recievedDate: new Date().toString(),
+					}));
+					var parentDiv = document.createElement('div');
+					var childDiv = document.createElement('div');
+					var timeLabel = document.createElement('label');
+
+					if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+
+						globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+						var dateTimeStamp = document.createElement('div');
+						dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+						dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+						messageSection.append(dateTimeStamp)
+					}
 					parentDiv.className = 'right-div';
 					childDiv.className = 'right-msg';
 					timeLabel.className = 'right-time';
-					timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
+					timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
 					parentDiv.append(timeLabel);
 					parentDiv.append(childDiv);
-					switch (fileToSendAsChat.files[0].type) {
-						case 'application/pdf':
-							childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
-
-							break;
-
-						case 'application/x-zip-compressed':
-							childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
-							break;
-
-						case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-							childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
-							break;
-
-						case 'application/zip':
-							childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
-							break;
-
-						default:
-							break;
-					}
-
+					childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
 					messageSection.append(parentDiv);
-					let formFile = new FormData();
-					formFile.append('msgFile', fileToSendAsChat.files[0])
-					formFile.append('username', username)
-					formFile.append('friend_id', friend_id)
 					$.ajax({
 						type: "POST",
-						url: "/send-file",
-						contentType: false,
-						processData: false,
-						data: formFile,
+						url: "/send-message",
+						data: {
+							requestData: JSON.stringify({
+								username, friend_id, myMessage
+							})
+						},
+
 						success: function (response) {
-							console.log(response);
+							//console.log(response);
 						}
 					});
+
+				}
+
+				messageArea.value = "";
+				fileToSendAsChat.value = "";
+				}else{
+					alert("sorry your friend is not online");
+
 				}
 			} else {
-				var formData = new FormData(e.target);
-				let myMessage = formData.get('message');
-				console.log(unpack(myMessage))
-				ws.send(JSON.stringify({
-					toUser: {
-						user_id: friend_id,
-						friends: [{ user_id: username }]
-					},
-					content: unpack(myMessage),
-					sendDate: new Date().toString(),
-					recievedDate: new Date().toString(),
-				}));
-				var parentDiv = document.createElement('div');
-				var childDiv = document.createElement('div');
-				var timeLabel = document.createElement('label');
-
-				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
-
-					globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
-					var dateTimeStamp = document.createElement('div');
-					dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-					dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-					messageSection.append(dateTimeStamp)
-				}
-				parentDiv.className = 'right-div';
-				childDiv.className = 'right-msg';
-				timeLabel.className = 'right-time';
-				timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
-				parentDiv.append(timeLabel);
-				parentDiv.append(childDiv);
-				childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
-				messageSection.append(parentDiv);
-				$.ajax({
-					type: "POST",
-					url: "/send-message",
-					data: {
-						requestData: JSON.stringify({
-							username, friend_id, myMessage
-						})
-					},
-
-					success: function (response) {
-						//console.log(response);
-					}
-				});
-
+				alert("sorry your friend is not online");
 			}
 
-			messageArea.value = "";
-			fileToSendAsChat.value = "";
-
 		} else {
-			alert("sorry you are not online")
+			alert("sorry you are not online");
 		}
 
 	} else {
-		alert("please select user")
+		alert("please select user");
 
 	}
 
