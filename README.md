@@ -10,12 +10,13 @@ Spring boot Websocket chat app
 ```sql
 CREATE TABLE `chat_user` (
   `user_id` bigint NOT NULL AUTO_INCREMENT,
+  `dummy_name` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `profile_img` longblob,
   `user_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 ```
 ###  2) Message table
 ```sql
@@ -30,20 +31,18 @@ CREATE TABLE `message` (
   KEY `FKqumcy6hmow228nk518uy1ayyd` (`to_user_user_id`),
   CONSTRAINT `FKqumcy6hmow228nk518uy1ayyd` FOREIGN KEY (`to_user_user_id`) REFERENCES `chat_user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 ```
-###  3) Chat user friends table
+###  3) friends table
 ```sql
-CREATE TABLE `chat_user_friends` (
+CREATE TABLE `friends` (
   `f_id` bigint NOT NULL AUTO_INCREMENT,
-  `chat_user_user_id` bigint NOT NULL,
-  `friends_user_id` bigint NOT NULL,
+  `save_name` varchar(255) DEFAULT NULL,
+  `user` bigint NOT NULL,
+  `my_friend_user_id` bigint DEFAULT NULL,
   PRIMARY KEY (`f_id`),
-  KEY `FKip4ovgrif9y6h8hdewk0r2tvo` (`chat_user_user_id`),
-  KEY `FKh9n2od5nvvwg5dbjqu2sex77g` (`friends_user_id`),
-  CONSTRAINT `FKh9n2od5nvvwg5dbjqu2sex77g` FOREIGN KEY (`friends_user_id`) REFERENCES `chat_user` (`user_id`),
-  CONSTRAINT `FKip4ovgrif9y6h8hdewk0r2tvo` FOREIGN KEY (`chat_user_user_id`) REFERENCES `chat_user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `FKnae7pds9coh6g0spqiaej8ekk` (`my_friend_user_id`),
+  CONSTRAINT `FKnae7pds9coh6g0spqiaej8ekk` FOREIGN KEY (`my_friend_user_id`) REFERENCES `chat_user` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 ```
 ###  4) Chat user message
 ```sql

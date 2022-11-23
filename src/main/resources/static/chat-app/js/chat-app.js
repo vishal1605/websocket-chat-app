@@ -25,6 +25,9 @@ const msgHeaderProfilePic = document.getElementById('message-header-profile-pic'
 const fileToSendAsChat = document.getElementById('send-file');
 const backDropOfLoader = document.getElementById('back-drop-of-loader');
 const myLoader = document.getElementById('my_loader');
+const renameUserInput = document.getElementById('rename-user');
+const addToFriendList = document.getElementById('add-to-friend-list');
+var saveFriendModal = new bootstrap.Modal(document.getElementById('user-rename-model'))
 
 //Global variable
 let active = [];
@@ -68,6 +71,7 @@ function initialFunct() {
 	profileMoreOptions.addEventListener('click', openMoreOptions);
 	submitProfilePicBtn.addEventListener('click', submitProfilePic)
 	fileToSendAsChat.addEventListener('change', trackFileToBeSendInChat)
+	addToFriendList.addEventListener('click', addInFriendList)
 }
 ///////////////////////////////Fetch Logged in User Profile/////////////////////////////////////
 function getMyProfilePicture() {
@@ -100,7 +104,7 @@ function connect() {
 		timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
 		if (typeof (event.data) === 'object') {
 			let userOpenToTakeMsg = holdBinaryMessageDetails[0];
-			if (friend_id == userOpenToTakeMsg.toUser.friends[0].user_id) {
+			if (friend_id == userOpenToTakeMsg.toUser.friend[0].myFriend.user_id) {
 				var labelTime = new Date();
 				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
@@ -114,7 +118,6 @@ function connect() {
 				reader.readAsDataURL(event.data);
 				reader.onloadend = function () {
 					var base64String = reader.result;
-					console.log(contentType);
 					switch (contentType) {
 						case 'application/pdf':
 							childDiv.className = 'left-msg';
@@ -191,13 +194,13 @@ function connect() {
 				}
 
 			} else {
-				if (friend_id != activeUser.toUser.friends[0].user_id) {
+				if (friend_id != activeUser.toUser.friend[0].myFriend.user_id) {
 					if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
 						holdBinaryMessageDetails.push(activeUser);
 						contentType = bin2String(activeUser.content).split(',')[1];
-						messageArray.push(activeUser.toUser.friends[0].user_id)
-						document.getElementById(activeUser.toUser.friends[0].user_id).children[2].children[1].innerText = 'Conte...';
-						document.getElementById(activeUser.toUser.friends[0].user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
+						messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
+						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = 'Conte...';
+						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 						//console.log(messageArray);
 						var count = {};
 						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
@@ -207,25 +210,24 @@ function connect() {
 							document.getElementById(key).children[0].style.display = 'block';
 
 						}
-						var first = document.getElementById(activeUser.toUser.friends[0].user_id).cloneNode(true);
-						document.getElementById(activeUser.toUser.friends[0].user_id).remove();
+						var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
+						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
 						friendList.prepend(first);
 					} else {
-						messageArray.push(activeUser.toUser.friends[0].user_id)
-						document.getElementById(activeUser.toUser.friends[0].user_id).children[2].children[1].innerText = bin2String(activeUser.content).substring(0, 10) + '...';
-						document.getElementById(activeUser.toUser.friends[0].user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
+						messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
+						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = bin2String(activeUser.content).substring(0, 10) + '...';
+						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 						//console.log(messageArray);
 						var count = {};
 						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 						//console.log(count);
 						for (let key in count) {
-							console.log("1");
 							document.getElementById(key).children[0].textContent = count[key];
 							document.getElementById(key).children[0].style.display = 'block';
 
 						}
-						var first = document.getElementById(activeUser.toUser.friends[0].user_id).cloneNode(true);
-						document.getElementById(activeUser.toUser.friends[0].user_id).remove();
+						var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
+						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
 						friendList.prepend(first);
 					}
 
@@ -236,7 +238,6 @@ function connect() {
 						contentType = bin2String(activeUser.content).split(',')[1];
 					} else {
 						var labelTime = new Date();
-						console.log(activeUser);
 						if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
 							globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
@@ -321,7 +322,7 @@ function whoOnline() {
 
 }
 
-//setInterval(()=>whoOnline(),2000);
+// setInterval(()=>whoOnline(),10000);
 
 ////////////////////////////////////////Get All Chat User Who is registered with this chat-app///////////////////////////////////
 function getAllChatUsers() {
@@ -333,7 +334,7 @@ function getAllChatUsers() {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
-					return friend.user_id == e.user_id
+					return friend.user.user_id == e.user_id
 				})
 				if (!result) {
 					if (e.user_id != username) {
@@ -343,10 +344,10 @@ function getAllChatUsers() {
 															<img src="${(e.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 														</div>
 														<div class="user-detail">
-															<h5 class="m-0">${e.userName}</h5>
-															<p class="m-0">vybbubythbub</p>
+															<h5 class="m-0">${e.dummyName}</h5>
+															<p class="m-0"></p>
 														</div>
-														<div class="user-add shadow" onclick="addFriend(event)" data-id="${e.user_id}">
+														<div class="user-add shadow" onclick="saveAsFriend(event,'${e.dummyName}')" data-id="${e.user_id}">
 															<i class="fa-solid fa-plus"></i>
 														</div>
 													</li>`;
@@ -355,6 +356,20 @@ function getAllChatUsers() {
 			})
 		}
 	});
+}
+
+function saveAsFriend(e,param){
+	//e.target.parentElement.getAttribute('data-id');
+	saveFriendModal.show();
+	renameUserInput.value = param;
+	addToFriendList.value = e.target.parentElement.getAttribute('data-id');
+
+}
+
+function addInFriendList(e){
+	addFriend(e.target.value, renameUserInput.value)
+	renameUserInput.value = "";
+	saveFriendModal.hide();
 }
 
 ///////////////////////////////////////Get All Your friends In FriendList///////////////////////////////////////////////
@@ -367,9 +382,10 @@ function getAllFriends(id) {
 			requestData: id
 		},
 		success: function (responseObject) {
+			//console.log(responseObject);
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
-				let modifiedFriendList = responseObject.map((u) => ({ ...u, profile_img: null }));
+				let modifiedFriendList = responseObject.map((u) => ({ ...u.user, profile_img: null }));
 				$.ajax({
 					type: "GET",
 					url: "/get-last-message",
@@ -402,15 +418,15 @@ function getAllFriends(id) {
 						});
 						//console.log(responseObject);
 						responseObject.forEach((e) => {
-							friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user_id}, '${e.userName}',this)"
-									 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user_id}">
+							friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user.user_id}, '${e.rename}',this)"
+									 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user.user_id}">
 														
 														<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 														<div class="user-photo">
-															<img src="${(e.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
+															<img src="${(e.user.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + e.user.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 														</div>
 														<div class="user-detail">
-															<h6 class="m-0">${e.userName}</h6>
+															<h6 class="m-0">${e.rename}</h6>
 															<small class="m-0" style="font-size:13px">no msg</small>
 														</div>
 														<div class="last-time">
@@ -452,31 +468,33 @@ function getAllFriends(id) {
 }
 
 ////////////////////////////////////////// Add More Friends In Your Friend List///////////////////////////////////////////
-function addFriend(e) {
+function addFriend(id,f_dummyName) {
 	if (document.getElementById('no-friends-list') != null) {
 		document.getElementById('no-friends-list').remove()
 	}
-	var friendId = e.target.parentElement.getAttribute('data-id');
+	var friendId = id
 	$.ajax({
 		type: "GET",
 		url: "/makeFriend",
 		data: {
-			requestData: friendId
+			requestData: friendId,
+			givenName: f_dummyName
 		},
 		success: function (responseObject) {
+			console.log(responseObject);
 			var list = document.createElement('li');
 			list.className = 'list-of-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'aqua';
 			list.style.position = 'relative';
 			list.style.cursor = 'pointer'
-			list.setAttribute('onclick', `showMessageOfSpecificUser(${username},${responseObject.user_id},'${responseObject.userName}', this)`)
-			list.id = responseObject.user_id;
+			list.setAttribute('onclick', `showMessageOfSpecificUser(${username},${responseObject.user.user_id},'${responseObject.rename}', this)`)
+			list.id = responseObject.user.user_id;
 			list.innerHTML = `<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 							  <div class="user-photo">
-								<img src="${(responseObject.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
+								<img src="${(responseObject.user.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + responseObject.user.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 							  </div>
 								<div class="user-detail">
-									<h6 class="m-0">${responseObject.userName}</h6>
+									<h6 class="m-0">${f_dummyName}</h6>
 									<small class="m-0" style="font-size:13px">no msg</small>
 								</div>
 								<div class="last-time">
@@ -491,7 +509,7 @@ function addFriend(e) {
 	});
 	//console.log(list);
 
-	document.getElementById(e.target.parentElement.getAttribute('data-id')).remove();
+	document.getElementById(id).remove();
 
 }
 
@@ -521,10 +539,10 @@ function removeFriend(e) {
 								<img src="${(responseObject.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 							</div>
 							<div class="user-detail">
-								<h5 class="m-0">${responseObject.userName}</h5>
+								<h5 class="m-0">${responseObject.dummyName}</h5>
 								<p class="m-0">vybbubythbub</p>
 							</div>
-							<div class="user-add shadow" onclick="addFriend(event)" data-id="${responseObject.user_id}">
+							<div class="user-add shadow" onclick="saveAsFriend(event,'${responseObject.dummyName}')" data-id="${responseObject.user_id}">
 								<i class="fa-solid fa-plus"></i>
 							</div>`;
 
@@ -758,7 +776,6 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 
 				globalDate.shift();
 			} else {
-				console.log("hai date aaj ki");
 			}
 			hideLoader();
 		}
@@ -781,7 +798,11 @@ function preocessMessage(e) {
 					ws.send(JSON.stringify({
 						toUser: {
 							user_id: friend_id,
-							friends: [{ user_id: username }]
+							friend: [{ 
+								myFriend:{
+									user_id:username
+								}
+							 }]
 						},
 						content: unpack("binarydta," + fileToSendAsChat.files[0].type),
 						sendDate: new Date().toString(),
@@ -825,7 +846,7 @@ function preocessMessage(e) {
 							processData: false,
 							data: formFile,
 							success: function (response) {
-								console.log(response);
+								// console.log(response);
 							}
 						});
 
@@ -871,18 +892,21 @@ function preocessMessage(e) {
 							processData: false,
 							data: formFile,
 							success: function (response) {
-								console.log(response);
+								//console.log(response);
 							}
 						});
 					}
 				} else {
 					var formData = new FormData(e.target);
 					let myMessage = formData.get('message');
-					console.log(unpack(myMessage))
 					ws.send(JSON.stringify({
 						toUser: {
 							user_id: friend_id,
-							friends: [{ user_id: username }]
+							friend: [{ 
+								myFriend:{
+									user_id:username
+								}
+							 }]
 						},
 						content: unpack(myMessage),
 						sendDate: new Date().toString(),

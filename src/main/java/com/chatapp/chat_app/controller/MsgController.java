@@ -28,7 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.chatapp.chat_app.model.ChatUser;
+import com.chatapp.chat_app.model.Friends;
 import com.chatapp.chat_app.model.Message;
+import com.chatapp.chat_app.services.FriendsDao;
 import com.chatapp.chat_app.services.MessageDao;
 import com.chatapp.chat_app.services.UserDao;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,6 +47,9 @@ public class MsgController {
 
 	@Autowired
 	private MessageDao mDao;
+
+	@Autowired
+	private FriendsDao fDao;
 
 	private List<ChatUser> listOfUsers = new ArrayList<>();
 
@@ -87,7 +92,7 @@ public class MsgController {
 			mv.setViewName("redirect:/login-form");
 			return mv;
 		}
-		u.getFriends().clear();
+		u.getFriend().clear();
 		u.getMessages().clear();
 		session.setAttribute("user", u);
 		mv.setViewName("redirect:/dashboard/" + u.getUserName());
@@ -139,8 +144,8 @@ public class MsgController {
 	}
 
 	@GetMapping("/getAllFriends")
-	public List<ChatUser> getAllFriends(String requestData) {
-		List<ChatUser> friends = dao.getAllFriends(Long.parseLong(requestData));
+	public List<Friends> getAllFriends(String requestData) {
+		List<Friends> friends = fDao.getAllFriends(Long.parseLong(requestData));
 
 		return friends;
 
@@ -190,12 +195,11 @@ public class MsgController {
 	}
 
 	@GetMapping("/makeFriend")
-	public ChatUser makeFriends(String requestData, HttpSession session) {
+	public Friends makeFriends(String requestData, String givenName, HttpSession session) {
 
 		ChatUser c = (ChatUser) session.getAttribute("user");
 		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
-		dao.saveMyFriend(c.getUser_id(), friend.getUser_id());
-		return friend;
+		return fDao.saveMyFriends(givenName, friend, c.getUser_id());
 
 	}
 
@@ -203,7 +207,7 @@ public class MsgController {
 	public ChatUser removeFriend(String requestData, HttpSession session) {
 		ChatUser c = (ChatUser) session.getAttribute("user");
 		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
-		dao.deleteSingleFriend(c.getUser_id(), Long.parseLong(requestData));
+		fDao.deleteSingleFriend(c.getUser_id(), Long.parseLong(requestData));
 		return friend;
 	}
 
