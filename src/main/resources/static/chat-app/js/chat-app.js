@@ -133,11 +133,25 @@ function connect() {
 					 						  alt="" width="100%" height="105px" style="cursor: pointer;">
 					 						  <a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							break;
-							
+
 						case 'text':
 							childDiv.className = 'left-msg';
 							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
                                 <hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+
+							break;
+
+						case 'video':
+							childDiv.className = 'left-msg';
+							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+									<hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+
+							break;
+
+						case 'audio':
+							childDiv.className = 'left-msg';
+							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+									<hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
 							break;
 
@@ -217,6 +231,7 @@ function connect() {
 				} else {
 
 					if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
+						console.log(bin2String(activeUser.content));
 						holdBinaryMessageDetails.push(activeUser);
 						contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
 					} else {
@@ -327,7 +342,7 @@ function getAllChatUsers() {
 															<img src="${(e.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 														</div>
 														<div class="user-detail">
-															<h5 class="m-0">${e.dummyName.substring(0,5)+"..."}</h5>
+															<h5 class="m-0">${e.dummyName.substring(0, 5) + "..."}</h5>
 															<p class="m-0"></p>
 														</div>
 														<div class="user-add shadow" onclick="saveAsFriend(event,'${e.dummyName}')" data-id="${e.user_id}">
@@ -341,7 +356,7 @@ function getAllChatUsers() {
 	});
 }
 
-function saveAsFriend(e,param){
+function saveAsFriend(e, param) {
 	//e.target.parentElement.getAttribute('data-id');
 	saveFriendModal.show();
 	renameUserInput.value = param;
@@ -349,7 +364,7 @@ function saveAsFriend(e,param){
 
 }
 
-function addInFriendList(e){
+function addInFriendList(e) {
 	addFriend(e.target.value, renameUserInput.value)
 	renameUserInput.value = "";
 	saveFriendModal.hide();
@@ -451,7 +466,7 @@ function getAllFriends(id) {
 }
 
 ////////////////////////////////////////// Add More Friends In Your Friend List///////////////////////////////////////////
-function addFriend(id,f_dummyName) {
+function addFriend(id, f_dummyName) {
 	if (document.getElementById('no-friends-list') != null) {
 		document.getElementById('no-friends-list').remove()
 	}
@@ -696,6 +711,21 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'XLSX') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-excel me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1] == 'mp4') {
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:video/mp4;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1] == 'mp3') {
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:audio/mpeg;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTML' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTM' ){
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:text/html;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JS'){
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:text/javascript;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'TXT'){
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:text/plain;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							}
 						}
 					}
@@ -743,6 +773,13 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 								childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
 							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'XLSX') {
 								childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1] == 'mp4') {
+								childDiv.innerHTML = `<i class="fa-solid fa-circle-play" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1] == 'mp3') {
+								childDiv.innerHTML = `<i class="fa-solid fa-music" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTML' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTM' 
+										|| e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JS' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'TXT'){
+											childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
 							}
 						}
 					}
@@ -775,165 +812,189 @@ function preocessMessage(e) {
 		if (online.checked) {
 			if (active.length != 0) {
 				let allowMsg = active.some(e => e.user_id == friend_id);
-				if(allowMsg){
-				if (fileToSendAsChat.value != "") {
-					//ws.binaryType = "arraybuffer"
-					ws.send(JSON.stringify({
-						toUser: {
-							user_id: friend_id,
-							friend: [{ 
-								myFriend:{
-									user_id:username
-								}
-							 }]
-						},
-						content: unpack("binarydta," + fileToSendAsChat.files[0].type+","+ fileToSendAsChat.files[0].name),
-						sendDate: new Date().toString(),
-						recievedDate: new Date().toString(),
+				if (allowMsg) {
+					if (fileToSendAsChat.value != "") {
+						//ws.binaryType = "arraybuffer"
+						ws.send(JSON.stringify({
+							toUser: {
+								user_id: friend_id,
+								friend: [{
+									myFriend: {
+										user_id: username
+									}
+								}]
+							},
+							content: unpack("binarydta," + fileToSendAsChat.files[0].type + "," + fileToSendAsChat.files[0].name),
+							sendDate: new Date().toString(),
+							recievedDate: new Date().toString(),
 
-					}))
-					ws.send(fileToSendAsChat.files[0]);
+						}))
+						ws.send(fileToSendAsChat.files[0]);
 
-					var parentDiv = document.createElement('div');
-					var childDiv = document.createElement('div');
-					var timeLabel = document.createElement('label');
-					if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+						var parentDiv = document.createElement('div');
+						var childDiv = document.createElement('div');
+						var timeLabel = document.createElement('label');
+						if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
-						globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
-						var dateTimeStamp = document.createElement('div');
-						dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-						dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-						messageSection.append(dateTimeStamp)
-					}
-					if (fileToSendAsChat.files[0].type == 'image/png' || fileToSendAsChat.files[0].type == 'image/jpeg') {
+							globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+							var dateTimeStamp = document.createElement('div');
+							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+							messageSection.append(dateTimeStamp)
+						}
+						if (fileToSendAsChat.files[0].type == 'image/png' || fileToSendAsChat.files[0].type == 'image/jpeg') {
 
-						parentDiv.className = 'right-div';
-						childDiv.className = 'right-msg-img';
-						timeLabel.className = 'right-time';
-						timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
-						parentDiv.append(timeLabel);
-						parentDiv.append(childDiv);
-						childDiv.innerHTML = `<img src="${'data:image/png;base64,' + fileString}"
+							parentDiv.className = 'right-div';
+							childDiv.className = 'right-msg-img';
+							timeLabel.className = 'right-time';
+							timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
+							parentDiv.append(timeLabel);
+							parentDiv.append(childDiv);
+							childDiv.innerHTML = `<img src="${'data:image/png;base64,' + fileString}"
 					 alt="" width="100%" style="cursor: pointer;">`;
 
-						messageSection.append(parentDiv);
+							messageSection.append(parentDiv);
 
-						let formFile = new FormData();
-						formFile.append('msgFile', fileToSendAsChat.files[0])
-						formFile.append('username', username)
-						formFile.append('friend_id', friend_id)
-						$.ajax({
-							type: "POST",
-							url: "/send-file",
-							contentType: false,
-							processData: false,
-							data: formFile,
-							success: function (response) {
-								// console.log(response);
+							let formFile = new FormData();
+							formFile.append('msgFile', fileToSendAsChat.files[0])
+							formFile.append('username', username)
+							formFile.append('friend_id', friend_id)
+							$.ajax({
+								type: "POST",
+								url: "/send-file",
+								contentType: false,
+								processData: false,
+								data: formFile,
+								success: function (response) {
+									// console.log(response);
+								}
+							});
+
+
+						} else {
+							parentDiv.className = 'right-div';
+							childDiv.className = 'right-msg';
+							timeLabel.className = 'right-time';
+							timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
+							parentDiv.append(timeLabel);
+							parentDiv.append(childDiv);
+							switch (fileToSendAsChat.files[0].type) {
+								case 'application/pdf':
+									childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+
+									break;
+
+								case 'application/x-zip-compressed':
+									childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									break;
+
+								case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+									childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									break;
+
+								case 'application/zip':
+									childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									break;
+
+								case 'video/mp4':
+									childDiv.innerHTML = `<i class="fa-solid fa-circle-play" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									break;
+
+								case 'audio/mpeg':
+									childDiv.innerHTML = `<i class="fa-solid fa-music" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									break;
+
+								case 'text/html':
+									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									break;
+
+								case 'text/htm':
+									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									break;
+
+								case 'text/javascript':
+									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									break;
+
+								case 'text/plain':
+									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									break;
+
+								default:
+									break;
 							}
-						});
 
-
+							messageSection.append(parentDiv);
+							let formFile = new FormData();
+							formFile.append('msgFile', fileToSendAsChat.files[0])
+							formFile.append('username', username)
+							formFile.append('friend_id', friend_id)
+							$.ajax({
+								type: "POST",
+								url: "/send-file",
+								contentType: false,
+								processData: false,
+								data: formFile,
+								success: function (response) {
+									//console.log(response);
+								}
+							});
+						}
 					} else {
+						var formData = new FormData(e.target);
+						let myMessage = formData.get('message');
+						ws.send(JSON.stringify({
+							toUser: {
+								user_id: friend_id,
+								friend: [{
+									myFriend: {
+										user_id: username
+									}
+								}]
+							},
+							content: unpack(myMessage),
+							sendDate: new Date().toString(),
+							recievedDate: new Date().toString(),
+						}));
+						var parentDiv = document.createElement('div');
+						var childDiv = document.createElement('div');
+						var timeLabel = document.createElement('label');
+
+						if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+
+							globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+							var dateTimeStamp = document.createElement('div');
+							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+							messageSection.append(dateTimeStamp)
+						}
 						parentDiv.className = 'right-div';
 						childDiv.className = 'right-msg';
 						timeLabel.className = 'right-time';
-						timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
+						timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
 						parentDiv.append(timeLabel);
 						parentDiv.append(childDiv);
-						switch (fileToSendAsChat.files[0].type) {
-							case 'application/pdf':
-								childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
-
-								break;
-
-							case 'application/x-zip-compressed':
-								childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
-								break;
-
-							case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-								childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
-								break;
-
-							case 'application/zip':
-								childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
-								break;
-
-							default:
-								break;
-						}
-
+						childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
 						messageSection.append(parentDiv);
-						let formFile = new FormData();
-						formFile.append('msgFile', fileToSendAsChat.files[0])
-						formFile.append('username', username)
-						formFile.append('friend_id', friend_id)
 						$.ajax({
 							type: "POST",
-							url: "/send-file",
-							contentType: false,
-							processData: false,
-							data: formFile,
+							url: "/send-message",
+							data: {
+								requestData: JSON.stringify({
+									username, friend_id, myMessage
+								})
+							},
+
 							success: function (response) {
 								//console.log(response);
 							}
 						});
+
 					}
+
+					messageArea.value = "";
+					fileToSendAsChat.value = "";
 				} else {
-					var formData = new FormData(e.target);
-					let myMessage = formData.get('message');
-					ws.send(JSON.stringify({
-						toUser: {
-							user_id: friend_id,
-							friend: [{ 
-								myFriend:{
-									user_id:username
-								}
-							 }]
-						},
-						content: unpack(myMessage),
-						sendDate: new Date().toString(),
-						recievedDate: new Date().toString(),
-					}));
-					var parentDiv = document.createElement('div');
-					var childDiv = document.createElement('div');
-					var timeLabel = document.createElement('label');
-
-					if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
-
-						globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
-						var dateTimeStamp = document.createElement('div');
-						dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-						dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-						messageSection.append(dateTimeStamp)
-					}
-					parentDiv.className = 'right-div';
-					childDiv.className = 'right-msg';
-					timeLabel.className = 'right-time';
-					timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
-					parentDiv.append(timeLabel);
-					parentDiv.append(childDiv);
-					childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
-					messageSection.append(parentDiv);
-					$.ajax({
-						type: "POST",
-						url: "/send-message",
-						data: {
-							requestData: JSON.stringify({
-								username, friend_id, myMessage
-							})
-						},
-
-						success: function (response) {
-							//console.log(response);
-						}
-					});
-
-				}
-
-				messageArea.value = "";
-				fileToSendAsChat.value = "";
-				}else{
 					alert("sorry your friend is not online");
 
 				}
