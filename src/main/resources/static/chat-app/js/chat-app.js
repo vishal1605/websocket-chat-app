@@ -118,44 +118,27 @@ function connect() {
 				reader.readAsDataURL(event.data);
 				reader.onloadend = function () {
 					var base64String = reader.result;
+					console.log(bin2String(userOpenToTakeMsg.content).split(",")[1].split('/')[0]);
+					let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2];
 					switch (contentType) {
-						case 'application/pdf':
+						case 'application':
 							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-pdf me-2" style="font-size:25px;"></i><span class="text-light">xyz.pdf</span></label><br />
-                                <hr class="m-0"/><a download="xyz.pdf" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+                                <hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
 							break;
-
-						case 'image/png':
+						case 'image':
 							childDiv.className = 'left-msg-img';
 							childDiv.innerHTML = `<img src="${base64String}"
 					 						  alt="" width="100%" height="105px" style="cursor: pointer;">
-					 						  <a download="xyz.png" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+					 						  <a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							break;
-
-						case 'image/jpeg':
-							childDiv.className = 'left-msg-img';
-							childDiv.innerHTML = `<img src="${base64String}"
-					 						  alt="" width="100%" height="105px" style="cursor: pointer;">
-					 						  <a download="xyz.jpg" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							break;
-
-						case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+							
+						case 'text':
 							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-excel me-2" style="font-size:25px;"></i><span class="text-light">xyz.xlsx</span></label><br />
-                                <hr class="m-0"/><a download="xyz.xlsx" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							break;
+							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+                                <hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
-						case 'application/zip':
-							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-zipper me-2" style="font-size:25px;"></i><span class="text-light">xyz.zip</span></label><br />
-                                <hr class="m-0"/><a download="xyz.zip" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							break;
-
-						case 'application/x-zip-compressed':
-							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-zipper me-2" style="font-size:25px;"></i><span class="text-light">xyz.zip</span></label><br />
-                                <hr class="m-0"/><a download="xyz.zip" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							break;
 
 						default:
@@ -197,7 +180,7 @@ function connect() {
 				if (friend_id != activeUser.toUser.friend[0].myFriend.user_id) {
 					if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
 						holdBinaryMessageDetails.push(activeUser);
-						contentType = bin2String(activeUser.content).split(',')[1];
+						contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
 						messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
 						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = 'Conte...';
 						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
@@ -234,8 +217,8 @@ function connect() {
 				} else {
 
 					if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
-						holdBinaryMessageDetails.push(activeUser)
-						contentType = bin2String(activeUser.content).split(',')[1];
+						holdBinaryMessageDetails.push(activeUser);
+						contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
 					} else {
 						var labelTime = new Date();
 						if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
@@ -344,7 +327,7 @@ function getAllChatUsers() {
 															<img src="${(e.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + e.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 														</div>
 														<div class="user-detail">
-															<h5 class="m-0">${e.dummyName}</h5>
+															<h5 class="m-0">${e.dummyName.substring(0,5)+"..."}</h5>
 															<p class="m-0"></p>
 														</div>
 														<div class="user-add shadow" onclick="saveAsFriend(event,'${e.dummyName}')" data-id="${e.user_id}">
@@ -804,7 +787,7 @@ function preocessMessage(e) {
 								}
 							 }]
 						},
-						content: unpack("binarydta," + fileToSendAsChat.files[0].type),
+						content: unpack("binarydta," + fileToSendAsChat.files[0].type+","+ fileToSendAsChat.files[0].name),
 						sendDate: new Date().toString(),
 						recievedDate: new Date().toString(),
 
