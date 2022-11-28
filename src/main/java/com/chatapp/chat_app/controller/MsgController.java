@@ -236,7 +236,7 @@ public class MsgController {
 		ChatUser f = dao.getSingleUser(friend_id);
 		Set<Message> set = new HashSet<Message>();
 		set.add(mDao.saveMessage(myId,
-				new Message(f, myMultipartFile.getBytes(),myMultipartFile.getOriginalFilename(), LocalDateTime.now().toString(), LocalDateTime.now().toString())));
+				new Message(f, myMultipartFile.getBytes(),myMultipartFile.getOriginalFilename()+","+myMultipartFile.getContentType(), LocalDateTime.now().toString(), LocalDateTime.now().toString())));
 		return "done";
 	}
 

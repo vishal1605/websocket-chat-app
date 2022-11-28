@@ -27,7 +27,7 @@ const backDropOfLoader = document.getElementById('back-drop-of-loader');
 const myLoader = document.getElementById('my_loader');
 const renameUserInput = document.getElementById('rename-user');
 const addToFriendList = document.getElementById('add-to-friend-list');
-var saveFriendModal = new bootstrap.Modal(document.getElementById('user-rename-model'))
+var saveFriendModal = new bootstrap.Modal(document.getElementById('user-rename-model'));
 
 //Global variable
 let active = [];
@@ -119,7 +119,6 @@ function connect() {
 					reader.readAsDataURL(event.data);
 					reader.onloadend = function() {
 						var base64String = reader.result;
-						console.log(bin2String(userOpenToTakeMsg.content).split(",")[1].split('/')[0]);
 						let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2];
 						switch (contentType) {
 							case 'application':
@@ -171,7 +170,6 @@ function connect() {
 		} else {
 
 			var activeUser = JSON.parse(event.data);
-			console.log(activeUser)
 			if ('user_id' in activeUser) {
 				if (activeUser.isActive == true) {
 					let exist = active.some((e) => {
@@ -179,8 +177,7 @@ function connect() {
 					})
 					if (!exist) {
 						if (parseInt(username) != activeUser.user_id) {
-
-							active.push(activeUser)
+							active.push(activeUser);
 						}
 					}
 
@@ -240,7 +237,6 @@ function connect() {
 					} else {
 
 						if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
-							console.log(bin2String(activeUser.content));
 							holdBinaryMessageDetails.push(activeUser);
 							contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
 						} else {
@@ -458,7 +454,6 @@ function getAllFriends(id) {
 							}
 						})
 						hideLoader();
-						console.log(allFriendsUsers);
 						document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none');
 					}
 
@@ -490,7 +485,6 @@ function addFriend(id, f_dummyName) {
 			givenName: f_dummyName
 		},
 		success: function(responseObject) {
-			console.log(responseObject);
 			var list = document.createElement('li');
 			list.className = 'list-of-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'aqua';
@@ -705,38 +699,25 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 						childDiv.innerHTML = `<small class="text-light">${decodedString}</small>`;
 
 					} else {
-						if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'PNG' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JPG' ||
-							e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JPEG' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JFIF') {
+						if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'IMAGE') {
 							childDiv.className = 'left-msg-img';
 							childDiv.innerHTML = `<img src="${'data:image/png;base64,' + e.content}"
 					 						  alt="" width="100%" height="105px" style="cursor: pointer;">
-					 						  <a download="${e.msgLabel}" href="${'data:image/png;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+					 						  <a download="${e.msgLabel.split(',')[0]}" href="${'data:image/png;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 						} else {
 							childDiv.className = 'left-msg';
-							if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'PDF') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-pdf me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:application/pdf;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'ZIP') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-zipper me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:application/zip;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'XLSX') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file-excel me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1] == 'mp4') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:video/mp4;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1] == 'mp3') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:audio/mpeg;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTML' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTM') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:text/html;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JS') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:text/javascript;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'TXT') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:text/plain;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+							if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'APPLICATION') {
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:'+e.msgLabel.split(',')[1]+';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'VIDEO') {
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:'+e.msgLabel.split(',')[1]+';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'AUDIO') {
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:'+e.msgLabel.split(',')[1]+';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'TEXT') {
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
+                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:'+e.msgLabel.split(',')[1]+';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							}
 						}
 					}
@@ -771,26 +752,20 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 						var decodedString = atob(e.content);
 						childDiv.innerHTML = `<small class="text-light">${decodedString}</small>`;
 					} else {
-						if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'PNG' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JPG' ||
-							e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JPEG' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JFIF') {
+						if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'IMAGE') {
 							childDiv.className = 'right-msg-img';
-							childDiv.innerHTML = `<img src="${'data:image/png;base64,' + e.content}"
+							childDiv.innerHTML = `<img src="${'data:'+e.msgLabel.split(',')[1]+';base64,' + e.content}"
 					 						  alt="" width="100%" style="cursor: pointer;">`;
 						} else {
 							childDiv.className = 'right-msg';
-							if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'PDF') {
-								childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'ZIP') {
-								childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'XLSX') {
-								childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1] == 'mp4') {
-								childDiv.innerHTML = `<i class="fa-solid fa-circle-play" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1] == 'mp3') {
-								childDiv.innerHTML = `<i class="fa-solid fa-music" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTML' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTM'
-								|| e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JS' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'TXT') {
-								childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
+							if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'APPLICATION') {
+								childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel.split(',')[0]}</span>`;
+							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'VIDEO') {
+								childDiv.innerHTML = `<i class="fa-solid fa-circle-play" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel.split(',')[0]}</span>`;
+							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'AUDIO') {
+								childDiv.innerHTML = `<i class="fa-solid fa-music" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel.split(',')[0]}</span>`;
+							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'TEXT') {
+								childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel.split(',')[0]}</span>`;
 							}
 						}
 					}
@@ -809,6 +784,8 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			} else {
 			}
 			hideLoader();
+			messageSection.scrollTop = messageSection.scrollHeight;
+			messageSection.scrollTop = messageSection.lastChild.offsetTop;
 		}
 	});
 }
@@ -995,14 +972,11 @@ function preocessMessage(e) {
 									username, friend_id, myMessage
 								})
 							},
-
 							success: function(response) {
 								//console.log(response);
 							}
 						});
-
 					}
-
 					messageArea.value = "";
 					fileToSendAsChat.value = "";
 				} else {
