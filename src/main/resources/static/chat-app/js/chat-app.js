@@ -45,14 +45,14 @@ let holdBinaryMessageDetails = [];
 
 ////Event Listners
 refresh.addEventListener('click', whoOnline);
-myFriends.onclick = function (e) {
+myFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'gray';
 	notMyFriends.style.background = '#f76b2a';
 }
 
-notMyFriends.onclick = function (e) {
+notMyFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#f76b2a';
@@ -81,7 +81,7 @@ function getMyProfilePicture() {
 		data: {
 			requestData: username
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			if (responseObject == "") {
 			} else {
 
@@ -95,7 +95,7 @@ function getMyProfilePicture() {
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function (event) {
+	ws.onmessage = function(event) {
 		var parentDiv = document.createElement('div');
 		var childDiv = document.createElement('div');
 		var timeLabel = document.createElement('label');
@@ -103,72 +103,75 @@ function connect() {
 		timeLabel.className = 'left-time';
 		timeLabel.innerText = `${moment(labelTime).format('h:mm a')}`;
 		if (typeof (event.data) === 'object') {
-			let userOpenToTakeMsg = holdBinaryMessageDetails[0];
-			if (friend_id == userOpenToTakeMsg.toUser.friend[0].myFriend.user_id) {
-				var labelTime = new Date();
-				if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+			if (holdBinaryMessageDetails.length > 0) {
+				let userOpenToTakeMsg = holdBinaryMessageDetails[0];
+				if (friend_id == userOpenToTakeMsg.toUser.friend[0].myFriend.user_id) {
+					var labelTime = new Date();
+					if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
 
-					globalDate.push(moment(labelTime).format("DD/MM/YYYY"));
-					var dateTimeStamp = document.createElement('div');
-					dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-					dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-					messageSection.append(dateTimeStamp);
-				}
-				var reader = new FileReader();
-				reader.readAsDataURL(event.data);
-				reader.onloadend = function () {
-					var base64String = reader.result;
-					console.log(bin2String(userOpenToTakeMsg.content).split(",")[1].split('/')[0]);
-					let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2];
-					switch (contentType) {
-						case 'application':
-							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+						globalDate.push(moment(labelTime).format("DD/MM/YYYY"));
+						var dateTimeStamp = document.createElement('div');
+						dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+						dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+						messageSection.append(dateTimeStamp);
+					}
+					var reader = new FileReader();
+					reader.readAsDataURL(event.data);
+					reader.onloadend = function() {
+						var base64String = reader.result;
+						console.log(bin2String(userOpenToTakeMsg.content).split(",")[1].split('/')[0]);
+						let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2];
+						switch (contentType) {
+							case 'application':
+								childDiv.className = 'left-msg';
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
                                 <hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
-							break;
-						case 'image':
-							childDiv.className = 'left-msg-img';
-							childDiv.innerHTML = `<img src="${base64String}"
+								break;
+							case 'image':
+								childDiv.className = 'left-msg-img';
+								childDiv.innerHTML = `<img src="${base64String}"
 					 						  alt="" width="100%" height="105px" style="cursor: pointer;">
 					 						  <a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							break;
+								break;
 
-						case 'text':
-							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+							case 'text':
+								childDiv.className = 'left-msg';
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
                                 <hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
-							break;
+								break;
 
-						case 'video':
-							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+							case 'video':
+								childDiv.className = 'left-msg';
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
 									<hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
-							break;
+								break;
 
-						case 'audio':
-							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+							case 'audio':
+								childDiv.className = 'left-msg';
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
 									<hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
-							break;
+								break;
 
-						default:
-							break;
+							default:
+								break;
+						}
+						parentDiv.append(timeLabel);
+						parentDiv.append(childDiv);
+						messageSection.append(parentDiv);
+						holdBinaryMessageDetails.shift();
 					}
-					parentDiv.append(timeLabel);
-					parentDiv.append(childDiv);
-					messageSection.append(parentDiv);
+				} else {
 					holdBinaryMessageDetails.shift();
 				}
-			} else {
-				holdBinaryMessageDetails.shift();
 			}
 		} else {
 
 			var activeUser = JSON.parse(event.data);
+			console.log(activeUser)
 			if ('user_id' in activeUser) {
 				if (activeUser.isActive == true) {
 					let exist = active.some((e) => {
@@ -191,65 +194,72 @@ function connect() {
 				}
 
 			} else {
-				if (friend_id != activeUser.toUser.friend[0].myFriend.user_id) {
-					if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
-						holdBinaryMessageDetails.push(activeUser);
-						contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
-						messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
-						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = 'Conte...';
-						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
-						//console.log(messageArray);
-						var count = {};
-						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
-						//console.log(count);
-						for (let key in count) {
-							document.getElementById(key).children[0].textContent = count[key];
-							document.getElementById(key).children[0].style.display = 'block';
 
+				let itIs = allFriendsUsers.some(e => {
+					return activeUser.toUser.friend[0].myFriend.user_id == e.user.user_id;
+				})
+
+				if (itIs) {
+					if (friend_id != activeUser.toUser.friend[0].myFriend.user_id) {
+						if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
+							holdBinaryMessageDetails.push(activeUser);
+							contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
+							messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
+							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = 'Conte...';
+							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
+							//console.log(messageArray);
+							var count = {};
+							messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+							//console.log(count);
+							for (let key in count) {
+								document.getElementById(key).children[0].textContent = count[key];
+								document.getElementById(key).children[0].style.display = 'block';
+
+							}
+							var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
+							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
+							friendList.prepend(first);
+						} else {
+							messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
+							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = bin2String(activeUser.content).substring(0, 10) + '...';
+							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
+							//console.log(messageArray);
+							var count = {};
+							messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+							//console.log(count);
+							for (let key in count) {
+								document.getElementById(key).children[0].textContent = count[key];
+								document.getElementById(key).children[0].style.display = 'block';
+
+							}
+							var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
+							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
+							friendList.prepend(first);
 						}
-						var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
-						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
-						friendList.prepend(first);
+
 					} else {
-						messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
-						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = bin2String(activeUser.content).substring(0, 10) + '...';
-						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
-						//console.log(messageArray);
-						var count = {};
-						messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
-						//console.log(count);
-						for (let key in count) {
-							document.getElementById(key).children[0].textContent = count[key];
-							document.getElementById(key).children[0].style.display = 'block';
 
+						if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
+							console.log(bin2String(activeUser.content));
+							holdBinaryMessageDetails.push(activeUser);
+							contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
+						} else {
+							var labelTime = new Date();
+							if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+
+								globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+								var dateTimeStamp = document.createElement('div');
+								dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+								dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+								messageSection.append(dateTimeStamp)
+							}
+							childDiv.className = 'left-msg';
+							childDiv.innerHTML = `<small class="text-light">${bin2String(activeUser.content)}</small>`;
+
+							parentDiv.append(timeLabel);
+							parentDiv.append(childDiv);
+							messageSection.append(parentDiv);
 						}
-						var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
-						document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
-						friendList.prepend(first);
-					}
-
-				} else {
-
-					if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
-						console.log(bin2String(activeUser.content));
-						holdBinaryMessageDetails.push(activeUser);
-						contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
-					} else {
-						var labelTime = new Date();
-						if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
-
-							globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
-							var dateTimeStamp = document.createElement('div');
-							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-							messageSection.append(dateTimeStamp)
-						}
-						childDiv.className = 'left-msg';
-						childDiv.innerHTML = `<small class="text-light">${bin2String(activeUser.content)}</small>`;
-
-						parentDiv.append(timeLabel);
-						parentDiv.append(childDiv);
-						messageSection.append(parentDiv);
 					}
 				}
 			}
@@ -328,7 +338,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function (responseObject) {
+		success: function(responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -379,7 +389,7 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			//console.log(responseObject);
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
@@ -392,7 +402,7 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function (lastMessages) {
+					success: function(lastMessages) {
 						lastMessages.sort((a, b) => {
 							var date1 = new Date(a.sendDate)
 							var date2 = new Date(b.sendDate)
@@ -448,6 +458,7 @@ function getAllFriends(id) {
 							}
 						})
 						hideLoader();
+						console.log(allFriendsUsers);
 						document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none');
 					}
 
@@ -478,7 +489,7 @@ function addFriend(id, f_dummyName) {
 			requestData: friendId,
 			givenName: f_dummyName
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			console.log(responseObject);
 			var list = document.createElement('li');
 			list.className = 'list-of-friend border border-1 border-dark mb-1';
@@ -528,7 +539,7 @@ function removeFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
@@ -556,7 +567,7 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function (e) {
+closePopUpProfileModel.onclick = function(e) {
 	profilePic.value = '';
 	if (alertMsg.classList.contains('show-model')) {
 		alertMsg.classList.remove('show-model');
@@ -609,7 +620,7 @@ function submitProfilePic() {
 		contentType: false,
 		processData: false,
 		data: formData,
-		success: function (response) {
+		success: function(response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
 
 		}
@@ -638,7 +649,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function (response) {
+		success: function(response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -717,13 +728,13 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1] == 'mp3') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:audio/mpeg;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTML' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTM' ){
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTML' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTM') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:text/html;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JS'){
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JS') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:text/javascript;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'TXT'){
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'TXT') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel}" href="${'data:text/plain;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							}
@@ -777,9 +788,9 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 								childDiv.innerHTML = `<i class="fa-solid fa-circle-play" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
 							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1] == 'mp3') {
 								childDiv.innerHTML = `<i class="fa-solid fa-music" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
-							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTML' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTM' 
-										|| e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JS' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'TXT'){
-											childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
+							} else if (e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTML' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'HTM'
+								|| e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'JS' || e.msgLabel.split('.')[e.msgLabel.split('.').length - 1].toUpperCase() == 'TXT') {
+								childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel}</span>`;
 							}
 						}
 					}
@@ -865,7 +876,7 @@ function preocessMessage(e) {
 								contentType: false,
 								processData: false,
 								data: formFile,
-								success: function (response) {
+								success: function(response) {
 									// console.log(response);
 								}
 							});
@@ -935,7 +946,7 @@ function preocessMessage(e) {
 								contentType: false,
 								processData: false,
 								data: formFile,
-								success: function (response) {
+								success: function(response) {
 									//console.log(response);
 								}
 							});
@@ -985,7 +996,7 @@ function preocessMessage(e) {
 								})
 							},
 
-							success: function (response) {
+							success: function(response) {
 								//console.log(response);
 							}
 						});

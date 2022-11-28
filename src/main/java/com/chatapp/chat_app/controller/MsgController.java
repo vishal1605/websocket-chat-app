@@ -232,7 +232,7 @@ public class MsgController {
 	@PostMapping("/send-file")
 	public String saveUserFileMessage(@RequestParam("msgFile") MultipartFile myMultipartFile,
 		    @RequestParam("username") int myId,@RequestParam("friend_id") int friend_id) throws IOException {
-		System.out.println(myMultipartFile.getOriginalFilename());
+		//System.out.println(myMultipartFile.getOriginalFilename());
 		ChatUser f = dao.getSingleUser(friend_id);
 		Set<Message> set = new HashSet<Message>();
 		set.add(mDao.saveMessage(myId,
