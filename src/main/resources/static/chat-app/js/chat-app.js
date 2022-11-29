@@ -27,7 +27,10 @@ const backDropOfLoader = document.getElementById('back-drop-of-loader');
 const myLoader = document.getElementById('my_loader');
 const renameUserInput = document.getElementById('rename-user');
 const addToFriendList = document.getElementById('add-to-friend-list');
-var saveFriendModal = new bootstrap.Modal(document.getElementById('user-rename-model'));
+const saveFriendModal = new bootstrap.Modal(document.getElementById('user-rename-model'));
+const againRenameFriendModal = new bootstrap.Modal(document.getElementById('again-rename-model'));
+const againRenameInput = document.getElementById('again-rename-user');
+const againRenameBtn = document.getElementById('again-rename-user-btn');
 
 //Global variable
 let active = [];
@@ -45,14 +48,14 @@ let holdBinaryMessageDetails = [];
 
 ////Event Listners
 refresh.addEventListener('click', whoOnline);
-myFriends.onclick = function(e) {
+myFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'gray';
 	notMyFriends.style.background = '#f76b2a';
 }
 
-notMyFriends.onclick = function(e) {
+notMyFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#f76b2a';
@@ -69,9 +72,10 @@ function initialFunct() {
 	profilePic.addEventListener('change', trackProfilePic);
 	submitMessage.addEventListener('submit', preocessMessage);
 	profileMoreOptions.addEventListener('click', openMoreOptions);
-	submitProfilePicBtn.addEventListener('click', submitProfilePic)
-	fileToSendAsChat.addEventListener('change', trackFileToBeSendInChat)
-	addToFriendList.addEventListener('click', addInFriendList)
+	submitProfilePicBtn.addEventListener('click', submitProfilePic);
+	fileToSendAsChat.addEventListener('change', trackFileToBeSendInChat);
+	addToFriendList.addEventListener('click', addInFriendList);
+	againRenameBtn.addEventListener('click', renameFriendAgain);
 	document.addEventListener('click', closeMoreOptions);
 }
 ///////////////////////////////Fetch Logged in User Profile/////////////////////////////////////
@@ -82,7 +86,7 @@ function getMyProfilePicture() {
 		data: {
 			requestData: username
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			if (responseObject == "") {
 			} else {
 
@@ -96,7 +100,7 @@ function getMyProfilePicture() {
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function(event) {
+	ws.onmessage = function (event) {
 		var parentDiv = document.createElement('div');
 		var childDiv = document.createElement('div');
 		var timeLabel = document.createElement('label');
@@ -118,7 +122,7 @@ function connect() {
 					}
 					var reader = new FileReader();
 					reader.readAsDataURL(event.data);
-					reader.onloadend = function() {
+					reader.onloadend = function () {
 						var base64String = reader.result;
 						let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2];
 						switch (contentType) {
@@ -192,12 +196,7 @@ function connect() {
 				}
 
 			} else {
-
-				let itIs = allFriendsUsers.some(e => {
-					return activeUser.toUser.friend[0].myFriend.user_id == e.user.user_id;
-				})
-
-				if (itIs) {
+				if (!(friendList.querySelector(`[data-find="find_${activeUser.toUser.friend[0].myFriend.user_id}"]`) == undefined)) {
 					if (friend_id != activeUser.toUser.friend[0].myFriend.user_id) {
 						if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
 							holdBinaryMessageDetails.push(activeUser);
@@ -207,7 +206,7 @@ function connect() {
 							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 							//console.log(messageArray);
 							var count = {};
-							messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+							messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 							//console.log(count);
 							for (let key in count) {
 								document.getElementById(key).children[0].textContent = count[key];
@@ -223,7 +222,7 @@ function connect() {
 							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 							//console.log(messageArray);
 							var count = {};
-							messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+							messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 							//console.log(count);
 							for (let key in count) {
 								document.getElementById(key).children[0].textContent = count[key];
@@ -261,9 +260,6 @@ function connect() {
 				}
 			}
 		}
-
-
-
 		// whoOnline();
 	}
 
@@ -335,7 +331,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function(responseObject) {
+		success: function (responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -386,7 +382,7 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			//console.log(responseObject);
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
@@ -399,7 +395,7 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function(lastMessages) {
+					success: function (lastMessages) {
 						lastMessages.sort((a, b) => {
 							var date1 = new Date(a.sendDate)
 							var date2 = new Date(b.sendDate)
@@ -424,7 +420,7 @@ function getAllFriends(id) {
 						//console.log(responseObject);
 						responseObject.forEach((e) => {
 							friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user.user_id}, '${e.rename}',this)"
-									 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user.user_id}">
+									 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user.user_id}" data-find="${'find_' + e.user.user_id}">
 														
 														<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 														<div class="user-photo">
@@ -485,7 +481,7 @@ function addFriend(id, f_dummyName) {
 			requestData: friendId,
 			givenName: f_dummyName
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'aqua';
@@ -493,6 +489,7 @@ function addFriend(id, f_dummyName) {
 			list.style.cursor = 'pointer'
 			list.setAttribute('onclick', `showMessageOfSpecificUser(${username},${responseObject.user.user_id},'${responseObject.rename}', this)`)
 			list.id = responseObject.user.user_id;
+			list.setAttribute('data-find', 'find_' + responseObject.user.user_id)
 			list.innerHTML = `<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 							  <div class="user-photo">
 								<img src="${(responseObject.user.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + responseObject.user.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
@@ -526,6 +523,8 @@ function removeFriend(e) {
 	msgHeaderProfilePic.src = "/assets/img_avatar.png"
 	moreOptions.children[0].removeAttribute('data-id');
 	moreOptions.children[0].removeEventListener('click', removeFriend)
+	moreOptions.children[1].removeAttribute('data-rename');
+	moreOptions.children[1].removeEventListener('click', renameFriend)
 	moreOptions.style.transform = 'scale(1,0)';
 	friend_id = 0;
 	$.ajax({
@@ -534,7 +533,7 @@ function removeFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
@@ -543,7 +542,7 @@ function removeFriend(e) {
 								<img src="${(responseObject.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 							</div>
 							<div class="user-detail">
-								<h5 class="m-0">${responseObject.dummyName.substring(0,4)+'...'}</h5>
+								<h5 class="m-0">${responseObject.dummyName.substring(0, 4) + '...'}</h5>
 							</div>
 							<div class="user-add shadow" onclick="saveAsFriend(event,'${responseObject.dummyName}')" data-id="${responseObject.user_id}">
 								<i class="fa-solid fa-plus"></i>
@@ -561,7 +560,7 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function(e) {
+closePopUpProfileModel.onclick = function (e) {
 	profilePic.value = '';
 	if (alertMsg.classList.contains('show-model')) {
 		alertMsg.classList.remove('show-model');
@@ -614,7 +613,7 @@ function submitProfilePic() {
 		contentType: false,
 		processData: false,
 		data: formData,
-		success: function(response) {
+		success: function (response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
 
 		}
@@ -643,7 +642,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function(response) {
+		success: function (response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -655,7 +654,9 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			messageHeaderLabel.innerText = friendName;
 			profileMoreOptions.innerHTML = `<i class="fa-solid fa-bars"></i>`;
 			moreOptions.children[0].setAttribute("data-id", f_id);
-			moreOptions.children[0].addEventListener('click', removeFriend)
+			moreOptions.children[0].addEventListener('click', removeFriend);
+			moreOptions.children[1].setAttribute("data-rename", f_id);
+			moreOptions.children[1].addEventListener('click', renameFriend);
 			response.sort((a, b) => {
 				var date1 = new Date(a.sendDate)
 				var date2 = new Date(b.sendDate)
@@ -853,7 +854,7 @@ function preocessMessage(e) {
 								contentType: false,
 								processData: false,
 								data: formFile,
-								success: function(response) {
+								success: function (response) {
 									// console.log(response);
 								}
 							});
@@ -923,7 +924,7 @@ function preocessMessage(e) {
 								contentType: false,
 								processData: false,
 								data: formFile,
-								success: function(response) {
+								success: function (response) {
 									//console.log(response);
 								}
 							});
@@ -972,7 +973,7 @@ function preocessMessage(e) {
 									username, friend_id, myMessage
 								})
 							},
-							success: function(response) {
+							success: function (response) {
 								//console.log(response);
 							}
 						});
@@ -1047,6 +1048,36 @@ function closeMoreOptions(e) {
 	//if (e.target.parentNode.id != 'more-option' || e.target.parentNode.id != 'profile-more-options') {
 	//moreOptions.style.transform = 'scale(1,0)';
 	//}
+}
 
+/////////////////////////////////////////////////////Rename Friend//////////////////////////////////////////////////////
 
+function renameFriend(e) {
+	var friendId = e.target.getAttribute('data-rename');
+	console.log(friendId);
+	againRenameFriendModal.show();
+	againRenameInput.value = messageHeaderLabel.innerText;
+	againRenameBtn.value = friendId;
+	//console.log(saveFriendModal._element);
+}
+
+function renameFriendAgain(e){
+	let id = e.target.value;
+	$.ajax({
+		type: "GET",
+		url: "/rename-friend",
+		data: {
+			rename: againRenameInput.value,
+			user_id: username,
+			friendId: id
+		},
+		success: function (response) {
+			console.log(response);
+			messageHeaderLabel.innerText = response;
+			friendList.querySelector(`[data-find="find_${id}"]`).children[2].children[0].innerText = response;
+		}
+	});
+	againRenameInput.value = '';
+	e.target.value = '';
+	againRenameFriendModal.hide();
 }

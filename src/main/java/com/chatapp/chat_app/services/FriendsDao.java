@@ -26,5 +26,9 @@ public class FriendsDao {
     public void deleteSingleFriend(long uId, long fid){
         fRepo.deleteMyFriend(uId, fid);
     }
+
+    public void renameMyFriend(String rename, long u_id, long f_id){
+        fRepo.renameFriend(rename, u_id, f_id);
+    }
     
 }

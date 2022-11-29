@@ -269,4 +269,10 @@ public class MsgController {
 		return profilePic;
 	}
 
+	@GetMapping("/rename-friend")
+	public String renameFriend(String rename, long user_id, long friendId){
+		fDao.renameMyFriend(rename, user_id, friendId);
+		return rename;
+	}
+
 }

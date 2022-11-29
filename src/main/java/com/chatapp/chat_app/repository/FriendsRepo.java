@@ -22,5 +22,10 @@ public interface FriendsRepo extends JpaRepository<Friends, Long>{
     @Transactional
     @Query(value = "delete from friends where user = :user_id and my_friend_user_id = :f_id", nativeQuery = true)
     public void deleteMyFriend(@Param("user_id") long userId, @Param("f_id") long fId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update friends set save_name = :rename where user = :user_id and my_friend_user_id = :f_id", nativeQuery = true)
+    public void renameFriend(@Param("rename") String rename, @Param("user_id") long userId, @Param("f_id") long fId);
     
 }
