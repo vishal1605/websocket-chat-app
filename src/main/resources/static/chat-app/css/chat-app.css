@@ -227,3 +227,36 @@
     transform: translate(-50%,-50%);
     z-index: 2100 !important;
 }
+
+/* ////////////////////////////////////Drop down for more Option////////////////////////////////////////////// */
+
+#profile-more-options{
+	font-size: 25px;
+}
+
+#more-option{
+	position: absolute;
+	background-color: #e4e7e6;
+	right: 17px;
+	top: 40px;
+	list-style: none;
+	width: 130px;
+	padding: 0;
+	transform: scale(1, 0);
+	transform-origin: top;
+	transition: transform ease-in-out .3s;
+}
+#more-option li{
+	display: block;
+	text-align: center;
+	border-bottom: 0.5px solid white;
+	padding: 5px 0;
+	font-weight: 600;
+	cursor: pointer;
+}
+#more-option li:last-child {
+	border-bottom: none;
+}
+#more-option li:hover {
+	background-color: #ffffff;
+}

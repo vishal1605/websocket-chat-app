@@ -72,6 +72,7 @@ function initialFunct() {
 	submitProfilePicBtn.addEventListener('click', submitProfilePic)
 	fileToSendAsChat.addEventListener('change', trackFileToBeSendInChat)
 	addToFriendList.addEventListener('click', addInFriendList)
+	document.addEventListener('click', closeMoreOptions);
 }
 ///////////////////////////////Fetch Logged in User Profile/////////////////////////////////////
 function getMyProfilePicture() {
@@ -525,7 +526,7 @@ function removeFriend(e) {
 	msgHeaderProfilePic.src = "/assets/img_avatar.png"
 	moreOptions.children[0].removeAttribute('data-id');
 	moreOptions.children[0].removeEventListener('click', removeFriend)
-	moreOptions.style.transform = 'scale(0,0)';
+	moreOptions.style.transform = 'scale(1,0)';
 	friend_id = 0;
 	$.ajax({
 		type: "GET",
@@ -542,8 +543,7 @@ function removeFriend(e) {
 								<img src="${(responseObject.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 							</div>
 							<div class="user-detail">
-								<h5 class="m-0">${responseObject.dummyName}</h5>
-								<p class="m-0">vybbubythbub</p>
+								<h5 class="m-0">${responseObject.dummyName.substring(0,4)+'...'}</h5>
 							</div>
 							<div class="user-add shadow" onclick="saveAsFriend(event,'${responseObject.dummyName}')" data-id="${responseObject.user_id}">
 								<i class="fa-solid fa-plus"></i>
@@ -653,7 +653,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			messageSection.innerHTML = '';
 			msgHeaderProfilePic.src = element.children[1].children[0].src;
 			messageHeaderLabel.innerText = friendName;
-			profileMoreOptions.innerHTML = `<i class="fa-solid fa-ellipsis-vertical"></i>`;
+			profileMoreOptions.innerHTML = `<i class="fa-solid fa-bars"></i>`;
 			moreOptions.children[0].setAttribute("data-id", f_id);
 			moreOptions.children[0].addEventListener('click', removeFriend)
 			response.sort((a, b) => {
@@ -708,16 +708,16 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 							childDiv.className = 'left-msg';
 							if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'APPLICATION') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:'+e.msgLabel.split(',')[1]+';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'VIDEO') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:'+e.msgLabel.split(',')[1]+';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'AUDIO') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:'+e.msgLabel.split(',')[1]+';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'TEXT') {
 								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
-                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:'+e.msgLabel.split(',')[1]+';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+                                <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							}
 						}
 					}
@@ -754,7 +754,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 					} else {
 						if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'IMAGE') {
 							childDiv.className = 'right-msg-img';
-							childDiv.innerHTML = `<img src="${'data:'+e.msgLabel.split(',')[1]+';base64,' + e.content}"
+							childDiv.innerHTML = `<img src="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}"
 					 						  alt="" width="100%" style="cursor: pointer;">`;
 						} else {
 							childDiv.className = 'right-msg';
@@ -776,6 +776,8 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 
 
 				}
+				messageSection.scrollTop = messageSection.scrollHeight;
+				messageSection.scrollTop = messageSection.lastChild.offsetTop;
 
 			});
 			if (storeDate.indexOf(globalDate[0]) == -1) {
@@ -784,8 +786,6 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			} else {
 			}
 			hideLoader();
-			messageSection.scrollTop = messageSection.scrollHeight;
-			messageSection.scrollTop = messageSection.lastChild.offsetTop;
 		}
 	});
 }
@@ -1013,7 +1013,7 @@ function openMoreOptions(e) {
 		moreOptions.style.transform = 'scale(1,1)';
 		i = 1;
 	} else {
-		moreOptions.style.transform = 'scale(0,0)';
+		moreOptions.style.transform = 'scale(1,0)';
 		i = 0;
 	}
 }
@@ -1041,3 +1041,12 @@ function hideLoader() {
 	myLoader.classList.remove('show-model');
 }
 
+//////////////////////////////////////////////////Close More Options//////////////////////////////////////////////////////
+function closeMoreOptions(e) {
+	//console.log(e.target.parentNode.id)
+	//if (e.target.parentNode.id != 'more-option' || e.target.parentNode.id != 'profile-more-options') {
+	//moreOptions.style.transform = 'scale(1,0)';
+	//}
+
+
+}
