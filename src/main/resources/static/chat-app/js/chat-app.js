@@ -31,6 +31,9 @@ const saveFriendModal = new bootstrap.Modal(document.getElementById('user-rename
 const againRenameFriendModal = new bootstrap.Modal(document.getElementById('again-rename-model'));
 const againRenameInput = document.getElementById('again-rename-user');
 const againRenameBtn = document.getElementById('again-rename-user-btn');
+//const searchFriendLocal = document.getElementById('search-friend-local');
+const messageHeaderTemplete = document.getElementById('message-header-templete');
+const messageInputTemplete = document.getElementById('message-input-templete');
 
 //Global variable
 let active = [];
@@ -77,6 +80,7 @@ function initialFunct() {
 	addToFriendList.addEventListener('click', addInFriendList);
 	againRenameBtn.addEventListener('click', renameFriendAgain);
 	document.addEventListener('click', closeMoreOptions);
+	//searchFriendLocal.addEventListener('input', searchLocalFriend);
 }
 ///////////////////////////////Fetch Logged in User Profile/////////////////////////////////////
 function getMyProfilePicture() {
@@ -175,6 +179,7 @@ function connect() {
 		} else {
 
 			var activeUser = JSON.parse(event.data);
+			console.log("Working");
 			if ('user_id' in activeUser) {
 				if (activeUser.isActive == true) {
 					let exist = active.some((e) => {
@@ -250,7 +255,7 @@ function connect() {
 								messageSection.append(dateTimeStamp)
 							}
 							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<small class="text-light">${bin2String(activeUser.content)}</small>`;
+							childDiv.innerHTML = `<small class="">${bin2String(activeUser.content)}</small>`;
 
 							parentDiv.append(timeLabel);
 							parentDiv.append(childDiv);
@@ -294,7 +299,7 @@ function whoOnline() {
 
 		[...friendList.children].forEach((e) => {
 
-			e.style.background = "aqua";
+			//e.style.background = "aqua";
 		})
 		active.forEach((on) => {
 			var elem = [...friendList.children].find((e) => {
@@ -315,7 +320,7 @@ function whoOnline() {
 		[...friendList.children].forEach((e) => {
 
 			if (e.id != "no-friends-list") {
-				e.style.background = "aqua";
+				e.style.background = "";
 			}
 		})
 
@@ -404,23 +409,24 @@ function getAllFriends(id) {
 						lastMessages.reverse();
 						lastMessages.forEach((e1) => {
 							responseObject.forEach((e) => {
-								if (e1.toUser.user_id == e.user_id) {
+								if (e1.toUser.user_id == e.user.user_id) {
 
-									let temp = e;
-									responseObject.splice(responseObject.indexOf(e), 1)
-									responseObject.unshift(temp)
+								let temp = e;
+								responseObject.splice(responseObject.indexOf(e), 1)
+								responseObject.unshift(temp)
 
 								} else {
 
 								}
+
 
 							});
 
 						});
 						//console.log(responseObject);
 						responseObject.forEach((e) => {
-							friendList.innerHTML += `<li class="list-of-friend border border-1 border-dark mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user.user_id}, '${e.rename}',this)"
-									 style="background-color:aqua;position:relative;cursor:pointer" id="${e.user.user_id}" data-find="${'find_' + e.user.user_id}">
+							friendList.innerHTML += `<li class="list-of-friend mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user.user_id}, '${e.rename}',this)"
+									 style="position:relative;cursor:pointer" id="${e.user.user_id}" data-find="${'find_' + e.user.user_id}">
 														
 														<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
 														<div class="user-photo">
@@ -428,10 +434,10 @@ function getAllFriends(id) {
 														</div>
 														<div class="user-detail">
 															<h6 class="m-0">${e.rename}</h6>
-															<small class="m-0" style="font-size:13px">no msg</small>
+															<small class="m-0" style="font-size:12px; opacity:0.8">no msg</small>
 														</div>
 														<div class="last-time">
-															<small>3:45</small>
+															<small style="font-size:10px">3:45</small>
 														</div>
 													</li>`;
 						});
@@ -483,8 +489,9 @@ function addFriend(id, f_dummyName) {
 		},
 		success: function (responseObject) {
 			var list = document.createElement('li');
-			list.className = 'list-of-friend border border-1 border-dark mb-1';
-			list.style.backgroundColor = 'aqua';
+			list.className = 'list-of-friend mb-1';
+			list.style.backgroundColor = 'white';
+			list.style.color = 'black';
 			list.style.position = 'relative';
 			list.style.cursor = 'pointer'
 			list.setAttribute('onclick', `showMessageOfSpecificUser(${username},${responseObject.user.user_id},'${responseObject.rename}', this)`)
@@ -496,10 +503,10 @@ function addFriend(id, f_dummyName) {
 							  </div>
 								<div class="user-detail">
 									<h6 class="m-0">${f_dummyName}</h6>
-									<small class="m-0" style="font-size:13px">no msg</small>
+									<small class="m-0" style="font-size:12px;opacity:0.8">no msg</small>
 								</div>
 								<div class="last-time">
-									<small>3:45</small>
+									<small style="font-size:10px">3:45</small>
 								</div>
 								`;
 
@@ -520,7 +527,10 @@ function removeFriend(e) {
 	messageSection.innerHTML = '';
 	messageHeaderLabel.innerText = '';
 	profileMoreOptions.innerHTML = ``;
-	msgHeaderProfilePic.src = "/assets/img_avatar.png"
+	msgHeaderProfilePic.src = "/assets/img_avatar.png";
+	msgHeaderProfilePic.classList.remove('show-element');
+	messageHeaderTemplete.classList.remove('shadow-sm');
+	messageInputTemplete.classList.remove('show-model');
 	moreOptions.children[0].removeAttribute('data-id');
 	moreOptions.children[0].removeEventListener('click', removeFriend)
 	moreOptions.children[1].removeAttribute('data-rename');
@@ -651,6 +661,9 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			}
 			messageSection.innerHTML = '';
 			msgHeaderProfilePic.src = element.children[1].children[0].src;
+			msgHeaderProfilePic.classList.add('show-element');
+			messageHeaderTemplete.classList.add('shadow-sm');
+			messageInputTemplete.classList.add('show-model');
 			messageHeaderLabel.innerText = friendName;
 			profileMoreOptions.innerHTML = `<i class="fa-solid fa-bars"></i>`;
 			moreOptions.children[0].setAttribute("data-id", f_id);
@@ -697,7 +710,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 					if (e.msgLabel == "") {
 						childDiv.className = 'left-msg';
 						var decodedString = atob(e.content);
-						childDiv.innerHTML = `<small class="text-light">${decodedString}</small>`;
+						childDiv.innerHTML = `<small class="">${decodedString}</small>`;
 
 					} else {
 						if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'IMAGE') {
@@ -751,7 +764,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 					if (e.msgLabel == "") {
 						childDiv.className = 'right-msg';
 						var decodedString = atob(e.content);
-						childDiv.innerHTML = `<small class="text-light">${decodedString}</small>`;
+						childDiv.innerHTML = `<small class="">${decodedString}</small>`;
 					} else {
 						if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'IMAGE') {
 							childDiv.className = 'right-msg-img';
@@ -963,7 +976,7 @@ function preocessMessage(e) {
 						timeLabel.innerText = `${labelTime.getHours()}:${labelTime.getMinutes()}`;
 						parentDiv.append(timeLabel);
 						parentDiv.append(childDiv);
-						childDiv.innerHTML = `<small class="text-light">${myMessage}</small>`;
+						childDiv.innerHTML = `<small class="">${myMessage}</small>`;
 						messageSection.append(parentDiv);
 						$.ajax({
 							type: "POST",
@@ -1054,7 +1067,6 @@ function closeMoreOptions(e) {
 
 function renameFriend(e) {
 	var friendId = e.target.getAttribute('data-rename');
-	console.log(friendId);
 	againRenameFriendModal.show();
 	againRenameInput.value = messageHeaderLabel.innerText;
 	againRenameBtn.value = friendId;
@@ -1073,11 +1085,20 @@ function renameFriendAgain(e){
 		},
 		success: function (response) {
 			console.log(response);
-			messageHeaderLabel.innerText = response;
-			friendList.querySelector(`[data-find="find_${id}"]`).children[2].children[0].innerText = response;
+			//messageHeaderLabel.innerText = response;
+			//friendList.querySelector(`[data-find="find_${id}"]`).children[2].children[0].innerText = response;
 		}
 	});
 	againRenameInput.value = '';
 	e.target.value = '';
 	againRenameFriendModal.hide();
+}
+
+function searchLocalFriend(e){
+	//let allElement = [...friendList.children];
+	//allElement.forEach(e=>{
+		//console.log(e.[]);
+	//})
+	//console.log(friendList.textContent)
+	
 }

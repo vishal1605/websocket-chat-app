@@ -13,16 +13,17 @@
 
 <body>
 	<div class="row chat-section">
-
-		<div class="back-drop fade-model" id="back-drop-of-loader">
-
-		</div>
+<!-- /////////////////////////////////Loader backdrop/////////////////////////////////////////////////////// -->
+		<div class="back-drop fade-model" id="back-drop-of-loader"></div>
+		
+<!-- //////////////////////////////////Loader//////////////////////////////////////////////////////////// -->
 		<div class="my-loader fade-model" id="my_loader">
 			<div class="spinner-border" role="status" style="width: 100px; height: 100px">
 				<span class="visually-hidden">Loading...</span>
 			</div>
 		</div>
 
+<!-- /////////////////////////////////////Change profile pic//////////////////////////////////////////////////// -->
 		<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="staticBackdropLabel" aria-hidden="true">
 			<div class="modal-dialog">
@@ -52,6 +53,7 @@
 			</div>
 		</div>
 
+<!-- ///////////////////////////////////////////Rename While Adding Friend/////////////////////////////////////// -->
 		<div class="modal fade" id="user-rename-model" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="userrenamemodelLabel" aria-hidden="true">
 			<div class="modal-dialog">
@@ -75,6 +77,7 @@
 			</div>
 		</div>
 
+<!-- ///////////////////////////////////////////////Again Rename User//////////////////////////////////////////////////////////// -->
 		<div class="modal fade" id="again-rename-model" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="userrenamemodelLabel" aria-hidden="true">
 			<div class="modal-dialog">
@@ -110,20 +113,26 @@
 			</div>
 
 		</div>
-		<div class="col-10 chat m-auto shadow">
+		<div class="col-10 chat m-auto shadow" id="chat-templete">
 			<div class="row">
-				<div class="col-3 p-0 border border-1 d-flex flex-column justify-content-between" style="height: 550px">
+				<div class="col-3 p-0 border border-1 d-flex flex-column justify-content-between" style="height: 550px" id="friend-sidebr">
 					<div class="friends-selection-section" style="height: 510px; overflow: auto">
-						<div class="rfs-btn d-flex justify-content-between align-items-center mb-2 px-2"
-							style="background-color: #f76b2a;">
-							<div class="form-check form-switch">
-								<input class="form-check-input" type="checkbox" role="switch" id="online"
-									autocomplete="off">
-
+						<div class="online-template shadow-sm mb-2">
+							<div class="rfs-btn d-flex justify-content-between align-items-center px-2"
+								style="background-color: white;">
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" role="switch" id="online"
+										autocomplete="off">
+	
+								</div>
+								<i class="fa-solid fa-arrows-rotate" id="refresh"
+									style="color: black; font-size: 20px;"></i>
 							</div>
-							<i class="fa-solid fa-arrows-rotate shadow" id="refresh"
-								style="color: white; font-size: 20px;"></i>
+							<!-- <input class="form-control mb-2" type="text" autocomplete="off" placeholder="search friend..." id="search-friend-local"> -->
 						</div>
+						
+							
+						
 						<ul class="mb-2" id="friend-list" style="list-style: none; padding-left: 0; margin-bottom: 0;">
 
 
@@ -146,11 +155,11 @@
 					</div>
 				</div>
 				<div class="col-9 border border-1 p-0" id="chat-main">
-					<div class="message-section-header bg-primary d-flex align-items-center justify-content-between px-3"
-						style="height: 55px; position: relative;">
+					<div class="message-section-header d-flex align-items-center justify-content-between px-3"
+						style="height: 55px; position: relative;" id="message-header-templete">
 						<div>
 							<img th:src="@{/assets/img_avatar.png}" alt="" width="45px" height="45px"
-								style="border-radius: 50%;" id="message-header-profile-pic"> <small
+								style="border-radius: 50%;" id="message-header-profile-pic" class="hide-element"> <small
 								id="message-header-label"> </small>
 						</div>
 						<label for="" style="cursor: pointer;" id="profile-more-options"></label>
@@ -192,13 +201,13 @@
                         </div> -->
 
 					</div>
-					<div class="message-input-section bg-warning">
+					<div class="message-input-section cstm-shadow fade-model" id="message-input-templete">
 						<form action="" class="d-flex align-items-center" id="submit-message">
-							<input type="text" class="form-control w-50 me-2 my-1" name="message" id="message-area"
-								required>
-							<button type="submit" class="btn btn-primary me-2">send</button>
+							<input type="text" class="form-control w-50 me-2 my-1 ms-5" name="message" id="message-area"
+								required placeholder="Type a message">
+							<button type="submit" class="btn btn-primary me-2"><i class="fa-solid fa-paper-plane"></i></button>
 							<label for="send-file" style="cursor: pointer; font-size: 20px" id="send-file-label"
-								class="shadow rounded"><i class="fa-solid fa-paperclip"></i></label> <input type="file"
+								class=""><i class="fa-solid fa-paperclip"></i></label> <input type="file"
 								class="" id="send-file" hidden="hidden">
 						</form>
 					</div>
