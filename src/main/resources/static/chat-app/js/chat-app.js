@@ -50,7 +50,6 @@ let contentType = "";
 let holdBinaryMessageDetails = [];
 
 ////Event Listners
-refresh.addEventListener('click', whoOnline);
 myFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
@@ -68,10 +67,11 @@ notMyFriends.onclick = function (e) {
 ///Init function
 initialFunct();
 function initialFunct() {
-
-	myFriends.style.background = 'gray';
+	
+	myFriends.style.background = '#dbdbf7';
 	getMyProfilePicture();
 	getAllFriends(username);
+	refresh.addEventListener('click', whoOnline);
 	profilePic.addEventListener('change', trackProfilePic);
 	submitMessage.addEventListener('submit', preocessMessage);
 	profileMoreOptions.addEventListener('click', openMoreOptions);
@@ -464,7 +464,7 @@ function getAllFriends(id) {
 
 
 			} else {
-				friendList.innerHTML = `<li class="border border-1 border-dark" id="no-friends-list" style="height:40px; background-color:green;">Sorry! no friends</li>`;
+				friendList.innerHTML = `<li class="rounded" id="no-friends-list" style="height:40px; background-color:white;">Sorry! no friends</li>`;
 				hideLoader();
 			}
 			getAllChatUsers();
@@ -721,16 +721,16 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 						} else {
 							childDiv.className = 'left-msg';
 							if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'APPLICATION') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'VIDEO') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'AUDIO') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'TEXT') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${e.msgLabel.split(',')[0]}</span></label><br />
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 							}
 						}
@@ -773,13 +773,13 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 						} else {
 							childDiv.className = 'right-msg';
 							if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'APPLICATION') {
-								childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel.split(',')[0]}</span>`;
+								childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="">${e.msgLabel.split(',')[0]}</span>`;
 							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'VIDEO') {
-								childDiv.innerHTML = `<i class="fa-solid fa-circle-play" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel.split(',')[0]}</span>`;
+								childDiv.innerHTML = `<i class="fa-solid fa-circle-play" style="font-size:25px;"></i>&nbsp;<span class="">${e.msgLabel.split(',')[0]}</span>`;
 							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'AUDIO') {
-								childDiv.innerHTML = `<i class="fa-solid fa-music" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel.split(',')[0]}</span>`;
+								childDiv.innerHTML = `<i class="fa-solid fa-music" style="font-size:25px;"></i>&nbsp;<span class="">${e.msgLabel.split(',')[0]}</span>`;
 							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'TEXT') {
-								childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${e.msgLabel.split(',')[0]}</span>`;
+								childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="">${e.msgLabel.split(',')[0]}</span>`;
 							}
 						}
 					}

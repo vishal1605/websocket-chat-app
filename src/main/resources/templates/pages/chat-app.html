@@ -13,17 +13,17 @@
 
 <body>
 	<div class="row chat-section">
-<!-- /////////////////////////////////Loader backdrop/////////////////////////////////////////////////////// -->
+		<!-- /////////////////////////////////Loader backdrop/////////////////////////////////////////////////////// -->
 		<div class="back-drop fade-model" id="back-drop-of-loader"></div>
-		
-<!-- //////////////////////////////////Loader//////////////////////////////////////////////////////////// -->
+
+		<!-- //////////////////////////////////Loader//////////////////////////////////////////////////////////// -->
 		<div class="my-loader fade-model" id="my_loader">
 			<div class="spinner-border" role="status" style="width: 100px; height: 100px">
 				<span class="visually-hidden">Loading...</span>
 			</div>
 		</div>
 
-<!-- /////////////////////////////////////Change profile pic//////////////////////////////////////////////////// -->
+		<!-- /////////////////////////////////////Change profile pic//////////////////////////////////////////////////// -->
 		<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="staticBackdropLabel" aria-hidden="true">
 			<div class="modal-dialog">
@@ -53,7 +53,7 @@
 			</div>
 		</div>
 
-<!-- ///////////////////////////////////////////Rename While Adding Friend/////////////////////////////////////// -->
+		<!-- ///////////////////////////////////////////Rename While Adding Friend/////////////////////////////////////// -->
 		<div class="modal fade" id="user-rename-model" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="userrenamemodelLabel" aria-hidden="true">
 			<div class="modal-dialog">
@@ -66,7 +66,7 @@
 					<div class="modal-body">
 
 						<div class="mb-3">
-							<label for="rename-user" class="form-label">Rename</label> 
+							<label for="rename-user" class="form-label">Rename</label>
 							<input class="form-control" type="text" id="rename-user">
 						</div>
 					</div>
@@ -77,7 +77,7 @@
 			</div>
 		</div>
 
-<!-- ///////////////////////////////////////////////Again Rename User//////////////////////////////////////////////////////////// -->
+		<!-- ///////////////////////////////////////////////Again Rename User//////////////////////////////////////////////////////////// -->
 		<div class="modal fade" id="again-rename-model" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="userrenamemodelLabel" aria-hidden="true">
 			<div class="modal-dialog">
@@ -90,7 +90,7 @@
 					<div class="modal-body">
 
 						<div class="mb-3">
-							<label for="again-rename-user" class="form-label">Rename</label> 
+							<label for="again-rename-user" class="form-label">Rename</label>
 							<input class="form-control" type="text" id="again-rename-user">
 						</div>
 					</div>
@@ -101,38 +101,42 @@
 			</div>
 		</div>
 
-		<div class="col-12 chat-header mb-3 text-light d-flex" style="background-color: #f76b2a;">
-			<h6 class="mb-0 me-2" th:text="${session.user.user_id}" id="unique-name" style="display: none;"></h6>
-			<h6 class="mb-0 me-2" th:text="${session.user.userName}" id="myame"></h6>
+		<div class="col-10 m-auto chat-header mb-1 d-flex align-items-center justify-content-between" style="background-color: #dbdbf7;">
+			<h1>Chat App</h1>
+			<div class="d-flex align-items-center">
+				<h6 class="mb-0 me-3" th:text="${session.user.user_id}" id="unique-name" style="display: none;"></h6>
+				<h6 class="mb-0 me-3" th:text="${session.user.userName}" id="myame"></h6>
 
-			<a th:href="@{/logout}" class="btn btn-danger me-2">Logout</a>
-			<div class="my-profile-pic" style="width: 35px; height: 35px; cursor: pointer;">
-				<img th:src="@{/assets/img_avatar.png}" alt="" th:attr="data-user=${session.user.user_id}" width="100%"
-					height="35px" style="border-radius: 50%;" id="profile-pic" data-bs-toggle="modal"
-					data-bs-target="#staticBackdrop">
+				<div class="my-profile-pic me-3" style="width: 35px; height: 35px; cursor: pointer;">
+					<img th:src="@{/assets/img_avatar.png}" alt="" th:attr="data-user=${session.user.user_id}"
+						width="100%" height="35px" style="border-radius: 50%;" id="profile-pic" data-bs-toggle="modal"
+						data-bs-target="#staticBackdrop">
+				</div>
+				<label for="" class="m-0 p-0 me-3" style="cursor: pointer; font-size: 20px;"><i class="fa-solid fa-bell"></i></label>
+				<a th:href="@{/logout}" class="btn btn-danger btn-sm me-2"><i class="fa-solid fa-power-off"></i></a>
 			</div>
 
 		</div>
 		<div class="col-10 chat m-auto shadow" id="chat-templete">
 			<div class="row">
-				<div class="col-3 p-0 border border-1 d-flex flex-column justify-content-between" style="height: 550px" id="friend-sidebr">
-					<div class="friends-selection-section" style="height: 510px; overflow: auto">
-						<div class="online-template shadow-sm mb-2">
-							<div class="rfs-btn d-flex justify-content-between align-items-center px-2"
-								style="background-color: white;">
-								<div class="form-check form-switch">
-									<input class="form-check-input" type="checkbox" role="switch" id="online"
-										autocomplete="off">
-	
-								</div>
-								<i class="fa-solid fa-arrows-rotate" id="refresh"
-									style="color: black; font-size: 20px;"></i>
+				<div class="col-sm-4 col-md-3 p-0 border border-1 d-flex flex-column justify-content-between" style="height: 550px"
+					id="friend-sidebr">
+					<div class="online-template shadow-sm mb-2">
+						<div class="rfs-btn d-flex justify-content-between align-items-center px-2"
+							style="background-color: white;">
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" role="switch" id="online"
+									autocomplete="off">
+
 							</div>
-							<!-- <input class="form-control mb-2" type="text" autocomplete="off" placeholder="search friend..." id="search-friend-local"> -->
+							<i class="fa-solid fa-arrows-rotate" id="refresh"
+								style="color: black; font-size: 20px;"></i>
 						</div>
+						<input class="form-control" type="text" autocomplete="off" placeholder="search friend..." id="search-friend-local">
+					</div>
+					<div class="friends-selection-section" style="height: 510px; overflow: auto">
 						
-							
-						
+
 						<ul class="mb-2" id="friend-list" style="list-style: none; padding-left: 0; margin-bottom: 0;">
 
 
@@ -154,7 +158,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-9 border border-1 p-0" id="chat-main">
+				<div class="col-sm-8 col-md-9 border border-1 p-0" id="chat-main">
 					<div class="message-section-header d-flex align-items-center justify-content-between px-3"
 						style="height: 55px; position: relative;" id="message-header-templete">
 						<div>
@@ -205,10 +209,11 @@
 						<form action="" class="d-flex align-items-center" id="submit-message">
 							<input type="text" class="form-control w-50 me-2 my-1 ms-5" name="message" id="message-area"
 								required placeholder="Type a message">
-							<button type="submit" class="btn btn-primary me-2"><i class="fa-solid fa-paper-plane"></i></button>
+							<button type="submit" class="btn btn-primary me-2"><i
+									class="fa-solid fa-paper-plane"></i></button>
 							<label for="send-file" style="cursor: pointer; font-size: 20px" id="send-file-label"
-								class=""><i class="fa-solid fa-paperclip"></i></label> <input type="file"
-								class="" id="send-file" hidden="hidden">
+								class=""><i class="fa-solid fa-paperclip"></i></label> <input type="file" class=""
+								id="send-file" hidden="hidden">
 						</form>
 					</div>
 					<!-- <h1>Hello</h1>

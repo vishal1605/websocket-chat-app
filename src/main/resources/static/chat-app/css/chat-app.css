@@ -22,7 +22,7 @@
 	transform: scale(1, 1);
 	transition: transform ease-in-out .6s;
 	transform-origin: right;
-	color: white;
+	/* color: white; */
 }
 
 #not-friend-list .list-of-no-friend {
@@ -72,7 +72,7 @@
 
 #my-friends {
 	background-color: #f76b2a;
-	color: white;
+	/* color: white; */
 }
 
 #not-my-friends {
@@ -281,8 +281,8 @@
 }
 
 /* ////////////////////////////////////////////////////Media Queries//////////////////////////////////////////////// */
-@media only screen and (max-width: 890px) {
+@media only screen and (max-width: 768px) {
 	/* #friend-sidebr{
-		background-color: blue;
+		position: absolute;
 	} */
 }
