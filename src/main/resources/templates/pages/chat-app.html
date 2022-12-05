@@ -101,8 +101,8 @@
 			</div>
 		</div>
 
-		<div class="col-10 m-auto chat-header mb-1 d-flex align-items-center justify-content-between" style="background-color: #dbdbf7;">
-			<h1>Chat App</h1>
+		<div class="col-10 m-auto chat-header mb-1 d-flex align-items-center justify-content-between" style="background-color: #7eaae0;">
+			<h1><i class="fa-solid fa-envelope"></i>Chat App</h1>
 			<div class="d-flex align-items-center">
 				<h6 class="mb-0 me-3" th:text="${session.user.user_id}" id="unique-name" style="display: none;"></h6>
 				<h6 class="mb-0 me-3" th:text="${session.user.userName}" id="myame"></h6>
@@ -149,11 +149,11 @@
 					</div>
 					<div class="change-users-view">
 						<div class="row m-0">
-							<div class="col-6 border border-1" id="not-my-friends" style="cursor: pointer;">
-								<h5>Not friend</h5>
+							<div class="col-6 border border-1 text-center" id="not-my-friends" style="cursor: pointer;">
+								<h5><i class="fa-solid fa-user-plus"></i></h5>
 							</div>
-							<div class="col-6 border border-1" id="my-friends" style="cursor: pointer;">
-								<h6>Friends</h6>
+							<div class="col-6 border border-1 text-center" id="my-friends" style="cursor: pointer;">
+								<h5><i class="fa-solid fa-user-group"></i></h5>
 							</div>
 						</div>
 					</div>

@@ -280,6 +280,54 @@
 	box-shadow: 0px -2px 2px rgba(224, 225, 229, 0.52);
 }
 
+#not-my-friends{
+	position: relative;
+}
+#not-my-friends::before {
+	content: "Add friend";
+	position: absolute;
+	left:0;
+	top:-25px;
+	background: #e8e8e8;
+	box-shadow: 4px 4px 5px 3px rgba(224, 225, 229, 0.52);
+	border-radius: 5px;
+	padding: 2px 4px;
+	opacity: 0.7;
+	display: none;
+	color:black;
+	font-size: 11px;
+	
+}
+
+#not-my-friends:hover:before{
+	display: block;
+}
+
+
+#my-friends{
+	position: relative;
+}
+#my-friends::before {
+	content: "Friend";
+	position: absolute;
+	right:0;
+	top:-25px;
+	background: #e8e8e8;
+	box-shadow: 4px 4px 5px 3px rgba(224, 225, 229, 0.52);
+	border-radius: 5px;
+	padding: 2px 4px;
+	opacity: 0.7;
+	display: none;
+	color:black;
+	font-size: 11px;
+	
+}
+
+#my-friends:hover:before{
+	display: block;
+}
+
+
 /* ////////////////////////////////////////////////////Media Queries//////////////////////////////////////////////// */
 @media only screen and (max-width: 768px) {
 	/* #friend-sidebr{
