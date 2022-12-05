@@ -101,16 +101,31 @@
 			</div>
 		</div>
 
-		<div class="col-10 m-auto chat-header mb-1 d-flex align-items-center justify-content-between" style="background-color: #7eaae0;">
-			<h1><i class="fa-solid fa-envelope"></i>Chat App</h1>
+		<!-- ////////////////////////////////////////////////Open all Element/////////////////////////////////////////////// -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+				<!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+				<div class="modal-body" id="element-body">
+				  <!-- <img th:src="@{/assets/img_avatar.png}" alt="" width="400px"> -->
+				</div>
+				<div class="modal-footer" id="remove-conditional-btn">
+				  <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+				  data-bs-target="#staticBackdrop">Edit profile</button>
+				</div>
+			  </div>
+			</div>
+		  </div>
+
+		<div class="col-10 m-auto chat-header mb-2 d-flex align-items-center justify-content-between" style="background-color: #7eaae0;">
+			<h3><i class="fa-solid fa-envelope"></i>Chat App</h3>
 			<div class="d-flex align-items-center">
 				<h6 class="mb-0 me-3" th:text="${session.user.user_id}" id="unique-name" style="display: none;"></h6>
 				<h6 class="mb-0 me-3" th:text="${session.user.userName}" id="myame"></h6>
 
 				<div class="my-profile-pic me-3" style="width: 35px; height: 35px; cursor: pointer;">
 					<img th:src="@{/assets/img_avatar.png}" alt="" th:attr="data-user=${session.user.user_id}"
-						width="100%" height="35px" style="border-radius: 50%;" id="profile-pic" data-bs-toggle="modal"
-						data-bs-target="#staticBackdrop">
+						width="100%" height="35px" style="border-radius: 50%;" id="profile-pic">
 				</div>
 				<label for="" class="m-0 p-0 me-3" style="cursor: pointer; font-size: 20px;"><i class="fa-solid fa-bell"></i></label>
 				<a th:href="@{/logout}" class="btn btn-danger btn-sm me-2"><i class="fa-solid fa-power-off"></i></a>

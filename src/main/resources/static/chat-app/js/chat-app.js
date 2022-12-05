@@ -29,11 +29,14 @@ const renameUserInput = document.getElementById('rename-user');
 const addToFriendList = document.getElementById('add-to-friend-list');
 const saveFriendModal = new bootstrap.Modal(document.getElementById('user-rename-model'));
 const againRenameFriendModal = new bootstrap.Modal(document.getElementById('again-rename-model'));
+const exampleModal = new bootstrap.Modal(document.getElementById('exampleModal'));
 const againRenameInput = document.getElementById('again-rename-user');
 const againRenameBtn = document.getElementById('again-rename-user-btn');
 //const searchFriendLocal = document.getElementById('search-friend-local');
 const messageHeaderTemplete = document.getElementById('message-header-templete');
 const messageInputTemplete = document.getElementById('message-input-templete');
+const removeConditionalBtn = document.getElementById('remove-conditional-btn');
+const elementBody = document.getElementById('element-body');
 
 //Global variable
 let active = [];
@@ -132,7 +135,7 @@ function connect() {
 						switch (contentType) {
 							case 'application':
 								childDiv.className = 'left-msg';
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="">${contentName}</span></label><br />
                                 <hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
 								break;
@@ -145,21 +148,21 @@ function connect() {
 
 							case 'text':
 								childDiv.className = 'left-msg';
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="">${contentName}</span></label><br />
                                 <hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
 								break;
 
 							case 'video':
 								childDiv.className = 'left-msg';
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="">${contentName}</span></label><br />
 									<hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
 								break;
 
 							case 'audio':
 								childDiv.className = 'left-msg';
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="text-light">${contentName}</span></label><br />
+								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="">${contentName}</span></label><br />
 									<hr class="m-0"/><a download="${contentName}" href="${base64String}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
 
 								break;
@@ -882,44 +885,44 @@ function preocessMessage(e) {
 							parentDiv.append(childDiv);
 							switch (fileToSendAsChat.files[0].type) {
 								case 'application/pdf':
-									childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 
 									break;
 
 								case 'application/x-zip-compressed':
-									childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 									break;
 
 								case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-									childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 									break;
 
 								case 'application/zip':
-									childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 									break;
 
 								case 'video/mp4':
-									childDiv.innerHTML = `<i class="fa-solid fa-circle-play" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									childDiv.innerHTML = `<i class="fa-solid fa-circle-play" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 									break;
 
 								case 'audio/mpeg':
-									childDiv.innerHTML = `<i class="fa-solid fa-music" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									childDiv.innerHTML = `<i class="fa-solid fa-music" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 									break;
 
 								case 'text/html':
-									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 									break;
 
 								case 'text/htm':
-									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 									break;
 
 								case 'text/javascript':
-									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 									break;
 
 								case 'text/plain':
-									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="text-light">${fileToSendAsChat.files[0].name}</span>`;
+									childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 									break;
 
 								default:
@@ -1057,10 +1060,20 @@ function hideLoader() {
 
 //////////////////////////////////////////////////Close More Options//////////////////////////////////////////////////////
 function closeMoreOptions(e) {
-	//console.log(e.target.parentNode.id)
-	//if (e.target.parentNode.id != 'more-option' || e.target.parentNode.id != 'profile-more-options') {
-	//moreOptions.style.transform = 'scale(1,0)';
-	//}
+	if(e.target.tagName.toLowerCase()=='img'){
+		removeConditionalBtn.classList.remove('fade-model');
+		exampleModal.show();
+		if(e.target.id == 'profile-pic'){
+			
+			elementBody.innerHTML = `<img src='${e.target.src}' width='400px' height='470px' />`;
+		}else{
+			elementBody.innerHTML = `<img src='${e.target.src}' width='400px' height='470px' />`;
+			removeConditionalBtn.classList.add('fade-model');
+		}
+	}else{
+		//console.log(e.target);
+	}
+	
 }
 
 /////////////////////////////////////////////////////Rename Friend//////////////////////////////////////////////////////
