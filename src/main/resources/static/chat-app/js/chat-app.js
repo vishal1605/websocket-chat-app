@@ -37,6 +37,8 @@ const messageHeaderTemplete = document.getElementById('message-header-templete')
 const messageInputTemplete = document.getElementById('message-input-templete');
 const removeConditionalBtn = document.getElementById('remove-conditional-btn');
 const elementBody = document.getElementById('element-body');
+const appNotification = document.getElementById('app-notification');
+const appNotificationCount = document.getElementById('app-notification-count');
 
 //Global variable
 let active = [];
@@ -56,15 +58,15 @@ let holdBinaryMessageDetails = [];
 myFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
-	myFriends.style.background = 'gray';
-	notMyFriends.style.background = '#f76b2a';
+	myFriends.style.background = 'rgb(219, 219, 247)';
+	notMyFriends.style.background = '#ffe7c7';
 }
 
 notMyFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
-	myFriends.style.background = '#f76b2a';
-	notMyFriends.style.background = 'gray';
+	myFriends.style.background = '#ffe7c7';
+	notMyFriends.style.background = 'rgb(219, 219, 247)';
 }
 
 ///Init function
@@ -265,6 +267,10 @@ function connect() {
 							messageSection.append(parentDiv);
 						}
 					}
+				}else{
+					//appNotification.style.color = 'red';
+					appNotificationCount.innerText = "1";
+					console.log(activeUser)
 				}
 			}
 		}
@@ -311,7 +317,7 @@ function whoOnline() {
 			//console.log(elem);
 			if (!(elem === undefined)) {
 
-				elem.style.background = "green";
+				elem.style.background = "#b8fcca";
 				var first = elem.cloneNode(true);
 				elem.remove();
 				friendList.prepend(first);
