@@ -139,12 +139,38 @@
 							aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						
+						<div id="notify-modal-header" class="d-flex align-items-center bg-primary px-2 rounded shadow mb-3">
+							<div class="me-2" >
+								<img th:src="@{/assets/img_avatar.png}" alt=""
+									th:attr="data-user=${session.user.user_id}" width="100%"
+									height="45px" style="border-radius: 50%;" id="notify-modal-img">
+							</div>
+							<h5 id="notify-modal-name">myName</h5>
+						</div>
+						<div id="notify-modal-body">
+						<div class="left-div">
+                            <label class="left-time">3:25</label>
+                            <div class="left-msg">
+                                <small>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consectetur quia
+                                    repellendus omnis aspernatur earum quae, aliquam quidem modi aperiam expedita
+                                    doloremque illo nemo. Sint aliquam laboriosam eveniet incidunt dolorum sunt officiis
+                                    voluptatibus asperiores, possimus, rem maxime eos fuga tempora quasi blanditiis
+                                    beatae nemo temporibus fugit illo itaque. Ducimus, eos error.</small>
+                            </div>
+                        </div>
+                        <div class="left-div">
+                            <label class="left-time">3:25</label>
+                            <div class="left-msg">
+                                <small>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consectetur quia
+                                    </small>
+                            </div>
+                        </div>
+						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" disabled="disabled" id="block-new-friend"
+						<button type="button" id="block-new-friend"
 							class="btn btn-danger">Block</button>
-						<button type="button" disabled="disabled" id="save-new-friend"
+						<button type="button" id="save-new-friend"
 							class="btn btn-primary">Add Friend</button>
 					</div>
 				</div>
@@ -184,26 +210,7 @@
 								<h6 class="m-0">myName</h6>
 								<p class="m-0">bbbybyt</p>
 							</div>
-						</li>
-						<li class="dropdown-item list-of-notification-msg" id="notify-me-2">
-							<div class="nofification-user-photo">
-								<img th:src="@{/assets/img_avatar.png}" alt="" width="35px" height="35px" style="border-radius: 50%;">
-							</div>
-							<div class="notification-user-detail">
-								<h6 class="m-0">myName</h6>
-								<p class="m-0">bbbybyt</p>
-							</div>
-						</li>
-						<li class="dropdown-item list-of-notification-msg" id="notify-me-3">
-							<div class="nofification-user-photo">
-								<img th:src="@{/assets/img_avatar.png}" alt="" width="35px" height="35px" style="border-radius: 50%;">
-							</div>
-							<div class="notification-user-detail">
-								<h6 class="m-0">myName</h6>
-								<p class="m-0">bbbybyt</p>
-							</div>
 						</li> -->
-
 					</ul>
 				</div>
 				<a th:href="@{/logout}" class="btn btn-danger btn-sm me-2"><i
