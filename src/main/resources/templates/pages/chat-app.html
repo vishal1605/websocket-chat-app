@@ -126,6 +126,30 @@
 				</div>
 			</div>
 		</div>
+		
+		<!-- /////////////////////////////////////Handle Notification details//////////////////////////////////////////////////// -->
+		<div class="modal fade" id="handle-notification-details" data-bs-backdrop="static"
+			data-bs-keyboard="false" tabindex="-1"
+			aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						
+					</div>
+					<div class="modal-footer">
+						<button type="button" disabled="disabled" id="block-new-friend"
+							class="btn btn-danger">Block</button>
+						<button type="button" disabled="disabled" id="save-new-friend"
+							class="btn btn-primary">Add Friend</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<div
 			class="col-10 m-auto chat-header mb-2 d-flex align-items-center justify-content-between"
@@ -148,12 +172,38 @@
 					<label for="" class="m-0 p-0 me-3"
 						style="cursor: pointer; font-size: 20px;" id="app-notification"
 						data-bs-toggle="dropdown" aria-expanded="false"><i
-						class="fa-solid fa-bell"><sup id="app-notification-count" style="padding: 2px 4px; border-radius: 50%; background-color: white"></sup></i></label>
-					<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
-						<li class="dropdown-item">Action</li>
-						<li class="dropdown-item">Action</li>
-						<li class="dropdown-item">Action</li>
-						
+						class="fa-solid fa-bell"><sup id="app-notification-count"
+							style="padding: 2px 4px; border-radius: 50%; background-color: white"></sup></i></label>
+					<ul class="dropdown-menu dropdown-menu-end"
+						aria-labelledby="dropdownMenuButton1" id="notification-list">
+						<!-- <li class="dropdown-item list-of-notification-msg" id="notify-me-1">
+							<div class="nofification-user-photo">
+								<img th:src="@{/assets/img_avatar.png}" alt="" width="35px" height="35px" style="border-radius: 50%;">
+							</div>
+							<div class="notification-user-detail">
+								<h6 class="m-0">myName</h6>
+								<p class="m-0">bbbybyt</p>
+							</div>
+						</li>
+						<li class="dropdown-item list-of-notification-msg" id="notify-me-2">
+							<div class="nofification-user-photo">
+								<img th:src="@{/assets/img_avatar.png}" alt="" width="35px" height="35px" style="border-radius: 50%;">
+							</div>
+							<div class="notification-user-detail">
+								<h6 class="m-0">myName</h6>
+								<p class="m-0">bbbybyt</p>
+							</div>
+						</li>
+						<li class="dropdown-item list-of-notification-msg" id="notify-me-3">
+							<div class="nofification-user-photo">
+								<img th:src="@{/assets/img_avatar.png}" alt="" width="35px" height="35px" style="border-radius: 50%;">
+							</div>
+							<div class="notification-user-detail">
+								<h6 class="m-0">myName</h6>
+								<p class="m-0">bbbybyt</p>
+							</div>
+						</li> -->
+
 					</ul>
 				</div>
 				<a th:href="@{/logout}" class="btn btn-danger btn-sm me-2"><i

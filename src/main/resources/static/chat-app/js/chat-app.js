@@ -39,6 +39,8 @@ const removeConditionalBtn = document.getElementById('remove-conditional-btn');
 const elementBody = document.getElementById('element-body');
 const appNotification = document.getElementById('app-notification');
 const appNotificationCount = document.getElementById('app-notification-count');
+const notificationList = document.getElementById('notification-list');
+const handleNotificationDetails = new bootstrap.Modal(document.getElementById('handle-notification-details'));
 
 //Global variable
 let active = [];
@@ -53,6 +55,8 @@ let fileString = "";
 let fileByteArray = [];
 let contentType = "";
 let holdBinaryMessageDetails = [];
+let holdNotificationMessages = [];
+let holdNotificationFromUser = [];
 
 ////Event Listners
 myFriends.onclick = function (e) {
@@ -268,9 +272,52 @@ function connect() {
 						}
 					}
 				}else{
+					if(holdNotificationMessages.length==0){
+						holdNotificationMessages.push(activeUser);
+						console.log(document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[1].children[0].textContent);
+						let notiList = document.createElement('li');
+						notiList.className = 'dropdown-item list-of-notification-msg';
+						notiList.id = `notify-me-${activeUser.toUser.friend[0].myFriend.user_id}`;
+						notiList.innerHTML = `
+												<div class="nofification-user-photo">
+								<img src="${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[0].children[0].src}" alt="" width="35px" height="35px" style="border-radius: 50%;">
+							</div>
+							<div class="notification-user-detail">
+								<h6 class="m-0">${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[1].children[0].textContent}</h6>
+								<p class="m-0">${bin2String(activeUser.content).substring(0,7)+"..."}</p>
+							</div>	`;
+							notiList.setAttribute('onclick', `showNotifyUserMessage(${username},${activeUser.toUser.friend[0].myFriend.user_id},
+							 '${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[0].children[0].src}',
+							 '${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[1].children[0].textContent}', this)`);
+						notificationList.append(notiList);
+						
+					}else{
+						let notifyMe = holdNotificationMessages.some(e=>{
+							holdNotificationFromUser.push(e.toUser.friend[0].myFriend.user_id);
+							return (e.toUser.friend[0].myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id)
+						});
+						if(notifyMe){
+							document.getElementById('notify-me-'+activeUser.toUser.friend[0].myFriend.user_id).children[1].children[1].textContent = bin2String(activeUser.content).substring(0,7)+"...";
+						}else{
+							holdNotificationMessages.push(activeUser);
+							let notiList = document.createElement('li');
+						notiList.className = 'dropdown-item list-of-notification-msg';
+						notiList.id = `notify-me-${activeUser.toUser.friend[0].myFriend.user_id}`;
+						notiList.innerHTML = `
+												<div class="nofification-user-photo">
+								<img src="${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[0].children[0].src}" alt="" width="35px" height="35px" style="border-radius: 50%;">
+							</div>
+							<div class="notification-user-detail">
+								<h6 class="m-0">${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[1].children[0].textContent}</h6>
+								<p class="m-0">${bin2String(activeUser.content).substring(0,7)+"..."}</p>
+							</div>`;
+						notificationList.append(notiList);
+						}
+					}
 					//appNotification.style.color = 'red';
-					appNotificationCount.innerText = "1";
-					console.log(activeUser)
+					//appNotificationCount.innerText = "1";
+					//console.log(holdNotificationFromUser)
+					console.log(activeUser);
 				}
 			}
 		}
@@ -987,18 +1034,18 @@ function preocessMessage(e) {
 						parentDiv.append(childDiv);
 						childDiv.innerHTML = `<small class="">${myMessage}</small>`;
 						messageSection.append(parentDiv);
-						$.ajax({
-							type: "POST",
-							url: "/send-message",
-							data: {
-								requestData: JSON.stringify({
-									username, friend_id, myMessage
-								})
-							},
-							success: function (response) {
-								//console.log(response);
-							}
-						});
+						//$.ajax({
+						//	type: "POST",
+						//	url: "/send-message",
+						//	data: {
+						//		requestData: JSON.stringify({
+						//			username, friend_id, myMessage
+						//		})
+						//	},
+						//	success: function (response) {
+						//		//console.log(response);
+						//	}
+						//});
 					}
 					messageArea.value = "";
 					fileToSendAsChat.value = "";
@@ -1120,4 +1167,23 @@ function searchLocalFriend(e){
 	//})
 	//console.log(friendList.textContent)
 	
+}
+
+//////////////////////////////////////////////////////////App Notification Releted///////////////////////////////////
+function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element){
+	console.log(dummyName);
+	console.log(imgString);
+	console.log(f_id);
+	console.log(element);
+	handleNotificationDetails.show();
+	$.ajax({
+		type: "GET",
+		url: "/get-message",
+		data: {
+			requestData: JSON.stringify({ u_id, f_id })
+		},
+		success: function(result) {
+			console.log(result);
+		}
+	});
 }

@@ -327,6 +327,17 @@
 	display: block;
 }
 
+/* //////////////////////////////////////////////////////Notification releted////////////////////////////////////// */
+#notification-list .list-of-notification-msg{
+	border-radius: 10px;
+	height: 50px;
+	display: flex;
+	justify-content: space-around;
+	padding: 0 3px;
+	align-items: center;
+	cursor: pointer;
+}
+
 
 /* ////////////////////////////////////////////////////Media Queries//////////////////////////////////////////////// */
 @media only screen and (max-width: 768px) {
