@@ -45,6 +45,8 @@ const notifyModalBody = document.getElementById('notify-modal-body');
 const notifyModalName = document.getElementById('notify-modal-name');
 const notifyModalImg = document.getElementById('notify-modal-img');
 const blockNewFriend = document.getElementById('block-new-friend');
+const unBlockNewFriend = document.getElementById('unblock-new-friend');
+const saveNewFriendFromNotification = document.getElementById('save-new-friend-from-notification');
 
 //Global variable
 let active = [];
@@ -64,14 +66,14 @@ let holdNotificationFromUser = [];
 let isBlocked = false;
 
 ////Event Listners
-myFriends.onclick = function (e) {
+myFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'rgb(219, 219, 247)';
 	notMyFriends.style.background = '#ffe7c7';
 }
 
-notMyFriends.onclick = function (e) {
+notMyFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#ffe7c7';
@@ -95,6 +97,7 @@ function initialFunct() {
 	againRenameBtn.addEventListener('click', renameFriendAgain);
 	document.addEventListener('click', closeMoreOptions);
 	blockNewFriend.addEventListener('click', blockFriend);
+	unBlockNewFriend.addEventListener('click', unBlockFriend);
 	//searchFriendLocal.addEventListener('input', searchLocalFriend);
 }
 ///////////////////////////////Fetch Logged in User Profile/////////////////////////////////////
@@ -105,7 +108,7 @@ function getMyProfilePicture() {
 		data: {
 			requestData: username
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			if (responseObject == "") {
 			} else {
 
@@ -119,7 +122,7 @@ function getMyProfilePicture() {
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function (event) {
+	ws.onmessage = function(event) {
 		var parentDiv = document.createElement('div');
 		var childDiv = document.createElement('div');
 		var timeLabel = document.createElement('label');
@@ -141,7 +144,7 @@ function connect() {
 					}
 					var reader = new FileReader();
 					reader.readAsDataURL(event.data);
-					reader.onloadend = function () {
+					reader.onloadend = function() {
 						var base64String = reader.result;
 						let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2];
 						switch (contentType) {
@@ -194,7 +197,7 @@ function connect() {
 		} else {
 
 			var activeUser = JSON.parse(event.data);
-			console.log("Working");
+
 			if ('user_id' in activeUser) {
 				if (activeUser.isActive == true) {
 					let exist = active.some((e) => {
@@ -218,7 +221,12 @@ function connect() {
 			} else {
 				if (!(friendList.querySelector(`[data-find="find_${activeUser.toUser.friend[0].myFriend.user_id}"]`) == undefined)) {
 					if (friend_id != activeUser.toUser.friend[0].myFriend.user_id) {
-						if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
+						if (bin2String(activeUser.content).split(',')[0] == "notification") {
+
+							console.log(bin2String(activeUser.content).split(',')[1]);
+							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
+							isBlocked = bin2String(activeUser.content).split(',')[1].trim();
+						} else if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
 							holdBinaryMessageDetails.push(activeUser);
 							contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
 							messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
@@ -226,7 +234,7 @@ function connect() {
 							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 							//console.log(messageArray);
 							var count = {};
-							messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+							messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
 							//console.log(count);
 							for (let key in count) {
 								document.getElementById(key).children[0].textContent = count[key];
@@ -242,7 +250,7 @@ function connect() {
 							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 							//console.log(messageArray);
 							var count = {};
-							messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+							messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
 							//console.log(count);
 							for (let key in count) {
 								document.getElementById(key).children[0].textContent = count[key];
@@ -255,8 +263,11 @@ function connect() {
 						}
 
 					} else {
-
-						if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
+						if (bin2String(activeUser.content).split(',')[0] == "notification") {
+							console.log(bin2String(activeUser.content).split(',')[1]);
+							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
+							isBlocked = bin2String(activeUser.content).split(',')[1].trim();
+						} else if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
 							holdBinaryMessageDetails.push(activeUser);
 							contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
 						} else {
@@ -398,7 +409,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function (responseObject) {
+		success: function(responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -449,7 +460,7 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			console.log(responseObject);
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
@@ -462,7 +473,7 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function (lastMessages) {
+					success: function(lastMessages) {
 						lastMessages.sort((a, b) => {
 							var date1 = new Date(a.sendDate)
 							var date2 = new Date(b.sendDate)
@@ -549,7 +560,8 @@ function addFriend(id, f_dummyName) {
 			requestData: friendId,
 			givenName: f_dummyName
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
+			console.log(responseObject)
 			var list = document.createElement('li');
 			list.className = 'list-of-friend mb-1';
 			list.style.backgroundColor = 'white';
@@ -606,11 +618,12 @@ function removeFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
 			list.id = responseObject.user_id;
+			list.setAttribute('data-dname',responseObject.dummyName);
 			list.innerHTML = `<div class="user-photo">
 								<img src="${(responseObject.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 							</div>
@@ -633,7 +646,7 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function (e) {
+closePopUpProfileModel.onclick = function(e) {
 	profilePic.value = '';
 	if (alertMsg.classList.contains('show-model')) {
 		alertMsg.classList.remove('show-model');
@@ -686,7 +699,7 @@ function submitProfilePic() {
 		contentType: false,
 		processData: false,
 		data: formData,
-		success: function (response) {
+		success: function(response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
 
 		}
@@ -716,7 +729,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function (response) {
+		success: function(response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -880,7 +893,7 @@ function preocessMessage(e) {
 				let allowMsg = active.some(e => e.user_id == friend_id);
 				if (allowMsg) {
 					console.log(isBlocked, typeof isBlocked);
-					if(isBlocked === 'false'){
+					if (isBlocked === 'false') {
 						if (fileToSendAsChat.value != "") {
 							//ws.binaryType = "arraybuffer"
 							ws.send(JSON.stringify({
@@ -895,15 +908,15 @@ function preocessMessage(e) {
 								content: unpack("binarydta," + fileToSendAsChat.files[0].type + "," + fileToSendAsChat.files[0].name),
 								sendDate: new Date().toString(),
 								recievedDate: new Date().toString(),
-	
+
 							}))
 							ws.send(fileToSendAsChat.files[0]);
-	
+
 							var parentDiv = document.createElement('div');
 							var childDiv = document.createElement('div');
 							var timeLabel = document.createElement('label');
 							if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
-	
+
 								globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
 								var dateTimeStamp = document.createElement('div');
 								dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
@@ -911,7 +924,7 @@ function preocessMessage(e) {
 								messageSection.append(dateTimeStamp)
 							}
 							if (fileToSendAsChat.files[0].type == 'image/png' || fileToSendAsChat.files[0].type == 'image/jpeg') {
-	
+
 								parentDiv.className = 'right-div';
 								childDiv.className = 'right-msg-img';
 								timeLabel.className = 'right-time';
@@ -920,9 +933,9 @@ function preocessMessage(e) {
 								parentDiv.append(childDiv);
 								childDiv.innerHTML = `<img src="${'data:image/png;base64,' + fileString}"
 						 alt="" width="100%" style="cursor: pointer;">`;
-	
+
 								messageSection.append(parentDiv);
-	
+
 								let formFile = new FormData();
 								formFile.append('msgFile', fileToSendAsChat.files[0])
 								formFile.append('username', username)
@@ -933,12 +946,12 @@ function preocessMessage(e) {
 									contentType: false,
 									processData: false,
 									data: formFile,
-									success: function (response) {
+									success: function(response) {
 										// console.log(response);
 									}
 								});
-	
-	
+
+
 							} else {
 								parentDiv.className = 'right-div';
 								childDiv.className = 'right-msg';
@@ -949,49 +962,49 @@ function preocessMessage(e) {
 								switch (fileToSendAsChat.files[0].type) {
 									case 'application/pdf':
 										childDiv.innerHTML = `<i class="fa-solid fa-file-pdf" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
-	
+
 										break;
-	
+
 									case 'application/x-zip-compressed':
 										childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 										break;
-	
+
 									case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
 										childDiv.innerHTML = `<i class="fa-solid fa-file-excel" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 										break;
-	
+
 									case 'application/zip':
 										childDiv.innerHTML = `<i class="fa-solid fa-file-zipper" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 										break;
-	
+
 									case 'video/mp4':
 										childDiv.innerHTML = `<i class="fa-solid fa-circle-play" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 										break;
-	
+
 									case 'audio/mpeg':
 										childDiv.innerHTML = `<i class="fa-solid fa-music" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 										break;
-	
+
 									case 'text/html':
 										childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 										break;
-	
+
 									case 'text/htm':
 										childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 										break;
-	
+
 									case 'text/javascript':
 										childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 										break;
-	
+
 									case 'text/plain':
 										childDiv.innerHTML = `<i class="fa-solid fa-file" style="font-size:25px;"></i>&nbsp;<span class="">${fileToSendAsChat.files[0].name}</span>`;
 										break;
-	
+
 									default:
 										break;
 								}
-	
+
 								messageSection.append(parentDiv);
 								let formFile = new FormData();
 								formFile.append('msgFile', fileToSendAsChat.files[0])
@@ -1003,7 +1016,7 @@ function preocessMessage(e) {
 									contentType: false,
 									processData: false,
 									data: formFile,
-									success: function (response) {
+									success: function(response) {
 										//console.log(response);
 									}
 								});
@@ -1027,9 +1040,9 @@ function preocessMessage(e) {
 							var parentDiv = document.createElement('div');
 							var childDiv = document.createElement('div');
 							var timeLabel = document.createElement('label');
-	
+
 							if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
-	
+
 								globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
 								var dateTimeStamp = document.createElement('div');
 								dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
@@ -1044,22 +1057,22 @@ function preocessMessage(e) {
 							parentDiv.append(childDiv);
 							childDiv.innerHTML = `<small class="">${myMessage}</small>`;
 							messageSection.append(parentDiv);
-							//$.ajax({
-							//	type: "POST",
-							//	url: "/send-message",
-							//	data: {
-							//		requestData: JSON.stringify({
-							//			username, friend_id, myMessage
-							//		})
-							//	},
-							//	success: function (response) {
-							//		//console.log(response);
-							//	}
-							//});
+							// $.ajax({
+							// 	type: "POST",
+							// 	url: "/send-message",
+							// 	data: {
+							// 		requestData: JSON.stringify({
+							// 			username, friend_id, myMessage
+							// 		})
+							// 	},
+							// 	success: function (response) {
+							// 		//console.log(response);
+							// 	}
+							// });
 						}
 						messageArea.value = "";
 						fileToSendAsChat.value = "";
-					}else{
+					} else {
 						alert("User Blocked You");
 					}
 				} else {
@@ -1162,7 +1175,7 @@ function renameFriendAgain(e) {
 			user_id: username,
 			friendId: id
 		},
-		success: function (response) {
+		success: function(response) {
 			console.log(response);
 			//messageHeaderLabel.innerText = response;
 			//friendList.querySelector(`[data-find="find_${id}"]`).children[2].children[0].innerText = response;
@@ -1185,18 +1198,38 @@ function searchLocalFriend(e) {
 //////////////////////////////////////////////////////////App Notification Releted///////////////////////////////////
 function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 	blockNewFriend.value = f_id;
+	unBlockNewFriend.value = f_id;
 	notifyModalBody.innerHTML = "";
 	handleNotificationDetails.show();
 	notifyModalImg.src = imgString;
 	notifyModalName.innerText = dummyName;
 	$.ajax({
 		type: "GET",
+		url: "/check-blocked-friend",
+		data: {
+			requestData: f_id
+		},
+		success: function(result) {
+			console.log(result)
+			if (result) {
+
+				blockNewFriend.classList.add('fade-model');
+				unBlockNewFriend.classList.remove('fade-model');
+			} else {
+
+				blockNewFriend.classList.remove('fade-model');
+				unBlockNewFriend.classList.add('fade-model');
+			}
+		}
+	});
+
+	$.ajax({
+		type: "GET",
 		url: "/get-message",
 		data: {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
-		success: function (result) {
-			console.log(result);
+		success: function(result) {
 			result.forEach(e => {
 				var dateTimeStamp = document.createElement('div');
 				dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
@@ -1217,19 +1250,78 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 			})
 		}
 	});
+	console.log(document.getElementById(f_id).getAttribute('data-dname'))
+	saveNewFriendFromNotification.setAttribute('onclick', `saveNotificationFriend(${f_id},'${document.getElementById(f_id).getAttribute('data-dname')}')`);
 }
-//handleNotificationDetails.show();
 
-function blockFriend(e){
-	console.log(e.target.value);
-	$.ajax({
-		type: "GET",
-		url: "/blocked-friend",
-		data: {
-			requestData: e.target.value
-		},
-		success: function (result) {
-			console.log(result);
-		}
-	})
+function saveNotificationFriend(id, param){
+	handleNotificationDetails.hide();
+	saveFriendModal.show();
+	renameUserInput.value = param;
+	addToFriendList.value = id;
+}
+
+function blockFriend(e) {
+	if (e.target.value != "") {
+		ws.send(JSON.stringify({
+			toUser: {
+				user_id: e.target.value,
+				friend: [{
+					myFriend: {
+						user_id: username
+					}
+				}]
+			},
+			content: unpack("notification," + "true," + "block"),
+			sendDate: new Date().toString(),
+			recievedDate: new Date().toString(),
+
+		}));
+
+		$.ajax({
+			type: "GET",
+			url: "/blocked-friend",
+			data: {
+				requestData: e.target.value
+			},
+			success: function(result) {
+				console.log(result);
+			}
+		});
+	}
+	handleNotificationDetails.hide();
+	e.target.value = "";
+
+}
+
+function unBlockFriend(e) {
+	console.log(e);
+	if (e.target.value != "") {
+		ws.send(JSON.stringify({
+			toUser: {
+				user_id: e.target.value,
+				friend: [{
+					myFriend: {
+						user_id: username
+					}
+				}]
+			},
+			content: unpack("notification," + "false," + "block"),
+			sendDate: new Date().toString(),
+			recievedDate: new Date().toString(),
+
+		}));
+		$.ajax({
+			type: "GET",
+			url: "/unblocked-friend",
+			data: {
+				requestData: e.target.value
+			},
+			success: function(result) {
+				console.log(result);
+			}
+		});
+	}
+	handleNotificationDetails.hide();
+	e.target.value = "";
 }

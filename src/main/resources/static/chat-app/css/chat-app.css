@@ -338,7 +338,8 @@
 	cursor: pointer;
 }
 #notify-modal-body{
-	overflow: auto
+	overflow: auto;
+	height: 350px;
 }
 #notify-modal-body .left-div{
 	/* border: 1px solid black; */

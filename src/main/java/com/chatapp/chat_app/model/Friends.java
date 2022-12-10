@@ -93,9 +93,16 @@ public class Friends {
         this.isBlocked = isBlocked;
         this.isFriend = isFriend;
     }
-
+	public Friends(long fId, String saveName, ChatUser myFriend, long user, boolean isBlocked, boolean isFriend) {
+		super();
+		this.fId = fId;
+		this.saveName = saveName;
+		this.myFriend = myFriend;
+		this.user = user;
+		this.isBlocked = isBlocked;
+		this.isFriend = isFriend;
+	}
     
-
     
     
 
