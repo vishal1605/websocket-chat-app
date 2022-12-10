@@ -16,7 +16,10 @@ public class FriendsDao {
     private FriendsRepo fRepo;
 
     public Friends saveMyFriends(String saveAs, ChatUser friend, long u_id){
-        return fRepo.save(new Friends(saveAs, friend, u_id));
+        return fRepo.save(new Friends(saveAs, friend, u_id, false, true));
+    }
+    public Friends saveBlockedFriends(ChatUser friend, long u_id){
+        return fRepo.save(new Friends(friend, u_id, true, false));
     }
 
     public List<Friends> getAllFriends(long u_id){

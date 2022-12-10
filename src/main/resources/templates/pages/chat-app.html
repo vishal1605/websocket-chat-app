@@ -3,11 +3,11 @@
 	th:replace="base::layout(~{::.row},~{::title},~{::script},~{::link})">
 
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" th:href="@{/chat-app/css/chat-app.css}">
-<title>chat app</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" th:href="@{/chat-app/css/chat-app.css}">
+	<title>chat app</title>
 
 </head>
 
@@ -18,34 +18,32 @@
 
 		<!-- //////////////////////////////////Loader//////////////////////////////////////////////////////////// -->
 		<div class="my-loader fade-model" id="my_loader">
-			<div class="spinner-border" role="status"
-				style="width: 100px; height: 100px">
+			<div class="spinner-border" role="status" style="width: 100px; height: 100px">
 				<span class="visually-hidden">Loading...</span>
 			</div>
 		</div>
 
 		<!-- /////////////////////////////////////Change profile pic//////////////////////////////////////////////////// -->
-		<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
-			data-bs-keyboard="false" tabindex="-1"
+		<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="staticBackdropLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="staticBackdropLabel">Change
 							Profile photo</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal"
-							aria-label="Close" id="close-profile-model"></button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+							id="close-profile-model"></button>
 					</div>
 					<div class="modal-body">
-						<div class="alert alert-danger m-0 p-0 fade-model" role="alert"
-							id="alert-msg">Please select image!</div>
+						<div class="alert alert-danger m-0 p-0 fade-model" role="alert" id="alert-msg">Please select
+							image!</div>
 						<div class="mb-3">
 							<label for="formFile" class="form-label text-light">select
 								image</label> <input class="form-control" type="file" id="form-file"
 								th:attr="data-user_id=${session.user.user_id}">
 						</div>
-						<img src="" alt="demo" width="150px" height="150px"
-							class="mt-1 fade-model m-auto" id="profile-demo">
+						<img src="" alt="demo" width="150px" height="150px" class="mt-1 fade-model m-auto"
+							id="profile-demo">
 					</div>
 					<div class="modal-footer">
 						<button type="button" disabled="disabled" id="submit-profile-pic"
@@ -56,43 +54,40 @@
 		</div>
 
 		<!-- ///////////////////////////////////////////Rename While Adding Friend/////////////////////////////////////// -->
-		<div class="modal fade" id="user-rename-model"
-			data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+		<div class="modal fade" id="user-rename-model" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="userrenamemodelLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="userrenamemodelLabel">Save as
 							User</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal"
-							aria-label="Close" id="close-add-user-model"></button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+							id="close-add-user-model"></button>
 					</div>
 					<div class="modal-body">
 
 						<div class="mb-3">
-							<label for="rename-user" class="form-label">Rename</label> <input
-								class="form-control" type="text" id="rename-user">
+							<label for="rename-user" class="form-label">Rename</label> <input class="form-control"
+								type="text" id="rename-user">
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" id="add-to-friend-list"
-							class="btn btn-primary">Add friend</button>
+						<button type="button" id="add-to-friend-list" class="btn btn-primary">Add friend</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- ///////////////////////////////////////////////Again Rename User//////////////////////////////////////////////////////////// -->
-		<div class="modal fade" id="again-rename-model"
-			data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+		<div class="modal fade" id="again-rename-model" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="userrenamemodelLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="againrenamemodelLabel">Rename
 							User</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal"
-							aria-label="Close" id="close-rename-user-model"></button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+							id="close-rename-user-model"></button>
 					</div>
 					<div class="modal-body">
 
@@ -102,16 +97,14 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" id="again-rename-user-btn"
-							class="btn btn-primary">Rename</button>
+						<button type="button" id="again-rename-user-btn" class="btn btn-primary">Rename</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- ////////////////////////////////////////////////Open all Element/////////////////////////////////////////////// -->
-		<div class="modal fade" id="exampleModal" tabindex="-1"
-			aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
@@ -119,89 +112,83 @@
 						<!-- <img th:src="@{/assets/img_avatar.png}" alt="" width="400px"> -->
 					</div>
 					<div class="modal-footer" id="remove-conditional-btn">
-						<button type="button" class="btn btn-primary"
-							data-bs-toggle="modal" data-bs-target="#staticBackdrop">Edit
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+							data-bs-target="#staticBackdrop">Edit
 							profile</button>
 					</div>
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- /////////////////////////////////////Handle Notification details//////////////////////////////////////////////////// -->
-		<div class="modal fade" id="handle-notification-details" data-bs-backdrop="static"
-			data-bs-keyboard="false" tabindex="-1"
-			aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal fade" id="handle-notification-details" data-bs-backdrop="static" data-bs-keyboard="false"
+			tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						
-						<button type="button" class="btn-close" data-bs-dismiss="modal"
-							aria-label="Close"></button>
+
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<div id="notify-modal-header" class="d-flex align-items-center bg-primary px-2 rounded shadow mb-3">
-							<div class="me-2" >
+						<div id="notify-modal-header"
+							class="d-flex align-items-center bg-primary px-2 rounded shadow mb-3">
+							<div class="me-2">
 								<img th:src="@{/assets/img_avatar.png}" alt=""
-									th:attr="data-user=${session.user.user_id}" width="100%"
-									height="45px" style="border-radius: 50%;" id="notify-modal-img">
+									th:attr="data-user=${session.user.user_id}" width="45px" height="45px"
+									style="border-radius: 50%;" id="notify-modal-img">
 							</div>
-							<h5 id="notify-modal-name">myName</h5>
+							<h5 id="notify-modal-name"></h5>
 						</div>
-						<div id="notify-modal-body">
-						<div class="left-div">
-                            <label class="left-time">3:25</label>
-                            <div class="left-msg">
-                                <small>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consectetur quia
-                                    repellendus omnis aspernatur earum quae, aliquam quidem modi aperiam expedita
-                                    doloremque illo nemo. Sint aliquam laboriosam eveniet incidunt dolorum sunt officiis
-                                    voluptatibus asperiores, possimus, rem maxime eos fuga tempora quasi blanditiis
-                                    beatae nemo temporibus fugit illo itaque. Ducimus, eos error.</small>
-                            </div>
-                        </div>
-                        <div class="left-div">
-                            <label class="left-time">3:25</label>
-                            <div class="left-msg">
-                                <small>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consectetur quia
-                                    </small>
-                            </div>
-                        </div>
+						<div id="notify-modal-body" class="notify-message-section">
+							<!-- <div class="left-div">
+								<label class="left-time">3:25</label>
+								<div class="left-msg">
+									<small>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consectetur quia
+										repellendus omnis aspernatur earum quae, aliquam quidem modi aperiam expedita
+										doloremque illo nemo. Sint aliquam laboriosam eveniet incidunt dolorum sunt
+										</small>
+								</div>
+							</div>
+							<div class="left-div">
+								<label class="left-time">3:25</label>
+								<div class="left-msg">
+									<small>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consectetur quia
+										repellendus omnis aspernatur earum quae, aliquam quidem modi aperiam expedita
+										doloremque illo nemo. Sint aliquam laboriosam eveniet incidunt dolorum sunt
+										</small>
+								</div>
+							</div> -->
+							
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" id="block-new-friend"
-							class="btn btn-danger">Block</button>
-						<button type="button" id="save-new-friend"
-							class="btn btn-primary">Add Friend</button>
+						<button type="button" id="block-new-friend" class="btn btn-danger">Block</button>
+						<button type="button" id="save-new-friend" class="btn btn-primary">Add Friend</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div
-			class="col-10 m-auto chat-header mb-2 d-flex align-items-center justify-content-between"
+		<div class="col-10 m-auto chat-header mb-2 d-flex align-items-center justify-content-between"
 			style="background-color: #7eaae0;">
 			<h3>
 				<i class="fa-solid fa-envelope"></i>Chat App
 			</h3>
 			<div class="d-flex align-items-center">
-				<h6 class="mb-0 me-3" th:text="${session.user.user_id}"
-					id="unique-name" style="display: none;"></h6>
+				<h6 class="mb-0 me-3" th:text="${session.user.user_id}" id="unique-name" style="display: none;"></h6>
 				<h6 class="mb-0 me-3" th:text="${session.user.userName}" id="myame"></h6>
 
-				<div class="my-profile-pic me-3"
-					style="width: 35px; height: 35px; cursor: pointer;">
-					<img th:src="@{/assets/img_avatar.png}" alt=""
-						th:attr="data-user=${session.user.user_id}" width="100%"
-						height="35px" style="border-radius: 50%;" id="profile-pic">
+				<div class="my-profile-pic me-3" style="width: 35px; height: 35px; cursor: pointer;">
+					<img th:src="@{/assets/img_avatar.png}" alt="" th:attr="data-user=${session.user.user_id}"
+						width="100%" height="35px" style="border-radius: 50%;" id="profile-pic">
 				</div>
 				<div class="btn-group">
-					<label for="" class="m-0 p-0 me-3"
-						style="cursor: pointer; font-size: 20px;" id="app-notification"
-						data-bs-toggle="dropdown" aria-expanded="false"><i
-						class="fa-solid fa-bell"><sup id="app-notification-count"
-							style="padding: 2px 4px; border-radius: 50%; background-color: white"></sup></i></label>
-					<ul class="dropdown-menu dropdown-menu-end"
-						aria-labelledby="dropdownMenuButton1" id="notification-list">
+					<label for="" class="m-0 p-0 me-3" style="cursor: pointer; font-size: 20px;" id="app-notification"
+						data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-bell"><sup
+								id="app-notification-count"
+								style="padding: 2px 4px; border-radius: 50%; background-color: white"></sup></i></label>
+					<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1"
+						id="notification-list">
 						<!-- <li class="dropdown-item list-of-notification-msg" id="notify-me-1">
 							<div class="nofification-user-photo">
 								<img th:src="@{/assets/img_avatar.png}" alt="" width="35px" height="35px" style="border-radius: 50%;">
@@ -213,37 +200,32 @@
 						</li> -->
 					</ul>
 				</div>
-				<a th:href="@{/logout}" class="btn btn-danger btn-sm me-2"><i
-					class="fa-solid fa-power-off"></i></a>
+				<a th:href="@{/logout}" class="btn btn-danger btn-sm me-2"><i class="fa-solid fa-power-off"></i></a>
 			</div>
 
 		</div>
 		<div class="col-10 chat m-auto shadow" id="chat-templete">
 			<div class="row">
-				<div
-					class="col-sm-4 col-md-3 p-0 border border-1 d-flex flex-column justify-content-between"
+				<div class="col-sm-4 col-md-3 p-0 border border-1 d-flex flex-column justify-content-between"
 					style="height: 550px" id="friend-sidebr">
 					<div class="online-template shadow-sm mb-2">
-						<div
-							class="rfs-btn d-flex justify-content-between align-items-center px-2"
+						<div class="rfs-btn d-flex justify-content-between align-items-center px-2"
 							style="background-color: white;">
 							<div class="form-check form-switch">
-								<input class="form-check-input" type="checkbox" role="switch"
-									id="online" autocomplete="off">
+								<input class="form-check-input" type="checkbox" role="switch" id="online"
+									autocomplete="off">
 
 							</div>
 							<i class="fa-solid fa-arrows-rotate" id="refresh"
 								style="color: black; font-size: 20px;"></i>
 						</div>
-						<input class="form-control" type="text" autocomplete="off"
-							placeholder="search friend..." id="search-friend-local">
+						<input class="form-control" type="text" autocomplete="off" placeholder="search friend..."
+							id="search-friend-local">
 					</div>
-					<div class="friends-selection-section"
-						style="height: 510px; overflow: auto">
+					<div class="friends-selection-section" style="height: 510px; overflow: auto">
 
 
-						<ul class="mb-2" id="friend-list"
-							style="list-style: none; padding-left: 0; margin-bottom: 0;">
+						<ul class="mb-2" id="friend-list" style="list-style: none; padding-left: 0; margin-bottom: 0;">
 
 
 						</ul>
@@ -255,14 +237,12 @@
 					</div>
 					<div class="change-users-view">
 						<div class="row m-0">
-							<div class="col-6 border border-1 text-center"
-								id="not-my-friends" style="cursor: pointer;">
+							<div class="col-6 border border-1 text-center" id="not-my-friends" style="cursor: pointer;">
 								<h5>
 									<i class="fa-solid fa-user-plus"></i>
 								</h5>
 							</div>
-							<div class="col-6 border border-1 text-center" id="my-friends"
-								style="cursor: pointer;">
+							<div class="col-6 border border-1 text-center" id="my-friends" style="cursor: pointer;">
 								<h5>
 									<i class="fa-solid fa-user-group"></i>
 								</h5>
@@ -271,14 +251,11 @@
 					</div>
 				</div>
 				<div class="col-sm-8 col-md-9 border border-1 p-0" id="chat-main">
-					<div
-						class="message-section-header d-flex align-items-center justify-content-between px-3"
-						style="height: 55px; position: relative;"
-						id="message-header-templete">
+					<div class="message-section-header d-flex align-items-center justify-content-between px-3"
+						style="height: 55px; position: relative;" id="message-header-templete">
 						<div>
-							<img th:src="@{/assets/img_avatar.png}" alt="" width="45px"
-								height="45px" style="border-radius: 50%;"
-								id="message-header-profile-pic" class="hide-element"> <small
+							<img th:src="@{/assets/img_avatar.png}" alt="" width="45px" height="45px"
+								style="border-radius: 50%;" id="message-header-profile-pic" class="hide-element"> <small
 								id="message-header-label"> </small>
 						</div>
 						<label for="" style="cursor: pointer;" id="profile-more-options"></label>
@@ -320,19 +297,15 @@
                         </div> -->
 
 					</div>
-					<div class="message-input-section cstm-shadow fade-model"
-						id="message-input-templete">
-						<form action="" class="d-flex align-items-center"
-							id="submit-message">
-							<input type="text" class="form-control w-50 me-2 my-1 ms-5"
-								name="message" id="message-area" required
-								placeholder="Type a message">
+					<div class="message-input-section cstm-shadow fade-model" id="message-input-templete">
+						<form action="" class="d-flex align-items-center" id="submit-message">
+							<input type="text" class="form-control w-50 me-2 my-1 ms-5" name="message" id="message-area"
+								required placeholder="Type a message">
 							<button type="submit" class="btn btn-primary me-2">
 								<i class="fa-solid fa-paper-plane"></i>
 							</button>
-							<label for="send-file" style="cursor: pointer; font-size: 20px"
-								id="send-file-label" class=""><i
-								class="fa-solid fa-paperclip"></i></label> <input type="file" class=""
+							<label for="send-file" style="cursor: pointer; font-size: 20px" id="send-file-label"
+								class=""><i class="fa-solid fa-paperclip"></i></label> <input type="file" class=""
 								id="send-file" hidden="hidden">
 						</form>
 					</div>

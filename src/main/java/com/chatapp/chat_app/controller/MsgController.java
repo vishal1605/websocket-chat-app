@@ -277,4 +277,13 @@ public class MsgController {
 		return rename;
 	}
 
+	@GetMapping("/blocked-friend")
+	public Friends saveBlockedUser(String requestData, HttpSession session) {
+
+		ChatUser c = (ChatUser) session.getAttribute("user");
+		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+		return fDao.saveBlockedFriends(friend, c.getUser_id());
+
+	}
+
 }

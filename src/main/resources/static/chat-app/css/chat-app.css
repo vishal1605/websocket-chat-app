@@ -337,6 +337,14 @@
 	align-items: center;
 	cursor: pointer;
 }
+#notify-modal-body{
+	overflow: auto
+}
+#notify-modal-body .left-div{
+	/* border: 1px solid black; */
+	margin-bottom: 5px;
+	overflow: auto;
+} 
 
 
 /* ////////////////////////////////////////////////////Media Queries//////////////////////////////////////////////// */

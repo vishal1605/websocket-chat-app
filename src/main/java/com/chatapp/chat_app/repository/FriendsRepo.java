@@ -15,7 +15,7 @@ import com.chatapp.chat_app.model.Friends;
 @Repository
 public interface FriendsRepo extends JpaRepository<Friends, Long>{
 
-    @Query(value = "select * from friends where user = ?;",nativeQuery = true)
+    @Query(value = "select * from friends where user = ? and is_friend = 1;",nativeQuery = true)
     public List<Friends> listOfFriends(long id);
 
     @Modifying
