@@ -153,6 +153,11 @@ public class MsgController {
 
 	}
 
+	@GetMapping("/getAllBlockFriends")
+	public List<Friends> listOfBlockFriends(String requestData) {
+		return fDao.listOfBlockFriends(Long.parseLong(requestData));
+	}
+
 	@GetMapping("/get-last-message")
 	public List<Message> getLastMessage(String requestData, String myId) {
 		//System.out.println(requestData);
@@ -286,24 +291,19 @@ public class MsgController {
 	@GetMapping("/blocked-friend")
 	public Friends saveBlockedUser(String requestData, HttpSession session) {
 
-		ChatUser c = (ChatUser) session.getAttribute("user");
-		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+		ChatUser c = (ChatUser) session.getAttribute("user");//14
+		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));//11
 		Friends checkRowExist = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
 		if(checkRowExist==null) {
-			Friends checkBlockedOrNot = fDao.checkBlockedOrNot(friend.getUser_id(), c.getUser_id());
-			fDao.updateBlockedFriend(checkBlockedOrNot.getfId());
-			return fDao.saveBlockedFriends(friend, c.getUser_id());
-			
+			return fDao.saveBlockedFriends(friend, c.getUser_id(), true);
 		}else {
-			Friends checkBlockedOrNot = fDao.checkBlockedOrNot(friend.getUser_id(), c.getUser_id());
-			fDao.updateBlockedFriend(checkBlockedOrNot.getfId());
-			return null;
+			return fDao.updateSaveBlockedFriends(checkRowExist.getfId(), checkRowExist.getMyFriend(), c.getUser_id(), true);
 		}
 
 	}
 	
 	@GetMapping("/unblocked-friend")
-	public String saveUnBlockedUser(String requestData, HttpSession session) {
+	public Friends saveUnBlockedUser(String requestData, HttpSession session) {
 
 		ChatUser c = (ChatUser) session.getAttribute("user");
 		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
@@ -312,9 +312,7 @@ public class MsgController {
 			return null;
 			
 		}else {
-			Friends checkBlockedOrNot = fDao.checkBlockedOrNot(friend.getUser_id(), c.getUser_id());
-			fDao.updateUnBlockedFriend(checkBlockedOrNot.getfId());
-			return "done";
+			return fDao.updateSaveBlockedFriends(checkRowExist.getfId(), checkRowExist.getMyFriend(), c.getUser_id(), false);
 		}
 
 	}
@@ -324,9 +322,13 @@ public class MsgController {
 
 		ChatUser c = (ChatUser) session.getAttribute("user");
 		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
-		
-		Friends checkBlockedOrNot = fDao.checkBlockedOrNot(friend.getUser_id(), c.getUser_id());
-		return checkBlockedOrNot.isBlocked();
+		Friends checkBlockedOrNot = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
+		if (checkBlockedOrNot == null) {
+			return false;
+		} else {
+			
+			return checkBlockedOrNot.isBlocked();
+		}
 	}
 
 }

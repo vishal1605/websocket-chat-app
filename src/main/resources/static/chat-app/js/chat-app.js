@@ -63,17 +63,18 @@ let contentType = "";
 let holdBinaryMessageDetails = [];
 let holdNotificationMessages = [];
 let holdNotificationFromUser = [];
+let blockList = [];
 let isBlocked = false;
 
 ////Event Listners
-myFriends.onclick = function(e) {
+myFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'rgb(219, 219, 247)';
 	notMyFriends.style.background = '#ffe7c7';
 }
 
-notMyFriends.onclick = function(e) {
+notMyFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#ffe7c7';
@@ -87,6 +88,7 @@ function initialFunct() {
 	myFriends.style.background = '#dbdbf7';
 	getMyProfilePicture();
 	getAllFriends(username);
+	getAllBlockedFriend();
 	refresh.addEventListener('click', whoOnline);
 	profilePic.addEventListener('change', trackProfilePic);
 	submitMessage.addEventListener('submit', preocessMessage);
@@ -108,7 +110,7 @@ function getMyProfilePicture() {
 		data: {
 			requestData: username
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			if (responseObject == "") {
 			} else {
 
@@ -122,7 +124,7 @@ function getMyProfilePicture() {
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function(event) {
+	ws.onmessage = function (event) {
 		var parentDiv = document.createElement('div');
 		var childDiv = document.createElement('div');
 		var timeLabel = document.createElement('label');
@@ -144,7 +146,7 @@ function connect() {
 					}
 					var reader = new FileReader();
 					reader.readAsDataURL(event.data);
-					reader.onloadend = function() {
+					reader.onloadend = function () {
 						var base64String = reader.result;
 						let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2];
 						switch (contentType) {
@@ -224,8 +226,8 @@ function connect() {
 						if (bin2String(activeUser.content).split(',')[0] == "notification") {
 
 							console.log(bin2String(activeUser.content).split(',')[1]);
-							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
-							isBlocked = bin2String(activeUser.content).split(',')[1].trim();
+							// document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
+							// isBlocked = bin2String(activeUser.content).split(',')[1].trim();
 						} else if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
 							holdBinaryMessageDetails.push(activeUser);
 							contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
@@ -234,7 +236,7 @@ function connect() {
 							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 							//console.log(messageArray);
 							var count = {};
-							messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+							messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 							//console.log(count);
 							for (let key in count) {
 								document.getElementById(key).children[0].textContent = count[key];
@@ -250,7 +252,7 @@ function connect() {
 							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 							//console.log(messageArray);
 							var count = {};
-							messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+							messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 							//console.log(count);
 							for (let key in count) {
 								document.getElementById(key).children[0].textContent = count[key];
@@ -265,8 +267,8 @@ function connect() {
 					} else {
 						if (bin2String(activeUser.content).split(',')[0] == "notification") {
 							console.log(bin2String(activeUser.content).split(',')[1]);
-							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
-							isBlocked = bin2String(activeUser.content).split(',')[1].trim();
+							// document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
+							// isBlocked = bin2String(activeUser.content).split(',')[1].trim();
 						} else if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
 							holdBinaryMessageDetails.push(activeUser);
 							contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
@@ -409,7 +411,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function(responseObject) {
+		success: function (responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -460,8 +462,8 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function(responseObject) {
-			console.log(responseObject);
+		success: function (responseObject) {
+			//console.log(responseObject);
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
 				let modifiedFriendList = responseObject.map((u) => ({ ...u.user, profile_img: null }));
@@ -473,7 +475,7 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function(lastMessages) {
+					success: function (lastMessages) {
 						lastMessages.sort((a, b) => {
 							var date1 = new Date(a.sendDate)
 							var date2 = new Date(b.sendDate)
@@ -498,6 +500,10 @@ function getAllFriends(id) {
 						});
 						//console.log(responseObject);
 						responseObject.forEach((e) => {
+							if (e.blocked) {
+								blockList.push(e);
+							}
+							console.log(blockList);
 							friendList.innerHTML += `<li class="list-of-friend mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user.user_id}, '${e.rename}',this)"
 									 style="position:relative;cursor:pointer" id="${e.user.user_id}" data-find="${'find_' + e.user.user_id}" data-blocked="${e.blocked}">
 														
@@ -546,6 +552,23 @@ function getAllFriends(id) {
 		}
 	});
 }
+///////////////////////////////////////////////Get All Blocked Friend//////////////////////////////////////////////////
+function getAllBlockedFriend() {
+	$.ajax({
+		type: "GET",
+		url: "/getAllBlockFriends",
+		data: {
+			requestData: username,
+		}
+		,
+		success: function (response) {
+			console.log(response);
+			response.forEach(e=>{
+				blockList.push(e);
+			})
+		}
+	});
+}
 
 ////////////////////////////////////////// Add More Friends In Your Friend List///////////////////////////////////////////
 function addFriend(id, f_dummyName) {
@@ -560,7 +583,7 @@ function addFriend(id, f_dummyName) {
 			requestData: friendId,
 			givenName: f_dummyName
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			console.log(responseObject)
 			var list = document.createElement('li');
 			list.className = 'list-of-friend mb-1';
@@ -588,6 +611,7 @@ function addFriend(id, f_dummyName) {
 
 			friendList.append(list);
 			document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none')
+			document.getElementById('notify-me-'+id).remove();
 		}
 	});
 	//console.log(list);
@@ -618,12 +642,12 @@ function removeFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
 			list.id = responseObject.user_id;
-			list.setAttribute('data-dname',responseObject.dummyName);
+			list.setAttribute('data-dname', responseObject.dummyName);
 			list.innerHTML = `<div class="user-photo">
 								<img src="${(responseObject.profile_img == null) ? '/assets/img_avatar.png' : 'data:image/png;base64,' + responseObject.profile_img}" alt="" width="45px" height="45px" style="border-radius: 50%;">
 							</div>
@@ -646,7 +670,7 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function(e) {
+closePopUpProfileModel.onclick = function (e) {
 	profilePic.value = '';
 	if (alertMsg.classList.contains('show-model')) {
 		alertMsg.classList.remove('show-model');
@@ -699,7 +723,7 @@ function submitProfilePic() {
 		contentType: false,
 		processData: false,
 		data: formData,
-		success: function(response) {
+		success: function (response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
 
 		}
@@ -729,7 +753,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function(response) {
+		success: function (response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -946,7 +970,7 @@ function preocessMessage(e) {
 									contentType: false,
 									processData: false,
 									data: formFile,
-									success: function(response) {
+									success: function (response) {
 										// console.log(response);
 									}
 								});
@@ -1016,7 +1040,7 @@ function preocessMessage(e) {
 									contentType: false,
 									processData: false,
 									data: formFile,
-									success: function(response) {
+									success: function (response) {
 										//console.log(response);
 									}
 								});
@@ -1073,7 +1097,7 @@ function preocessMessage(e) {
 						messageArea.value = "";
 						fileToSendAsChat.value = "";
 					} else {
-						alert("User Blocked You");
+						alert("You Blocked This User");
 					}
 				} else {
 					alert("sorry your friend is not online");
@@ -1175,7 +1199,7 @@ function renameFriendAgain(e) {
 			user_id: username,
 			friendId: id
 		},
-		success: function(response) {
+		success: function (response) {
 			console.log(response);
 			//messageHeaderLabel.innerText = response;
 			//friendList.querySelector(`[data-find="find_${id}"]`).children[2].children[0].innerText = response;
@@ -1197,6 +1221,7 @@ function searchLocalFriend(e) {
 
 //////////////////////////////////////////////////////////App Notification Releted///////////////////////////////////
 function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
+	console.log(blockList);
 	blockNewFriend.value = f_id;
 	unBlockNewFriend.value = f_id;
 	notifyModalBody.innerHTML = "";
@@ -1209,7 +1234,7 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 		data: {
 			requestData: f_id
 		},
-		success: function(result) {
+		success: function (result) {
 			console.log(result)
 			if (result) {
 
@@ -1229,7 +1254,7 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 		data: {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
-		success: function(result) {
+		success: function (result) {
 			result.forEach(e => {
 				var dateTimeStamp = document.createElement('div');
 				dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
@@ -1254,7 +1279,7 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 	saveNewFriendFromNotification.setAttribute('onclick', `saveNotificationFriend(${f_id},'${document.getElementById(f_id).getAttribute('data-dname')}')`);
 }
 
-function saveNotificationFriend(id, param){
+function saveNotificationFriend(id, param) {
 	handleNotificationDetails.hide();
 	saveFriendModal.show();
 	renameUserInput.value = param;
@@ -1284,8 +1309,9 @@ function blockFriend(e) {
 			data: {
 				requestData: e.target.value
 			},
-			success: function(result) {
+			success: function (result) {
 				console.log(result);
+				blockList.push(result);
 			}
 		});
 	}
@@ -1317,8 +1343,9 @@ function unBlockFriend(e) {
 			data: {
 				requestData: e.target.value
 			},
-			success: function(result) {
+			success: function (result) {
 				console.log(result);
+				blockList.splice(blockList.indexOf(blockList.find(e=>e.fId == result.fId)),1);
 			}
 		});
 	}

@@ -17,6 +17,9 @@ public interface FriendsRepo extends JpaRepository<Friends, Long>{
 
     @Query(value = "select * from friends where user = ? and is_friend = 1;",nativeQuery = true)
     public List<Friends> listOfFriends(long id);
+
+    @Query(value = "select * from friends where user = ? and is_blocked = 1 and is_friend = 0;",nativeQuery = true)
+    public List<Friends> listOfBlockFriends(long id);
     
     @Query(value = "select * from friends where user = ? and my_friend_user_id = ?;",nativeQuery = true)
     public Friends checkBlockedOrNot(long user_id, long f_id);
