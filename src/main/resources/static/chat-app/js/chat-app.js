@@ -291,7 +291,8 @@ function connect() {
 						}
 					}
 				} else {
-					if (holdNotificationMessages.length == 0) {
+					if(!(blockList.some(e=> e.myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id))){
+						if (holdNotificationMessages.length == 0) {
 						holdNotificationMessages.push(activeUser);
 						console.log(document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[1].children[0].textContent);
 						let notiList = document.createElement('li');
@@ -337,6 +338,8 @@ function connect() {
 					//appNotificationCount.innerText = "1";
 					//console.log(holdNotificationFromUser)
 					console.log(activeUser);
+					}
+					console.log(activeUser.toUser.friend[0].myFriend.user_id)
 				}
 			}
 		}
@@ -611,7 +614,10 @@ function addFriend(id, f_dummyName) {
 
 			friendList.append(list);
 			document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none')
+			if(!(document.getElementById('notify-me-'+id) == undefined)){
+				
 			document.getElementById('notify-me-'+id).remove();
+			}
 		}
 	});
 	//console.log(list);
@@ -964,16 +970,16 @@ function preocessMessage(e) {
 								formFile.append('msgFile', fileToSendAsChat.files[0])
 								formFile.append('username', username)
 								formFile.append('friend_id', friend_id)
-								$.ajax({
-									type: "POST",
-									url: "/send-file",
-									contentType: false,
-									processData: false,
-									data: formFile,
-									success: function (response) {
-										// console.log(response);
-									}
-								});
+								//$.ajax({
+								//	type: "POST",
+								//	url: "/send-file",
+								//	contentType: false,
+								//	processData: false,
+								//	data: formFile,
+								//	success: function (response) {
+								//		// console.log(response);
+								//	}
+								//});
 
 
 							} else {
@@ -1034,16 +1040,16 @@ function preocessMessage(e) {
 								formFile.append('msgFile', fileToSendAsChat.files[0])
 								formFile.append('username', username)
 								formFile.append('friend_id', friend_id)
-								$.ajax({
-									type: "POST",
-									url: "/send-file",
-									contentType: false,
-									processData: false,
-									data: formFile,
-									success: function (response) {
-										//console.log(response);
-									}
-								});
+								//$.ajax({
+								//	type: "POST",
+								//	url: "/send-file",
+								//	contentType: false,
+								//	processData: false,
+								//	data: formFile,
+								//	success: function (response) {
+								//		//console.log(response);
+								//	}
+								//});
 							}
 						} else {
 							var formData = new FormData(e.target);
