@@ -25,8 +25,8 @@ public class FriendsDao {
     public Friends saveBlockedFriends(ChatUser friend, long u_id, boolean isBlocked){
         return fRepo.save(new Friends(friend, u_id, isBlocked, false));
     }
-    public Friends updateSaveBlockedFriends(long existingRowId, ChatUser friend, long u_id, boolean is_blocked){
-        return fRepo.save(new Friends(existingRowId, null,friend, u_id, is_blocked, false));
+    public Friends updateSaveBlockedFriends(long existingRowId, String saveName, ChatUser friend, long u_id, boolean is_blocked, boolean isFriend){
+        return fRepo.save(new Friends(existingRowId, saveName,friend, u_id, is_blocked, isFriend));
     }
 
     public List<Friends> getAllFriends(long u_id){

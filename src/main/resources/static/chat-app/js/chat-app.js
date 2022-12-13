@@ -222,72 +222,74 @@ function connect() {
 
 			} else {
 				if (!(friendList.querySelector(`[data-find="find_${activeUser.toUser.friend[0].myFriend.user_id}"]`) == undefined)) {
-					if (friend_id != activeUser.toUser.friend[0].myFriend.user_id) {
-						if (bin2String(activeUser.content).split(',')[0] == "notification") {
-
-							console.log(bin2String(activeUser.content).split(',')[1]);
-							// document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
-							// isBlocked = bin2String(activeUser.content).split(',')[1].trim();
-						} else if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
-							holdBinaryMessageDetails.push(activeUser);
-							contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
-							messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
-							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = 'Conte...';
-							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
-							//console.log(messageArray);
-							var count = {};
-							messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
-							//console.log(count);
-							for (let key in count) {
-								document.getElementById(key).children[0].textContent = count[key];
-								document.getElementById(key).children[0].style.display = 'block';
-
+					if(!(blockList.some(e=> e.myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id))){
+						if (friend_id != activeUser.toUser.friend[0].myFriend.user_id) {
+							if (bin2String(activeUser.content).split(',')[0] == "notification") {
+	
+								console.log(bin2String(activeUser.content).split(',')[1]);
+								// document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
+								// isBlocked = bin2String(activeUser.content).split(',')[1].trim();
+							} else if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
+								holdBinaryMessageDetails.push(activeUser);
+								contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
+								messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
+								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = 'Conte...';
+								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
+								//console.log(messageArray);
+								var count = {};
+								messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+								//console.log(count);
+								for (let key in count) {
+									document.getElementById(key).children[0].textContent = count[key];
+									document.getElementById(key).children[0].style.display = 'block';
+	
+								}
+								var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
+								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
+								friendList.prepend(first);
+							} else {
+								messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
+								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = bin2String(activeUser.content).substring(0, 10) + '...';
+								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
+								//console.log(messageArray);
+								var count = {};
+								messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+								//console.log(count);
+								for (let key in count) {
+									document.getElementById(key).children[0].textContent = count[key];
+									document.getElementById(key).children[0].style.display = 'block';
+	
+								}
+								var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
+								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
+								friendList.prepend(first);
 							}
-							var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
-							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
-							friendList.prepend(first);
+	
 						} else {
-							messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
-							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = bin2String(activeUser.content).substring(0, 10) + '...';
-							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
-							//console.log(messageArray);
-							var count = {};
-							messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
-							//console.log(count);
-							for (let key in count) {
-								document.getElementById(key).children[0].textContent = count[key];
-								document.getElementById(key).children[0].style.display = 'block';
-
+							if (bin2String(activeUser.content).split(',')[0] == "notification") {
+								console.log(bin2String(activeUser.content).split(',')[1]);
+								// document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
+								// isBlocked = bin2String(activeUser.content).split(',')[1].trim();
+							} else if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
+								holdBinaryMessageDetails.push(activeUser);
+								contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
+							} else {
+								var labelTime = new Date();
+								if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+	
+									globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
+									var dateTimeStamp = document.createElement('div');
+									dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+									dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+									messageSection.append(dateTimeStamp)
+								}
+								childDiv.className = 'left-msg';
+								childDiv.innerHTML = `<small class="">${bin2String(activeUser.content)}</small>`;
+	
+								parentDiv.append(timeLabel);
+								parentDiv.append(childDiv);
+								messageSection.append(parentDiv);
 							}
-							var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
-							document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
-							friendList.prepend(first);
-						}
-
-					} else {
-						if (bin2String(activeUser.content).split(',')[0] == "notification") {
-							console.log(bin2String(activeUser.content).split(',')[1]);
-							// document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
-							// isBlocked = bin2String(activeUser.content).split(',')[1].trim();
-						} else if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
-							holdBinaryMessageDetails.push(activeUser);
-							contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
-						} else {
-							var labelTime = new Date();
-							if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
-
-								globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
-								var dateTimeStamp = document.createElement('div');
-								dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-								dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-								messageSection.append(dateTimeStamp)
-							}
-							childDiv.className = 'left-msg';
-							childDiv.innerHTML = `<small class="">${bin2String(activeUser.content)}</small>`;
-
-							parentDiv.append(timeLabel);
-							parentDiv.append(childDiv);
-							messageSection.append(parentDiv);
 						}
 					}
 				} else {
@@ -505,6 +507,8 @@ function getAllFriends(id) {
 						responseObject.forEach((e) => {
 							if (e.blocked) {
 								blockList.push(e);
+								moreOptions.children[2].classList.add('fade-model');
+								moreOptions.children[3].classList.remove('fade-model');
 							}
 							console.log(blockList);
 							friendList.innerHTML += `<li class="list-of-friend mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user.user_id}, '${e.rename}',this)"
@@ -640,6 +644,10 @@ function removeFriend(e) {
 	moreOptions.children[0].removeEventListener('click', removeFriend)
 	moreOptions.children[1].removeAttribute('data-rename');
 	moreOptions.children[1].removeEventListener('click', renameFriend)
+	moreOptions.children[2].removeAttribute('data-block');
+	moreOptions.children[2].removeEventListener('click', blockSpecficFriend)
+	moreOptions.children[3].removeAttribute('data-unblock');
+	moreOptions.children[3].removeEventListener('click', unBlockSpecficFriend)
 	moreOptions.style.transform = 'scale(1,0)';
 	friend_id = 0;
 	$.ajax({
@@ -777,6 +785,10 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			moreOptions.children[0].addEventListener('click', removeFriend);
 			moreOptions.children[1].setAttribute("data-rename", f_id);
 			moreOptions.children[1].addEventListener('click', renameFriend);
+			moreOptions.children[2].setAttribute("data-block", f_id);
+			moreOptions.children[2].addEventListener('click', blockSpecficFriend);
+			moreOptions.children[3].setAttribute("data-unblock", f_id);
+			moreOptions.children[3].addEventListener('click', unBlockSpecficFriend);
 			response.sort((a, b) => {
 				var date1 = new Date(a.sendDate)
 				var date2 = new Date(b.sendDate)
@@ -922,7 +934,6 @@ function preocessMessage(e) {
 			if (active.length != 0) {
 				let allowMsg = active.some(e => e.user_id == friend_id);
 				if (allowMsg) {
-					console.log(isBlocked, typeof isBlocked);
 					if (isBlocked === 'false') {
 						if (fileToSendAsChat.value != "") {
 							//ws.binaryType = "arraybuffer"
@@ -1325,6 +1336,25 @@ function blockFriend(e) {
 	e.target.value = "";
 
 }
+function blockSpecficFriend(e){
+	//console.log(e.target.getAttribute('data-block'));
+	$.ajax({
+		type: "GET",
+		url: "/blocked-friend",
+		data: {
+			requestData: e.target.getAttribute('data-block')
+		},
+		success: function (result) {
+			console.log(result);
+			blockList.push(result);
+		}
+	});
+	document.getElementById(e.target.getAttribute('data-block')).setAttribute('data-blocked','true');
+	moreOptions.style.transform = 'scale(1,0)';
+	moreOptions.children[2].classList.add('fade-model')
+	moreOptions.children[3].classList.remove('fade-model')
+	isBlocked = 'true';
+}
 
 function unBlockFriend(e) {
 	console.log(e);
@@ -1357,4 +1387,23 @@ function unBlockFriend(e) {
 	}
 	handleNotificationDetails.hide();
 	e.target.value = "";
+}
+
+function unBlockSpecficFriend(e){
+	$.ajax({
+		type: "GET",
+		url: "/unblocked-friend",
+		data: {
+			requestData: e.target.getAttribute('data-unblock')
+		},
+		success: function (result) {
+			console.log(result);
+			blockList.splice(blockList.indexOf(blockList.find(e=>e.fId == result.fId)),1);
+		}
+	});
+	document.getElementById(e.target.getAttribute('data-unblock')).setAttribute('data-blocked','false');
+	moreOptions.style.transform = 'scale(1,0)';
+	moreOptions.children[2].classList.remove('fade-model');
+	moreOptions.children[3].classList.add('fade-model');
+	isBlocked = 'false';
 }

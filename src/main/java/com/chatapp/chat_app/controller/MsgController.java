@@ -297,7 +297,7 @@ public class MsgController {
 		if(checkRowExist==null) {
 			return fDao.saveBlockedFriends(friend, c.getUser_id(), true);
 		}else {
-			return fDao.updateSaveBlockedFriends(checkRowExist.getfId(), checkRowExist.getMyFriend(), c.getUser_id(), true);
+			return fDao.updateSaveBlockedFriends(checkRowExist.getfId(),checkRowExist.getSaveName(), checkRowExist.getMyFriend(), c.getUser_id(), true, checkRowExist.isFriend());
 		}
 
 	}
@@ -312,7 +312,7 @@ public class MsgController {
 			return null;
 			
 		}else {
-			return fDao.updateSaveBlockedFriends(checkRowExist.getfId(), checkRowExist.getMyFriend(), c.getUser_id(), false);
+			return fDao.updateSaveBlockedFriends(checkRowExist.getfId(),checkRowExist.getSaveName(), checkRowExist.getMyFriend(), c.getUser_id(), false, checkRowExist.isFriend());
 		}
 
 	}
