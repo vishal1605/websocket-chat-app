@@ -330,5 +330,19 @@ public class MsgController {
 			return checkBlockedOrNot.isBlocked();
 		}
 	}
+	
+	@GetMapping("/get-friend-row")
+	public Friends getFriendRow(String requestData, HttpSession session) {
+
+		ChatUser c = (ChatUser) session.getAttribute("user");
+		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+		Friends checkBlockedOrNot = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
+		if (checkBlockedOrNot == null) {
+			return null;
+		} else {
+			
+			return checkBlockedOrNot;
+		}
+	}
 
 }

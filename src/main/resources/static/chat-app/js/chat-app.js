@@ -38,7 +38,7 @@ const messageInputTemplete = document.getElementById('message-input-templete');
 const removeConditionalBtn = document.getElementById('remove-conditional-btn');
 const elementBody = document.getElementById('element-body');
 const appNotification = document.getElementById('app-notification');
-const appNotificationCount = document.getElementById('app-notification-count');
+//const appNotificationCount = document.getElementById('app-notification-count');
 const notificationList = document.getElementById('notification-list');
 const handleNotificationDetails = new bootstrap.Modal(document.getElementById('handle-notification-details'));
 const notifyModalBody = document.getElementById('notify-modal-body');
@@ -67,14 +67,14 @@ let blockList = [];
 let isBlocked = false;
 
 ////Event Listners
-myFriends.onclick = function (e) {
+myFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'rgb(219, 219, 247)';
 	notMyFriends.style.background = '#ffe7c7';
 }
 
-notMyFriends.onclick = function (e) {
+notMyFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#ffe7c7';
@@ -110,7 +110,7 @@ function getMyProfilePicture() {
 		data: {
 			requestData: username
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			if (responseObject == "") {
 			} else {
 
@@ -124,7 +124,7 @@ function getMyProfilePicture() {
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function (event) {
+	ws.onmessage = function(event) {
 		var parentDiv = document.createElement('div');
 		var childDiv = document.createElement('div');
 		var timeLabel = document.createElement('label');
@@ -146,7 +146,7 @@ function connect() {
 					}
 					var reader = new FileReader();
 					reader.readAsDataURL(event.data);
-					reader.onloadend = function () {
+					reader.onloadend = function() {
 						var base64String = reader.result;
 						let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2];
 						switch (contentType) {
@@ -222,11 +222,10 @@ function connect() {
 
 			} else {
 				if (!(friendList.querySelector(`[data-find="find_${activeUser.toUser.friend[0].myFriend.user_id}"]`) == undefined)) {
-					if(!(blockList.some(e=> e.myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id))){
+					if (!(blockList.some(e => e.myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id))) {
 						if (friend_id != activeUser.toUser.friend[0].myFriend.user_id) {
 							if (bin2String(activeUser.content).split(',')[0] == "notification") {
-	
-								console.log(bin2String(activeUser.content).split(',')[1]);
+
 								// document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
 								// isBlocked = bin2String(activeUser.content).split(',')[1].trim();
 							} else if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
@@ -237,12 +236,12 @@ function connect() {
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 								//console.log(messageArray);
 								var count = {};
-								messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+								messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
 								//console.log(count);
 								for (let key in count) {
 									document.getElementById(key).children[0].textContent = count[key];
 									document.getElementById(key).children[0].style.display = 'block';
-	
+
 								}
 								var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
@@ -253,18 +252,18 @@ function connect() {
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 								//console.log(messageArray);
 								var count = {};
-								messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+								messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
 								//console.log(count);
 								for (let key in count) {
 									document.getElementById(key).children[0].textContent = count[key];
 									document.getElementById(key).children[0].style.display = 'block';
-	
+
 								}
 								var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
 								friendList.prepend(first);
 							}
-	
+
 						} else {
 							if (bin2String(activeUser.content).split(',')[0] == "notification") {
 								console.log(bin2String(activeUser.content).split(',')[1]);
@@ -276,7 +275,7 @@ function connect() {
 							} else {
 								var labelTime = new Date();
 								if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
-	
+
 									globalDate.push(moment(labelTime).format("DD/MM/YYYY"))
 									var dateTimeStamp = document.createElement('div');
 									dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
@@ -285,7 +284,7 @@ function connect() {
 								}
 								childDiv.className = 'left-msg';
 								childDiv.innerHTML = `<small class="">${bin2String(activeUser.content)}</small>`;
-	
+
 								parentDiv.append(timeLabel);
 								parentDiv.append(childDiv);
 								messageSection.append(parentDiv);
@@ -293,14 +292,14 @@ function connect() {
 						}
 					}
 				} else {
-					if(!(blockList.some(e=> e.myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id))){
-						if (holdNotificationMessages.length == 0) {
-						holdNotificationMessages.push(activeUser);
-						console.log(document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[1].children[0].textContent);
-						let notiList = document.createElement('li');
-						notiList.className = 'dropdown-item list-of-notification-msg';
-						notiList.id = `notify-me-${activeUser.toUser.friend[0].myFriend.user_id}`;
-						notiList.innerHTML = `
+					if (!(blockList.some(e => e.myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id))) {
+						if (!(bin2String(activeUser.content).split(',')[0] == "binarydta")) {
+							if (holdNotificationMessages.length == 0) {
+								holdNotificationMessages.push(activeUser);
+								let notiList = document.createElement('li');
+								notiList.className = 'dropdown-item list-of-notification-msg';
+								notiList.id = `notify-me-${activeUser.toUser.friend[0].myFriend.user_id}`;
+								notiList.innerHTML = `
 												<div class="nofification-user-photo">
 								<img src="${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[0].children[0].src}" alt="" width="35px" height="35px" style="border-radius: 50%;">
 							</div>
@@ -308,24 +307,24 @@ function connect() {
 								<h6 class="m-0">${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[1].children[0].textContent}</h6>
 								<p class="m-0">${bin2String(activeUser.content).substring(0, 7) + "..."}</p>
 							</div>	`;
-						notiList.setAttribute('onclick', `showNotifyUserMessage(${username},${activeUser.toUser.friend[0].myFriend.user_id},
+								notiList.setAttribute('onclick', `showNotifyUserMessage(${username},${activeUser.toUser.friend[0].myFriend.user_id},
 							 '${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[0].children[0].src}',
 							 '${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).getAttribute('data-dname')}', this)`);
-						notificationList.append(notiList);
+								notificationList.append(notiList);
 
-					} else {
-						let notifyMe = holdNotificationMessages.some(e => {
-							holdNotificationFromUser.push(e.toUser.friend[0].myFriend.user_id);
-							return (e.toUser.friend[0].myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id)
-						});
-						if (notifyMe) {
-							document.getElementById('notify-me-' + activeUser.toUser.friend[0].myFriend.user_id).children[1].children[1].textContent = bin2String(activeUser.content).substring(0, 7) + "...";
-						} else {
-							holdNotificationMessages.push(activeUser);
-							let notiList = document.createElement('li');
-							notiList.className = 'dropdown-item list-of-notification-msg';
-							notiList.id = `notify-me-${activeUser.toUser.friend[0].myFriend.user_id}`;
-							notiList.innerHTML = `
+							} else {
+								let notifyMe = holdNotificationMessages.some(e => {
+									holdNotificationFromUser.push(e.toUser.friend[0].myFriend.user_id);
+									return (e.toUser.friend[0].myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id)
+								});
+								if (notifyMe) {
+									document.getElementById('notify-me-' + activeUser.toUser.friend[0].myFriend.user_id).children[1].children[1].textContent = bin2String(activeUser.content).substring(0, 7) + "...";
+								} else {
+									holdNotificationMessages.push(activeUser);
+									let notiList = document.createElement('li');
+									notiList.className = 'dropdown-item list-of-notification-msg';
+									notiList.id = `notify-me-${activeUser.toUser.friend[0].myFriend.user_id}`;
+									notiList.innerHTML = `
 												<div class="nofification-user-photo">
 								<img src="${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[0].children[0].src}" alt="" width="35px" height="35px" style="border-radius: 50%;">
 							</div>
@@ -333,15 +332,17 @@ function connect() {
 								<h6 class="m-0">${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[1].children[0].textContent}</h6>
 								<p class="m-0">${bin2String(activeUser.content).substring(0, 7) + "..."}</p>
 							</div>`;
-							notificationList.append(notiList);
+									notificationList.append(notiList);
+								}
+							}
+							appNotification.style.color = 'red';
+							//appNotificationCount.innerText = "1";
+							//console.log(holdNotificationFromUser)
+
 						}
+
 					}
-					//appNotification.style.color = 'red';
-					//appNotificationCount.innerText = "1";
-					//console.log(holdNotificationFromUser)
-					console.log(activeUser);
-					}
-					console.log(activeUser.toUser.friend[0].myFriend.user_id)
+
 				}
 			}
 		}
@@ -416,7 +417,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function (responseObject) {
+		success: function(responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -467,7 +468,7 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			//console.log(responseObject);
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
@@ -480,7 +481,7 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function (lastMessages) {
+					success: function(lastMessages) {
 						lastMessages.sort((a, b) => {
 							var date1 = new Date(a.sendDate)
 							var date2 = new Date(b.sendDate)
@@ -568,9 +569,9 @@ function getAllBlockedFriend() {
 			requestData: username,
 		}
 		,
-		success: function (response) {
+		success: function(response) {
 			console.log(response);
-			response.forEach(e=>{
+			response.forEach(e => {
 				blockList.push(e);
 			})
 		}
@@ -590,7 +591,7 @@ function addFriend(id, f_dummyName) {
 			requestData: friendId,
 			givenName: f_dummyName
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			console.log(responseObject)
 			var list = document.createElement('li');
 			list.className = 'list-of-friend mb-1';
@@ -618,9 +619,13 @@ function addFriend(id, f_dummyName) {
 
 			friendList.append(list);
 			document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none')
-			if(!(document.getElementById('notify-me-'+id) == undefined)){
-				
-			document.getElementById('notify-me-'+id).remove();
+			if (!(document.getElementById('notify-me-' + id) == undefined)) {
+
+				document.getElementById('notify-me-' + id).remove();
+			}
+			if (responseObject.blocked) {
+				moreOptions.children[2].classList.add('fade-model');
+				moreOptions.children[3].classList.remove('fade-model');
 			}
 		}
 	});
@@ -650,13 +655,29 @@ function removeFriend(e) {
 	moreOptions.children[3].removeEventListener('click', unBlockSpecficFriend)
 	moreOptions.style.transform = 'scale(1,0)';
 	friend_id = 0;
+	if (blockList.length != 0) {
+		$.ajax({
+			type: "GET",
+			url: "/get-friend-row",
+			data: {
+				requestData: friendId
+			},
+			success: function(result) {
+				if(!(blockList.indexOf(blockList.find(e => e.fId == result.fId)) == -1)){
+					
+					blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
+				}
+			}
+		});
+		//blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
+	}
 	$.ajax({
 		type: "GET",
 		url: "/removeFriend",
 		data: {
 			requestData: friendId
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
@@ -673,7 +694,6 @@ function removeFriend(e) {
 							</div>`;
 
 			notFriendList.append(list);
-
 		}
 	});
 	document.getElementById(friendId).remove();
@@ -684,7 +704,7 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function (e) {
+closePopUpProfileModel.onclick = function(e) {
 	profilePic.value = '';
 	if (alertMsg.classList.contains('show-model')) {
 		alertMsg.classList.remove('show-model');
@@ -737,7 +757,7 @@ function submitProfilePic() {
 		contentType: false,
 		processData: false,
 		data: formData,
-		success: function (response) {
+		success: function(response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
 
 		}
@@ -757,6 +777,14 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 	document.getElementById(f_id).children[0].textContent = 0;
 	document.getElementById(f_id).children[0].style.display = 'none';
 	isBlocked = element.getAttribute('data-blocked');
+	if (isBlocked === 'true') {
+		console.log("It is blockeed", isBlocked)
+		moreOptions.children[2].classList.add('fade-model');
+		moreOptions.children[3].classList.remove('fade-model');
+	}else{	
+		moreOptions.children[2].classList.remove('fade-model');
+		moreOptions.children[3].classList.add('fade-model');
+	}
 	friend_id = f_id;
 	var storeDate = [];
 	showLoader();
@@ -767,7 +795,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function (response) {
+		success: function(response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -927,7 +955,6 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 //////////////////////////////////////////Send Message To Your Friend////////////////////////////////////////////////////
 function preocessMessage(e) {
 	e.preventDefault();
-	var storeDate = [];
 	var labelTime = new Date()
 	if (friend_id != 0) {
 		if (online.checked) {
@@ -1216,7 +1243,7 @@ function renameFriendAgain(e) {
 			user_id: username,
 			friendId: id
 		},
-		success: function (response) {
+		success: function(response) {
 			console.log(response);
 			//messageHeaderLabel.innerText = response;
 			//friendList.querySelector(`[data-find="find_${id}"]`).children[2].children[0].innerText = response;
@@ -1251,7 +1278,7 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 		data: {
 			requestData: f_id
 		},
-		success: function (result) {
+		success: function(result) {
 			console.log(result)
 			if (result) {
 
@@ -1271,7 +1298,7 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 		data: {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
-		success: function (result) {
+		success: function(result) {
 			result.forEach(e => {
 				var dateTimeStamp = document.createElement('div');
 				dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
@@ -1326,7 +1353,7 @@ function blockFriend(e) {
 			data: {
 				requestData: e.target.value
 			},
-			success: function (result) {
+			success: function(result) {
 				console.log(result);
 				blockList.push(result);
 			}
@@ -1336,7 +1363,7 @@ function blockFriend(e) {
 	e.target.value = "";
 
 }
-function blockSpecficFriend(e){
+function blockSpecficFriend(e) {
 	//console.log(e.target.getAttribute('data-block'));
 	$.ajax({
 		type: "GET",
@@ -1344,12 +1371,12 @@ function blockSpecficFriend(e){
 		data: {
 			requestData: e.target.getAttribute('data-block')
 		},
-		success: function (result) {
+		success: function(result) {
 			console.log(result);
 			blockList.push(result);
 		}
 	});
-	document.getElementById(e.target.getAttribute('data-block')).setAttribute('data-blocked','true');
+	document.getElementById(e.target.getAttribute('data-block')).setAttribute('data-blocked', 'true');
 	moreOptions.style.transform = 'scale(1,0)';
 	moreOptions.children[2].classList.add('fade-model')
 	moreOptions.children[3].classList.remove('fade-model')
@@ -1379,9 +1406,9 @@ function unBlockFriend(e) {
 			data: {
 				requestData: e.target.value
 			},
-			success: function (result) {
+			success: function(result) {
 				console.log(result);
-				blockList.splice(blockList.indexOf(blockList.find(e=>e.fId == result.fId)),1);
+				blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
 			}
 		});
 	}
@@ -1389,19 +1416,19 @@ function unBlockFriend(e) {
 	e.target.value = "";
 }
 
-function unBlockSpecficFriend(e){
+function unBlockSpecficFriend(e) {
 	$.ajax({
 		type: "GET",
 		url: "/unblocked-friend",
 		data: {
 			requestData: e.target.getAttribute('data-unblock')
 		},
-		success: function (result) {
+		success: function(result) {
 			console.log(result);
-			blockList.splice(blockList.indexOf(blockList.find(e=>e.fId == result.fId)),1);
+			blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
 		}
 	});
-	document.getElementById(e.target.getAttribute('data-unblock')).setAttribute('data-blocked','false');
+	document.getElementById(e.target.getAttribute('data-unblock')).setAttribute('data-blocked', 'false');
 	moreOptions.style.transform = 'scale(1,0)';
 	moreOptions.children[2].classList.remove('fade-model');
 	moreOptions.children[3].classList.add('fade-model');
