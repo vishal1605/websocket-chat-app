@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -133,11 +134,11 @@ public class MsgController {
 	@GetMapping("/active-users")
 	public String activeUsers(String requestData, HttpSession session, ChatUser u)
 			throws JsonMappingException, JsonProcessingException {
-		//System.out.println(requestData);
+		// System.out.println(requestData);
 		Gson gson = new Gson(); // Or use new GsonBuilder().create();
 		ChatUser user = gson.fromJson(requestData, ChatUser.class);
 		listOfUsers.add(user);
-		//System.out.println(user);
+		// System.out.println(user);
 
 		String json = new Gson().toJson(listOfUsers);
 
@@ -146,202 +147,260 @@ public class MsgController {
 	}
 
 	@GetMapping("/getAllFriends")
-	public List<Friends> getAllFriends(String requestData) {
-		List<Friends> friends = fDao.getAllFriends(Long.parseLong(requestData));
-
-		return friends;
+	public ResponseEntity<?> getAllFriends(String requestData) {
+		try {
+			List<Friends> friends = fDao.getAllFriends(Long.parseLong(requestData));
+			return ResponseEntity.ok().body(friends);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(e);
+		}
 
 	}
 
 	@GetMapping("/getAllBlockFriends")
-	public List<Friends> listOfBlockFriends(String requestData) {
-		return fDao.listOfBlockFriends(Long.parseLong(requestData));
+	public ResponseEntity<?> listOfBlockFriends(String requestData) {
+		try {
+			return ResponseEntity.ok().body(fDao.listOfBlockFriends(Long.parseLong(requestData)));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(e);
+		}
 	}
 
 	@GetMapping("/get-last-message")
-	public List<Message> getLastMessage(String requestData, String myId) {
-		//System.out.println(requestData);
-		TypeToken<List<ChatUser>> token = new TypeToken<List<ChatUser>>() {
-		};
-		List<ChatUser> friends = new Gson().fromJson(requestData, token.getType());
-		List<Message> messages1 = new ArrayList<>();
-		if (friends.size() != 0) {
-			List<Message> messages = new ArrayList<>();
-			for (ChatUser chatUser : friends) {
-				messages.addAll(mDao.getFriendMessages(Long.parseLong(myId), chatUser.getUser_id()));
-				messages.addAll(mDao.getFriendMessages(chatUser.getUser_id(), Long.parseLong(myId)));
-				// System.out.println(messages);
-				if (messages.size() != 0) {
-					for (int i = 0; i < messages.size(); i++) {
-						for (int j = i + 1; j < messages.size(); j++) {
-							if (LocalDateTime.parse(messages.get(i).getSendDate())
-									.isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
-								Message temp = messages.get(j);
-								messages.set(j, messages.get(i));
-								messages.set(i, temp);
+	public ResponseEntity<?> getLastMessage(String requestData, String myId) {
+		try {
+			// System.out.println(requestData);
+			TypeToken<List<ChatUser>> token = new TypeToken<List<ChatUser>>() {
+			};
+			List<ChatUser> friends = new Gson().fromJson(requestData, token.getType());
+			List<Message> messages1 = new ArrayList<>();
+			if (friends.size() != 0) {
+				List<Message> messages = new ArrayList<>();
+				for (ChatUser chatUser : friends) {
+					messages.addAll(mDao.getFriendMessages(Long.parseLong(myId), chatUser.getUser_id()));
+					messages.addAll(mDao.getFriendMessages(chatUser.getUser_id(), Long.parseLong(myId)));
+					// System.out.println(messages);
+					if (messages.size() != 0) {
+						for (int i = 0; i < messages.size(); i++) {
+							for (int j = i + 1; j < messages.size(); j++) {
+								if (LocalDateTime.parse(messages.get(i).getSendDate())
+										.isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
+									Message temp = messages.get(j);
+									messages.set(j, messages.get(i));
+									messages.set(i, temp);
+								}
 							}
-
 						}
+						Message m = new Message();
+						m.setToUser(chatUser);
+						m.setContent(messages.get(messages.size() - 1).getContent());
+						m.setSendDate(messages.get(messages.size() - 1).getSendDate());
+						m.setMsgLabel(messages.get(messages.size() - 1).getMsgLabel());
+						messages1.add(m);
+
+					} else {
 
 					}
-					Message m = new Message();
-					m.setToUser(chatUser);
-					m.setContent(messages.get(messages.size() - 1).getContent());
-					m.setSendDate(messages.get(messages.size() - 1).getSendDate());
-					m.setMsgLabel(messages.get(messages.size() - 1).getMsgLabel());
-					messages1.add(m);
-
-				} else {
-
+					messages.clear();
 				}
-				messages.clear();
 			}
+			return ResponseEntity.ok().body(messages1);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(e);
 		}
-
-		return messages1;
 	}
 
 	@GetMapping("/makeFriend")
-	public Friends makeFriends(String requestData, String givenName, HttpSession session) {
-
-		ChatUser c = (ChatUser) session.getAttribute("user");
-		Friends f = fDao.checkBlockedOrNot(c.getUser_id(), Long.parseLong(requestData));
-		if(f==null) {
-			ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
-			System.out.println("Creted");
-			return fDao.saveMyFriends(givenName, friend, c.getUser_id());
-		}else {
-			return fDao.saveMyFriends1(f.getfId(),givenName, f.getUser(), c.getUser_id(), f.isBlocked());
+	public ResponseEntity<?> makeFriends(String requestData, String givenName, HttpSession session) {
+		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			Friends f = fDao.checkBlockedOrNot(c.getUser_id(), Long.parseLong(requestData));
+			if (f == null) {
+				ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+				System.out.println("Creted");
+				return ResponseEntity.ok().body(fDao.saveMyFriends(givenName, friend, c.getUser_id()));
+			} else {
+				return ResponseEntity.ok()
+						.body(fDao.saveMyFriends1(f.getfId(), givenName, f.getUser(), c.getUser_id(), f.isBlocked()));
+			}
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
 		}
 
 	}
 
 	@GetMapping("/removeFriend")
-	public ChatUser removeFriend(String requestData, HttpSession session) {
-		ChatUser c = (ChatUser) session.getAttribute("user");
-		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
-		fDao.deleteSingleFriend(c.getUser_id(), Long.parseLong(requestData));
-		return friend;
+	public ResponseEntity<?> removeFriend(String requestData, HttpSession session) {
+		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+			fDao.deleteSingleFriend(c.getUser_id(), Long.parseLong(requestData));
+			return ResponseEntity.ok().body(friend);
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
+		}
 	}
 
 	@GetMapping("/getAllChatUsers")
-	public List<ChatUser> getAllChatUsers() {
-		return dao.getAllChatUser();
+	public ResponseEntity<?> getAllChatUsers() {
+		try {
+			return ResponseEntity.ok().body(dao.getAllChatUser());
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
+		}
 	}
 
 	@PostMapping("/send-message")
-	public String saveUserMessage(String requestData) {
-		JSONObject json = new JSONObject(requestData);
-		long user_id = json.getLong("username");
-		long f_id = json.getLong("friend_id");
-		String message = json.getString("myMessage");
-		ChatUser f = dao.getSingleUser(f_id);
-		Set<Message> set = new HashSet<Message>();
-		set.add(mDao.saveMessage(user_id,
-				new Message(f, message.getBytes(),"", LocalDateTime.now().toString(), LocalDateTime.now().toString())));
-		return "done";
+	public ResponseEntity<?> saveUserMessage(String requestData) {
+		try {
+			JSONObject json = new JSONObject(requestData);
+			long user_id = json.getLong("username");
+			long f_id = json.getLong("friend_id");
+			String message = json.getString("myMessage");
+			ChatUser f = dao.getSingleUser(f_id);
+			Set<Message> set = new HashSet<Message>();
+			set.add(mDao.saveMessage(user_id,
+					new Message(f, message.getBytes(), "", LocalDateTime.now().toString(),
+							LocalDateTime.now().toString())));
+			return ResponseEntity.ok().body("done");
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
+		}
 	}
-	
+
 	@PostMapping("/send-file")
 	public String saveUserFileMessage(@RequestParam("msgFile") MultipartFile myMultipartFile,
-		    @RequestParam("username") int myId,@RequestParam("friend_id") int friend_id) throws IOException {
-		//System.out.println(myMultipartFile.getOriginalFilename());
+			@RequestParam("username") int myId, @RequestParam("friend_id") int friend_id) throws IOException {
+		// System.out.println(myMultipartFile.getOriginalFilename());
 		ChatUser f = dao.getSingleUser(friend_id);
 		Set<Message> set = new HashSet<Message>();
 		set.add(mDao.saveMessage(myId,
-				new Message(f, myMultipartFile.getBytes(),myMultipartFile.getOriginalFilename()+","+myMultipartFile.getContentType(), LocalDateTime.now().toString(), LocalDateTime.now().toString())));
+				new Message(f, myMultipartFile.getBytes(),
+						myMultipartFile.getOriginalFilename() + "," + myMultipartFile.getContentType(),
+						LocalDateTime.now().toString(), LocalDateTime.now().toString())));
 		return "done";
 	}
 
 	@GetMapping("/get-message")
-	public List<Message> fetchMessage(String requestData) {
-		JSONObject json = new JSONObject(requestData);
-		long user_id = json.getLong("u_id");
-		long f_id = json.getLong("f_id");
-		List<Message> list = new ArrayList<>();
-		list.addAll(mDao.getFriendMessages(user_id, f_id));
-		list.addAll(mDao.getFriendMessages(f_id, user_id));
-		return list;
+	public ResponseEntity<?> fetchMessage(String requestData) {
+		try {
+			JSONObject json = new JSONObject(requestData);
+			long user_id = json.getLong("u_id");
+			long f_id = json.getLong("f_id");
+			List<Message> list = new ArrayList<>();
+			list.addAll(mDao.getFriendMessages(user_id, f_id));
+			list.addAll(mDao.getFriendMessages(f_id, user_id));
+			return ResponseEntity.ok().body(list);
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
+		}
 	}
 
 	@PostMapping("/upload-profile-pic")
-	public byte[] uploadProfilePic(@RequestParam("file") MultipartFile uploadfile, HttpSession session)
-			throws IOException {
-		ChatUser c = (ChatUser) session.getAttribute("user");
-		dao.uploadProfilePic(uploadfile.getBytes(), c.getUser_id());
-		byte[] encodeBase64 = Base64.encodeBase64(uploadfile.getBytes());
+	public ResponseEntity<?> uploadProfilePic(@RequestParam("file") MultipartFile uploadfile, HttpSession session) {
+		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			dao.uploadProfilePic(uploadfile.getBytes(), c.getUser_id());
+			byte[] encodeBase64 = Base64.encodeBase64(uploadfile.getBytes());
 
-		return encodeBase64;
+			return ResponseEntity.ok().body(encodeBase64);
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
+		}
 	}
 
 	@GetMapping("/get-profile-pic")
-	public byte[] uploadProfilePic(String requestData) throws IOException {
-		byte[] loggedInPic = dao.getLoggedInPic(Long.parseLong(requestData));
-		byte[] profilePic = Base64.encodeBase64(loggedInPic);
+	public ResponseEntity<?> uploadProfilePic(String requestData) throws IOException {
+		try {
+			byte[] loggedInPic = dao.getLoggedInPic(Long.parseLong(requestData));
+			byte[] profilePic = Base64.encodeBase64(loggedInPic);
 
-		return profilePic;
+			return ResponseEntity.ok().body(profilePic);
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
+		}
 	}
 
 	@GetMapping("/rename-friend")
-	public String renameFriend(String rename, long user_id, long friendId){
-		fDao.renameMyFriend(rename, user_id, friendId);
-		return rename;
+	public ResponseEntity<?> renameFriend(String rename, long user_id, long friendId) {
+		try {
+			fDao.renameMyFriend(rename, user_id, friendId);
+			return ResponseEntity.ok().body(rename);
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
+		}
 	}
 
 	@GetMapping("/blocked-friend")
-	public Friends saveBlockedUser(String requestData, HttpSession session) {
-
-		ChatUser c = (ChatUser) session.getAttribute("user");//14
-		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));//11
-		Friends checkRowExist = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
-		if(checkRowExist==null) {
-			return fDao.saveBlockedFriends(friend, c.getUser_id(), true);
-		}else {
-			return fDao.updateSaveBlockedFriends(checkRowExist.getfId(),checkRowExist.getSaveName(), checkRowExist.getMyFriend(), c.getUser_id(), true, checkRowExist.isFriend());
+	public ResponseEntity<?> saveBlockedUser(String requestData, HttpSession session) {
+		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");// 14
+			ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));// 11
+			Friends checkRowExist = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
+			if (checkRowExist == null) {
+				return ResponseEntity.ok().body(fDao.saveBlockedFriends(friend, c.getUser_id(), true));
+			} else {
+				return ResponseEntity.ok()
+						.body(fDao.updateSaveBlockedFriends(checkRowExist.getfId(), checkRowExist.getSaveName(),
+								checkRowExist.getMyFriend(), c.getUser_id(), true, checkRowExist.isFriend()));
+			}
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
 		}
 
 	}
-	
+
 	@GetMapping("/unblocked-friend")
-	public Friends saveUnBlockedUser(String requestData, HttpSession session) {
-
-		ChatUser c = (ChatUser) session.getAttribute("user");
+	public ResponseEntity<?> saveUnBlockedUser(String requestData, HttpSession session) {
+		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
 		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
 		Friends checkRowExist = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
-		if(checkRowExist==null) {
+		if (checkRowExist == null) {
 			return null;
-			
-		}else {
-			return fDao.updateSaveBlockedFriends(checkRowExist.getfId(),checkRowExist.getSaveName(), checkRowExist.getMyFriend(), c.getUser_id(), false, checkRowExist.isFriend());
+
+		} else {
+			return ResponseEntity.ok().body(fDao.updateSaveBlockedFriends(checkRowExist.getfId(), checkRowExist.getSaveName(),
+					checkRowExist.getMyFriend(), c.getUser_id(), false, checkRowExist.isFriend()));
+		}
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
 		}
 
 	}
-	
+
 	@GetMapping("/check-blocked-friend")
-	public boolean checkBlockedOrNot(String requestData, HttpSession session) {
-
-		ChatUser c = (ChatUser) session.getAttribute("user");
+	public ResponseEntity<?> checkBlockedOrNot(String requestData, HttpSession session) {
+		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
 		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
 		Friends checkBlockedOrNot = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
 		if (checkBlockedOrNot == null) {
-			return false;
+			return ResponseEntity.ok().body(false);
 		} else {
-			
-			return checkBlockedOrNot.isBlocked();
+
+			return ResponseEntity.ok().body(checkBlockedOrNot.isBlocked());
+		}
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
 		}
 	}
-	
-	@GetMapping("/get-friend-row")
-	public Friends getFriendRow(String requestData, HttpSession session) {
 
-		ChatUser c = (ChatUser) session.getAttribute("user");
-		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
-		Friends checkBlockedOrNot = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
-		if (checkBlockedOrNot == null) {
-			return null;
-		} else {
-			
-			return checkBlockedOrNot;
+	@GetMapping("/get-friend-row")
+	public ResponseEntity<?> getFriendRow(String requestData, HttpSession session) {
+
+		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+			Friends checkBlockedOrNot = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
+			if (checkBlockedOrNot == null) {
+				return null;
+			} else {
+
+				return ResponseEntity.ok().body(friend);
+			}
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(e);
 		}
 	}
 

@@ -1434,3 +1434,7 @@ function unBlockSpecficFriend(e) {
 	moreOptions.children[3].classList.add('fade-model');
 	isBlocked = 'false';
 }
+
+function closeAllPhotoModal(e){
+	exampleModal.hide();
+}
