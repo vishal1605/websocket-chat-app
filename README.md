@@ -39,10 +39,12 @@ CREATE TABLE `friends` (
   `save_name` varchar(255) DEFAULT NULL,
   `user` bigint NOT NULL,
   `my_friend_user_id` bigint DEFAULT NULL,
+  `is_blocked` bit(1) DEFAULT NULL,
+  `is_friend` bigint DEFAULT NULL,
   PRIMARY KEY (`f_id`),
   KEY `FKnae7pds9coh6g0spqiaej8ekk` (`my_friend_user_id`),
   CONSTRAINT `FKnae7pds9coh6g0spqiaej8ekk` FOREIGN KEY (`my_friend_user_id`) REFERENCES `chat_user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 ```
 ###  4) Chat user message
 ```sql

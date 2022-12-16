@@ -20,11 +20,13 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -41,6 +43,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 @RestController
+@RestControllerAdvice
 public class MsgController {
 
 	@Autowired
@@ -147,8 +150,11 @@ public class MsgController {
 	}
 
 	@GetMapping("/getAllFriends")
-	public ResponseEntity<?> getAllFriends(String requestData) {
+	public ResponseEntity<?> getAllFriends(String requestData, HttpSession session) {
 		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			if (c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			List<Friends> friends = fDao.getAllFriends(Long.parseLong(requestData));
 			return ResponseEntity.ok().body(friends);
 		} catch (Exception e) {
@@ -158,8 +164,11 @@ public class MsgController {
 	}
 
 	@GetMapping("/getAllBlockFriends")
-	public ResponseEntity<?> listOfBlockFriends(String requestData) {
+	public ResponseEntity<?> listOfBlockFriends(String requestData, HttpSession session) {
 		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			if (c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			return ResponseEntity.ok().body(fDao.listOfBlockFriends(Long.parseLong(requestData)));
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(e);
@@ -167,8 +176,11 @@ public class MsgController {
 	}
 
 	@GetMapping("/get-last-message")
-	public ResponseEntity<?> getLastMessage(String requestData, String myId) {
+	public ResponseEntity<?> getLastMessage(String requestData, String myId, HttpSession session) {
 		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			if (c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			// System.out.println(requestData);
 			TypeToken<List<ChatUser>> token = new TypeToken<List<ChatUser>>() {
 			};
@@ -214,6 +226,8 @@ public class MsgController {
 	public ResponseEntity<?> makeFriends(String requestData, String givenName, HttpSession session) {
 		try {
 			ChatUser c = (ChatUser) session.getAttribute("user");
+			if (c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			Friends f = fDao.checkBlockedOrNot(c.getUser_id(), Long.parseLong(requestData));
 			if (f == null) {
 				ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
@@ -233,6 +247,8 @@ public class MsgController {
 	public ResponseEntity<?> removeFriend(String requestData, HttpSession session) {
 		try {
 			ChatUser c = (ChatUser) session.getAttribute("user");
+			if (c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
 			fDao.deleteSingleFriend(c.getUser_id(), Long.parseLong(requestData));
 			return ResponseEntity.ok().body(friend);
@@ -242,8 +258,11 @@ public class MsgController {
 	}
 
 	@GetMapping("/getAllChatUsers")
-	public ResponseEntity<?> getAllChatUsers() {
+	public ResponseEntity<?> getAllChatUsers(HttpSession session) {
 		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			if (c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			return ResponseEntity.ok().body(dao.getAllChatUser());
 		} catch (Exception e) {
 			return ResponseEntity.ok().body(e);
@@ -251,17 +270,19 @@ public class MsgController {
 	}
 
 	@PostMapping("/send-message")
-	public ResponseEntity<?> saveUserMessage(String requestData) {
+	public ResponseEntity<?> saveUserMessage(String requestData, HttpSession session) {
 		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			if (c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			JSONObject json = new JSONObject(requestData);
 			long user_id = json.getLong("username");
 			long f_id = json.getLong("friend_id");
 			String message = json.getString("myMessage");
 			ChatUser f = dao.getSingleUser(f_id);
 			Set<Message> set = new HashSet<Message>();
-			set.add(mDao.saveMessage(user_id,
-					new Message(f, message.getBytes(), "", LocalDateTime.now().toString(),
-							LocalDateTime.now().toString())));
+			set.add(mDao.saveMessage(user_id, new Message(f, message.getBytes(), "", LocalDateTime.now().toString(),
+					LocalDateTime.now().toString())));
 			return ResponseEntity.ok().body("done");
 		} catch (Exception e) {
 			return ResponseEntity.ok().body(e);
@@ -282,8 +303,11 @@ public class MsgController {
 	}
 
 	@GetMapping("/get-message")
-	public ResponseEntity<?> fetchMessage(String requestData) {
+	public ResponseEntity<?> fetchMessage(String requestData, HttpSession session) {
 		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			if (c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			JSONObject json = new JSONObject(requestData);
 			long user_id = json.getLong("u_id");
 			long f_id = json.getLong("f_id");
@@ -300,6 +324,8 @@ public class MsgController {
 	public ResponseEntity<?> uploadProfilePic(@RequestParam("file") MultipartFile uploadfile, HttpSession session) {
 		try {
 			ChatUser c = (ChatUser) session.getAttribute("user");
+			if(c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			dao.uploadProfilePic(uploadfile.getBytes(), c.getUser_id());
 			byte[] encodeBase64 = Base64.encodeBase64(uploadfile.getBytes());
 
@@ -310,8 +336,11 @@ public class MsgController {
 	}
 
 	@GetMapping("/get-profile-pic")
-	public ResponseEntity<?> uploadProfilePic(String requestData) throws IOException {
+	public ResponseEntity<?> uploadProfilePic(String requestData, HttpSession session){
 		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			if(c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			byte[] loggedInPic = dao.getLoggedInPic(Long.parseLong(requestData));
 			byte[] profilePic = Base64.encodeBase64(loggedInPic);
 
@@ -322,8 +351,11 @@ public class MsgController {
 	}
 
 	@GetMapping("/rename-friend")
-	public ResponseEntity<?> renameFriend(String rename, long user_id, long friendId) {
+	public ResponseEntity<?> renameFriend(String rename, long user_id, long friendId, HttpSession session) {
 		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			if(c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			fDao.renameMyFriend(rename, user_id, friendId);
 			return ResponseEntity.ok().body(rename);
 		} catch (Exception e) {
@@ -334,8 +366,10 @@ public class MsgController {
 	@GetMapping("/blocked-friend")
 	public ResponseEntity<?> saveBlockedUser(String requestData, HttpSession session) {
 		try {
-			ChatUser c = (ChatUser) session.getAttribute("user");// 14
-			ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));// 11
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			if(c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
+			ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
 			Friends checkRowExist = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
 			if (checkRowExist == null) {
 				return ResponseEntity.ok().body(fDao.saveBlockedFriends(friend, c.getUser_id(), true));
@@ -354,15 +388,18 @@ public class MsgController {
 	public ResponseEntity<?> saveUnBlockedUser(String requestData, HttpSession session) {
 		try {
 			ChatUser c = (ChatUser) session.getAttribute("user");
-		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
-		Friends checkRowExist = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
-		if (checkRowExist == null) {
-			return null;
+			if(c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
+			ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+			Friends checkRowExist = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
+			if (checkRowExist == null) {
+				return null;
 
-		} else {
-			return ResponseEntity.ok().body(fDao.updateSaveBlockedFriends(checkRowExist.getfId(), checkRowExist.getSaveName(),
-					checkRowExist.getMyFriend(), c.getUser_id(), false, checkRowExist.isFriend()));
-		}
+			} else {
+				return ResponseEntity.ok()
+						.body(fDao.updateSaveBlockedFriends(checkRowExist.getfId(), checkRowExist.getSaveName(),
+								checkRowExist.getMyFriend(), c.getUser_id(), false, checkRowExist.isFriend()));
+			}
 		} catch (Exception e) {
 			return ResponseEntity.ok().body(e);
 		}
@@ -373,14 +410,16 @@ public class MsgController {
 	public ResponseEntity<?> checkBlockedOrNot(String requestData, HttpSession session) {
 		try {
 			ChatUser c = (ChatUser) session.getAttribute("user");
-		ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
-		Friends checkBlockedOrNot = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
-		if (checkBlockedOrNot == null) {
-			return ResponseEntity.ok().body(false);
-		} else {
+			if(c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
+			ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
+			Friends checkBlockedOrNot = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
+			if (checkBlockedOrNot == null) {
+				return ResponseEntity.ok().body(false);
+			} else {
 
-			return ResponseEntity.ok().body(checkBlockedOrNot.isBlocked());
-		}
+				return ResponseEntity.ok().body(checkBlockedOrNot.isBlocked());
+			}
 		} catch (Exception e) {
 			return ResponseEntity.ok().body(e);
 		}
@@ -391,6 +430,8 @@ public class MsgController {
 
 		try {
 			ChatUser c = (ChatUser) session.getAttribute("user");
+			if(c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
 			ChatUser friend = dao.getSingleUser(Long.parseLong(requestData));
 			Friends checkBlockedOrNot = fDao.checkBlockedOrNot(c.getUser_id(), friend.getUser_id());
 			if (checkBlockedOrNot == null) {
@@ -403,5 +444,18 @@ public class MsgController {
 			return ResponseEntity.badRequest().body(e);
 		}
 	}
+	
+//	@ExceptionHandler(Exception.class)
+//	public ModelAndView handleError(Exception ex, Model m, HttpSession session) {
+//		System.out.println("Exception aaya hai");
+//		ModelAndView mv = new ModelAndView();
+//		ChatUser c = (ChatUser) session.getAttribute("user");
+//		if (c == null) {
+//			mv.setViewName("null");
+//			return mv;
+//		}
+//		mv.setViewName("Error");
+//		return mv;
+//	}
 
 }
