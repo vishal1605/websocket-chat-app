@@ -348,6 +348,10 @@ function connect() {
 		}
 		// whoOnline();
 	}
+	ws.onerror = function(error){
+		console.log(error)
+		online.checked = false;
+	}
 
 }
 function bin2String(array) {

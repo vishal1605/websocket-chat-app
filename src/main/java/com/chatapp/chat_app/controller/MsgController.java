@@ -114,9 +114,13 @@ public class MsgController {
 	}
 
 	@GetMapping("/dashboard/{name}")
-	public ModelAndView dashboard(@PathVariable("name") String name) {
+	public ModelAndView dashboard(@PathVariable("name") String name, HttpSession session) {
 		ModelAndView mv = new ModelAndView();
-		// System.out.println(name+"dash");
+		ChatUser c = (ChatUser) session.getAttribute("user");
+		if (c == null) {
+			mv.setViewName("pages/error");
+			return mv;
+		}
 		mv.setViewName("pages/dashboard");
 		return mv;
 
@@ -125,10 +129,12 @@ public class MsgController {
 	@GetMapping("/dashboard/chat/{name}")
 	public ModelAndView chat(@PathVariable("name") String name, Model m, HttpSession session) {
 		ModelAndView mv = new ModelAndView();
-		m.addAttribute("username", name);
-		// System.out.println(name+"dash");
 		ChatUser c = (ChatUser) session.getAttribute("user");
-		// c.setActive(true);
+		if (c == null) {
+			mv.setViewName("pages/error");
+			return mv;
+		}
+		m.addAttribute("username", name);
 		mv.setViewName("pages/chat-app");
 		return mv;
 
@@ -449,12 +455,7 @@ public class MsgController {
 //	public ModelAndView handleError(Exception ex, Model m, HttpSession session) {
 //		System.out.println("Exception aaya hai");
 //		ModelAndView mv = new ModelAndView();
-//		ChatUser c = (ChatUser) session.getAttribute("user");
-//		if (c == null) {
-//			mv.setViewName("null");
-//			return mv;
-//		}
-//		mv.setViewName("Error");
+//		mv.setViewName("pages/error");
 //		return mv;
 //	}
 

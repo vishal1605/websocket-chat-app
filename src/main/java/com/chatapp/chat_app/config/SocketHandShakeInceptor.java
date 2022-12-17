@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -28,6 +29,9 @@ public class SocketHandShakeInceptor implements HandshakeInterceptor{
             Map<String, Object> attributes) throws Exception {
         ServletServerHttpRequest httpRequest = (ServletServerHttpRequest) request;
         HttpSession session = httpRequest.getServletRequest().getSession();
+        if((ChatUser)session.getAttribute("user") == null) {
+        	return false;
+        }
         attributes.put("log", (ChatUser)session.getAttribute("user"));
         System.out.println("Before=================");
         return true;
