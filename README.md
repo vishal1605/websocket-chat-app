@@ -23,6 +23,7 @@ CREATE TABLE `chat_user` (
 CREATE TABLE `message` (
   `message_id` bigint NOT NULL,
   `content` longblob,
+  `recieved_content` longblob,
   `msg_label` varchar(255) DEFAULT NULL,
   `recieved_date` varchar(255) DEFAULT NULL,
   `send_date` varchar(255) DEFAULT NULL,

@@ -56,6 +56,7 @@ let allFriendsUsers = [];
 let messageArray = [];
 let globalDate = [];
 let friend_id = 0;
+let globalMessageId = 0;
 var username = session.innerHTML;
 let fileString = "";
 let fileByteArray = [];
@@ -191,6 +192,7 @@ function connect() {
 						parentDiv.append(childDiv);
 						messageSection.append(parentDiv);
 						holdBinaryMessageDetails.shift();
+						//////////////////Ajax here////////////////////////
 					}
 				} else {
 					holdBinaryMessageDetails.shift();
@@ -223,6 +225,8 @@ function connect() {
 			} else {
 				if (!(friendList.querySelector(`[data-find="find_${activeUser.toUser.friend[0].myFriend.user_id}"]`) == undefined)) {
 					if (!(blockList.some(e => e.myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id))) {
+						let recievedMessageId = 0;
+						let recievedMessage = "";
 						if (friend_id != activeUser.toUser.friend[0].myFriend.user_id) {
 							if (bin2String(activeUser.content).split(',')[0] == "notification") {
 
@@ -248,7 +252,7 @@ function connect() {
 								friendList.prepend(first);
 							} else {
 								messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
-								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = bin2String(activeUser.content).substring(0, 10) + '...';
+								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = bin2String(activeUser.content).split('_|')[0].substring(0, 10) + '...';
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 								//console.log(messageArray);
 								var count = {};
@@ -262,6 +266,23 @@ function connect() {
 								var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
 								friendList.prepend(first);
+
+								recievedMessage = bin2String(activeUser.content).split('_|')[0];
+								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
+								// $.ajax({
+								// 	type: "POST",
+								// 	url: "/recieved-message",
+								// 	data: {
+								// 		requestData: JSON.stringify({
+								// 			recievedMessageId, recievedMessage
+								// 		})
+								// 	},
+								// 	success: function (response) {
+								// 		console.log(response);
+								// 		globalMessageId = 0;
+										
+								// 	}
+								// });
 							}
 
 						} else {
@@ -283,17 +304,37 @@ function connect() {
 									messageSection.append(dateTimeStamp)
 								}
 								childDiv.className = 'left-msg';
-								childDiv.innerHTML = `<small class="">${bin2String(activeUser.content)}</small>`;
+								childDiv.innerHTML = `<small class="">${bin2String(activeUser.content).split('_|')[0]}</small>`;
 
 								parentDiv.append(timeLabel);
 								parentDiv.append(childDiv);
 								messageSection.append(parentDiv);
+								///////////////////Ajax here///////////////
+								recievedMessage = bin2String(activeUser.content).split('_|')[0];
+								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
+								// $.ajax({
+								// 	type: "POST",
+								// 	url: "/recieved-message",
+								// 	data: {
+								// 		requestData: JSON.stringify({
+								// 			recievedMessageId, recievedMessage
+								// 		})
+								// 	},
+								// 	success: function (response) {
+								// 		console.log(response);
+								// 		globalMessageId = 0;
+										
+								// 	}
+								// });
+
 							}
 						}
 					}
 				} else {
 					if (!(blockList.some(e => e.myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id))) {
 						if (!(bin2String(activeUser.content).split(',')[0] == "binarydta")) {
+							let recievedMessageId;
+							let recievedMessage;
 							if (holdNotificationMessages.length == 0) {
 								holdNotificationMessages.push(activeUser);
 								let notiList = document.createElement('li');
@@ -305,12 +346,28 @@ function connect() {
 							</div>
 							<div class="notification-user-detail">
 								<h6 class="m-0">${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[1].children[0].textContent}</h6>
-								<p class="m-0">${bin2String(activeUser.content).substring(0, 7) + "..."}</p>
+								<p class="m-0">${bin2String(activeUser.content).split('_|')[0].substring(0, 7) + "..."}</p>
 							</div>	`;
 								notiList.setAttribute('onclick', `showNotifyUserMessage(${username},${activeUser.toUser.friend[0].myFriend.user_id},
 							 '${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[0].children[0].src}',
 							 '${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).getAttribute('data-dname')}', this)`);
 								notificationList.append(notiList);
+								recievedMessage = bin2String(activeUser.content).split('_|')[0];
+								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
+								// $.ajax({
+								// 	type: "POST",
+								// 	url: "/recieved-message",
+								// 	data: {
+								// 		requestData: JSON.stringify({
+								// 			recievedMessageId, recievedMessage
+								// 		})
+								// 	},
+								// 	success: function (response) {
+								// 		console.log(response);
+								// 		globalMessageId = 0;
+										
+								// 	}
+								// });								
 
 							} else {
 								let notifyMe = holdNotificationMessages.some(e => {
@@ -318,7 +375,7 @@ function connect() {
 									return (e.toUser.friend[0].myFriend.user_id == activeUser.toUser.friend[0].myFriend.user_id)
 								});
 								if (notifyMe) {
-									document.getElementById('notify-me-' + activeUser.toUser.friend[0].myFriend.user_id).children[1].children[1].textContent = bin2String(activeUser.content).substring(0, 7) + "...";
+									document.getElementById('notify-me-' + activeUser.toUser.friend[0].myFriend.user_id).children[1].children[1].textContent = bin2String(activeUser.content).split('_|')[0].substring(0, 7) + "...";
 								} else {
 									holdNotificationMessages.push(activeUser);
 									let notiList = document.createElement('li');
@@ -330,10 +387,26 @@ function connect() {
 							</div>
 							<div class="notification-user-detail">
 								<h6 class="m-0">${document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[1].children[0].textContent}</h6>
-								<p class="m-0">${bin2String(activeUser.content).substring(0, 7) + "..."}</p>
+								<p class="m-0">${bin2String(activeUser.content).split('_|')[0].substring(0, 7) + "..."}</p>
 							</div>`;
 									notificationList.append(notiList);
 								}
+								recievedMessage = bin2String(activeUser.content).split('_|')[0];
+								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
+								// $.ajax({
+								// 	type: "POST",
+								// 	url: "/recieved-message",
+								// 	data: {
+								// 		requestData: JSON.stringify({
+								// 			recievedMessageId, recievedMessage
+								// 		})
+								// 	},
+								// 	success: function (response) {
+								// 		console.log(response);
+								// 		globalMessageId = 0;
+										
+								// 	}
+								// });	
 							}
 							appNotification.style.color = 'red';
 							//appNotificationCount.innerText = "1";
@@ -968,20 +1041,6 @@ function preocessMessage(e) {
 					if (isBlocked === 'false') {
 						if (fileToSendAsChat.value != "") {
 							//ws.binaryType = "arraybuffer"
-							ws.send(JSON.stringify({
-								toUser: {
-									user_id: friend_id,
-									friend: [{
-										myFriend: {
-											user_id: username
-										}
-									}]
-								},
-								content: unpack("binarydta," + fileToSendAsChat.files[0].type + "," + fileToSendAsChat.files[0].name),
-								sendDate: new Date().toString(),
-								recievedDate: new Date().toString(),
-
-							}))
 							ws.send(fileToSendAsChat.files[0]);
 
 							var parentDiv = document.createElement('div');
@@ -1012,16 +1071,31 @@ function preocessMessage(e) {
 								formFile.append('msgFile', fileToSendAsChat.files[0])
 								formFile.append('username', username)
 								formFile.append('friend_id', friend_id)
-								//$.ajax({
-								//	type: "POST",
-								//	url: "/send-file",
-								//	contentType: false,
-								//	processData: false,
-								//	data: formFile,
-								//	success: function (response) {
-								//		// console.log(response);
-								//	}
-								//});
+								$.ajax({
+									type: "POST",
+									url: "/send-file",
+									contentType: false,
+									processData: false,
+									data: formFile,
+									success: function (response) {
+										console.log(response[0].message_id);
+										globalMessageId = response[0].message_id;
+										ws.send(JSON.stringify({
+											toUser: {
+												user_id: friend_id,
+												friend: [{
+													myFriend: {
+														user_id: username
+													}
+												}]
+											},
+											content: unpack("binarydta," + fileToSendAsChat.files[0].type + "," + fileToSendAsChat.files[0].name+"_|"+globalMessageId),
+											sendDate: new Date().toString(),
+											recievedDate: new Date().toString(),
+			
+										}));
+									}
+								});
 
 
 							} else {
@@ -1096,19 +1170,7 @@ function preocessMessage(e) {
 						} else {
 							var formData = new FormData(e.target);
 							let myMessage = formData.get('message');
-							ws.send(JSON.stringify({
-								toUser: {
-									user_id: friend_id,
-									friend: [{
-										myFriend: {
-											user_id: username
-										}
-									}]
-								},
-								content: unpack(myMessage),
-								sendDate: new Date().toString(),
-								recievedDate: new Date().toString(),
-							}));
+							
 							var parentDiv = document.createElement('div');
 							var childDiv = document.createElement('div');
 							var timeLabel = document.createElement('label');
@@ -1129,18 +1191,32 @@ function preocessMessage(e) {
 							parentDiv.append(childDiv);
 							childDiv.innerHTML = `<small class="">${myMessage}</small>`;
 							messageSection.append(parentDiv);
-							// $.ajax({
-							// 	type: "POST",
-							// 	url: "/send-message",
-							// 	data: {
-							// 		requestData: JSON.stringify({
-							// 			username, friend_id, myMessage
-							// 		})
-							// 	},
-							// 	success: function (response) {
-							// 		//console.log(response);
-							// 	}
-							// });
+							$.ajax({
+								type: "POST",
+								url: "/send-message",
+								data: {
+									requestData: JSON.stringify({
+										username, friend_id, myMessage
+									})
+								},
+								success: function (response) {
+									console.log(response[0].message_id);
+									globalMessageId = response[0].message_id;
+									ws.send(JSON.stringify({
+										toUser: {
+											user_id: friend_id,
+											friend: [{
+												myFriend: {
+													user_id: username
+												}
+											}]
+										},
+										content: unpack(myMessage+"_|"+globalMessageId),
+										sendDate: new Date().toString(),
+										recievedDate: new Date().toString(),
+									}));
+								}
+							});
 						}
 						messageArea.value = "";
 						fileToSendAsChat.value = "";
@@ -1276,6 +1352,7 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 	handleNotificationDetails.show();
 	notifyModalImg.src = imgString;
 	notifyModalName.innerText = dummyName;
+	appNotification.style.color = 'black';
 	$.ajax({
 		type: "GET",
 		url: "/check-blocked-friend",
