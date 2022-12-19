@@ -269,20 +269,20 @@ function connect() {
 
 								recievedMessage = bin2String(activeUser.content).split('_|')[0];
 								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
-								// $.ajax({
-								// 	type: "POST",
-								// 	url: "/recieved-message",
-								// 	data: {
-								// 		requestData: JSON.stringify({
-								// 			recievedMessageId, recievedMessage
-								// 		})
-								// 	},
-								// 	success: function (response) {
-								// 		console.log(response);
-								// 		globalMessageId = 0;
-										
-								// 	}
-								// });
+								$.ajax({
+									type: "POST",
+									url: "/recieved-message",
+									data: {
+										requestData: JSON.stringify({
+											recievedMessageId, recievedMessage
+										})
+									},
+									success: function(response) {
+										console.log(response);
+										globalMessageId = 0;
+
+									}
+								});
 							}
 
 						} else {
@@ -312,20 +312,20 @@ function connect() {
 								///////////////////Ajax here///////////////
 								recievedMessage = bin2String(activeUser.content).split('_|')[0];
 								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
-								// $.ajax({
-								// 	type: "POST",
-								// 	url: "/recieved-message",
-								// 	data: {
-								// 		requestData: JSON.stringify({
-								// 			recievedMessageId, recievedMessage
-								// 		})
-								// 	},
-								// 	success: function (response) {
-								// 		console.log(response);
-								// 		globalMessageId = 0;
-										
-								// 	}
-								// });
+								$.ajax({
+									type: "POST",
+									url: "/recieved-message",
+									data: {
+										requestData: JSON.stringify({
+											recievedMessageId, recievedMessage
+										})
+									},
+									success: function(response) {
+										console.log(response);
+										globalMessageId = 0;
+
+									}
+								});
 
 							}
 						}
@@ -354,20 +354,20 @@ function connect() {
 								notificationList.append(notiList);
 								recievedMessage = bin2String(activeUser.content).split('_|')[0];
 								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
-								// $.ajax({
-								// 	type: "POST",
-								// 	url: "/recieved-message",
-								// 	data: {
-								// 		requestData: JSON.stringify({
-								// 			recievedMessageId, recievedMessage
-								// 		})
-								// 	},
-								// 	success: function (response) {
-								// 		console.log(response);
-								// 		globalMessageId = 0;
-										
-								// 	}
-								// });								
+								$.ajax({
+									type: "POST",
+									url: "/recieved-message",
+									data: {
+										requestData: JSON.stringify({
+											recievedMessageId, recievedMessage
+										})
+									},
+									success: function(response) {
+										console.log(response);
+										globalMessageId = 0;
+
+									}
+								});
 
 							} else {
 								let notifyMe = holdNotificationMessages.some(e => {
@@ -393,25 +393,22 @@ function connect() {
 								}
 								recievedMessage = bin2String(activeUser.content).split('_|')[0];
 								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
-								// $.ajax({
-								// 	type: "POST",
-								// 	url: "/recieved-message",
-								// 	data: {
-								// 		requestData: JSON.stringify({
-								// 			recievedMessageId, recievedMessage
-								// 		})
-								// 	},
-								// 	success: function (response) {
-								// 		console.log(response);
-								// 		globalMessageId = 0;
-										
-								// 	}
-								// });	
+								$.ajax({
+									type: "POST",
+									url: "/recieved-message",
+									data: {
+										requestData: JSON.stringify({
+											recievedMessageId, recievedMessage
+										})
+									},
+									success: function(response) {
+										console.log(response);
+										globalMessageId = 0;
+
+									}
+								});
 							}
 							appNotification.style.color = 'red';
-							//appNotificationCount.innerText = "1";
-							//console.log(holdNotificationFromUser)
-
 						}
 
 					}
@@ -421,7 +418,7 @@ function connect() {
 		}
 		// whoOnline();
 	}
-	ws.onerror = function(error){
+	ws.onerror = function(error) {
 		console.log(error)
 		online.checked = false;
 	}
@@ -740,8 +737,8 @@ function removeFriend(e) {
 				requestData: friendId
 			},
 			success: function(result) {
-				if(!(blockList.indexOf(blockList.find(e => e.fId == result.fId)) == -1)){
-					
+				if (!(blockList.indexOf(blockList.find(e => e.fId == result.fId)) == -1)) {
+
 					blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
 				}
 			}
@@ -855,10 +852,9 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 	document.getElementById(f_id).children[0].style.display = 'none';
 	isBlocked = element.getAttribute('data-blocked');
 	if (isBlocked === 'true') {
-		console.log("It is blockeed", isBlocked)
 		moreOptions.children[2].classList.add('fade-model');
 		moreOptions.children[3].classList.remove('fade-model');
-	}else{	
+	} else {
 		moreOptions.children[2].classList.remove('fade-model');
 		moreOptions.children[3].classList.add('fade-model');
 	}
@@ -899,63 +895,63 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 				var date2 = new Date(b.sendDate)
 				return date1 - date2;
 			});
-
-
 			response.forEach((e) => {
 				var labelTime = new Date(e.sendDate)
 				var parentDiv = document.createElement('div');
 				var childDiv = document.createElement('div');
 				var timeLabel = document.createElement('label');
 				if (e.toUser.user_id == username) {
-					if (!(moment(labelTime).startOf('day').isSame(moment().startOf('day')))) {
-						if (storeDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
-							storeDate.push(moment(labelTime).format("DD/MM/YYYY"))
-							var dateTimeStamp = document.createElement('div');
-							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">${moment(labelTime).format("DD/MM/YYYY")}</h6>`;
-							messageSection.append(dateTimeStamp)
+					if (!(e.recievedDate == null)) {
+						if (!(moment(labelTime).startOf('day').isSame(moment().startOf('day')))) {
+							if (storeDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+								storeDate.push(moment(labelTime).format("DD/MM/YYYY"))
+								var dateTimeStamp = document.createElement('div');
+								dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+								dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">${moment(labelTime).format("DD/MM/YYYY")}</h6>`;
+								messageSection.append(dateTimeStamp)
+							}
+
+						} else {
+							if (storeDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
+								storeDate.push(moment(labelTime).format("DD/MM/YYYY"));
+								var dateTimeStamp = document.createElement('div');
+								dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
+								dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
+								messageSection.append(dateTimeStamp)
+							}
 						}
 
-					} else {
-						if (storeDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
-							storeDate.push(moment(labelTime).format("DD/MM/YYYY"));
-							var dateTimeStamp = document.createElement('div');
-							dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-							dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">Today</h6>`;
-							messageSection.append(dateTimeStamp)
-						}
-					}
+						parentDiv.className = 'left-div';
+						timeLabel.className = 'left-time';
+						timeLabel.innerText = `${moment(labelTime).format("h:mm")}`;
+						parentDiv.append(timeLabel);
+						parentDiv.append(childDiv);
+						if (e.msgLabel == "") {
+							childDiv.className = 'left-msg';
+							var decodedString = atob(e.content);
+							childDiv.innerHTML = `<small class="">${decodedString}</small>`;
 
-					parentDiv.className = 'left-div';
-					timeLabel.className = 'left-time';
-					timeLabel.innerText = `${moment(labelTime).format("h:mm")}`;
-					parentDiv.append(timeLabel);
-					parentDiv.append(childDiv);
-					if (e.msgLabel == "") {
-						childDiv.className = 'left-msg';
-						var decodedString = atob(e.content);
-						childDiv.innerHTML = `<small class="">${decodedString}</small>`;
-
-					} else {
-						if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'IMAGE') {
-							childDiv.className = 'left-msg-img';
-							childDiv.innerHTML = `<img src="${'data:image/png;base64,' + e.content}"
+						} else {
+							if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'IMAGE') {
+								childDiv.className = 'left-msg-img';
+								childDiv.innerHTML = `<img src="${'data:image/png;base64,' + e.content}"
 					 						  alt="" width="100%" height="105px" style="cursor: pointer;">
 					 						  <a download="${e.msgLabel.split(',')[0]}" href="${'data:image/png;base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-						} else {
-							childDiv.className = 'left-msg';
-							if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'APPLICATION') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
+							} else {
+								childDiv.className = 'left-msg';
+								if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'APPLICATION') {
+									childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'VIDEO') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
+								} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'VIDEO') {
+									childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-circle-play me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'AUDIO') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
+								} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'AUDIO') {
+									childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-music me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
-							} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'TEXT') {
-								childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
+								} else if (e.msgLabel.split(',')[1].split('/')[0].toUpperCase() == 'TEXT') {
+									childDiv.innerHTML = `<label for="" style="font-size:17px;"><i class="fa-solid fa-file me-2" style="font-size:25px;"></i><span class="">${e.msgLabel.split(',')[0]}</span></label><br />
                                 <hr class="m-0"/><a download="${e.msgLabel.split(',')[0]}" href="${'data:' + e.msgLabel.split(',')[1] + ';base64,' + e.content}" style="cursor: pointer;font-size: 13px"><i class="fa-sharp fa-solid fa-circle-down"></i></a>`;
+								}
 							}
 						}
 					}
@@ -1077,7 +1073,7 @@ function preocessMessage(e) {
 									contentType: false,
 									processData: false,
 									data: formFile,
-									success: function (response) {
+									success: function(response) {
 										console.log(response[0].message_id);
 										globalMessageId = response[0].message_id;
 										ws.send(JSON.stringify({
@@ -1089,10 +1085,10 @@ function preocessMessage(e) {
 													}
 												}]
 											},
-											content: unpack("binarydta," + fileToSendAsChat.files[0].type + "," + fileToSendAsChat.files[0].name+"_|"+globalMessageId),
+											content: unpack("binarydta," + fileToSendAsChat.files[0].type + "," + fileToSendAsChat.files[0].name + "_|" + globalMessageId),
 											sendDate: new Date().toString(),
 											recievedDate: new Date().toString(),
-			
+
 										}));
 									}
 								});
@@ -1170,7 +1166,7 @@ function preocessMessage(e) {
 						} else {
 							var formData = new FormData(e.target);
 							let myMessage = formData.get('message');
-							
+
 							var parentDiv = document.createElement('div');
 							var childDiv = document.createElement('div');
 							var timeLabel = document.createElement('label');
@@ -1199,7 +1195,7 @@ function preocessMessage(e) {
 										username, friend_id, myMessage
 									})
 								},
-								success: function (response) {
+								success: function(response) {
 									console.log(response[0].message_id);
 									globalMessageId = response[0].message_id;
 									ws.send(JSON.stringify({
@@ -1211,7 +1207,7 @@ function preocessMessage(e) {
 												}
 											}]
 										},
-										content: unpack(myMessage+"_|"+globalMessageId),
+										content: unpack(myMessage + "_|" + globalMessageId),
 										sendDate: new Date().toString(),
 										recievedDate: new Date().toString(),
 									}));
@@ -1380,24 +1376,25 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 		success: function(result) {
-			result.forEach(e => {
+			if (!(result[result.length - 1].recievedDate == null)) {
 				var dateTimeStamp = document.createElement('div');
 				dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
-				dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">${moment(e.recievedDate).format("DD/MM/YYYY")}</h6>`;
+				dateTimeStamp.innerHTML = `<h6 style="background-color: #e3dede;color:white;border-radius: 10px;padding:1px 2px">${moment(result[result.length - 1].recievedDate).format("DD/MM/YYYY")}</h6>`;
 				var parentDiv = document.createElement('div');
 				var childDiv = document.createElement('div');
 				var timeLabel = document.createElement('label');
 				parentDiv.className = 'left-div';
 				timeLabel.className = 'left-time';
-				timeLabel.innerText = `${moment(e.recievedDate).format("h:mm")}`;
+				timeLabel.innerText = `${moment(result[result.length - 1].recievedDate).format("h:mm")}`;
 				parentDiv.append(timeLabel);
 				parentDiv.append(childDiv);
 				childDiv.className = 'left-msg';
-				var decodedString = atob(e.content);
+				var decodedString = atob(result[result.length - 1].content);
 				childDiv.innerHTML = `<small class="">${decodedString}</small>`;
 				notifyModalBody.append(dateTimeStamp);
 				notifyModalBody.append(parentDiv);
-			})
+			}
+
 		}
 	});
 	console.log(document.getElementById(f_id).getAttribute('data-dname'))
@@ -1516,6 +1513,6 @@ function unBlockSpecficFriend(e) {
 	isBlocked = 'false';
 }
 
-function closeAllPhotoModal(e){
+function closeAllPhotoModal(e) {
 	exampleModal.hide();
 }

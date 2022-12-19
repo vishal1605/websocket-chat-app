@@ -307,7 +307,7 @@ public class MsgController {
 			Set<Message> set = new HashSet<Message>();
 
 			set.add(mDao.updateMessage(new Message(mId.getMessage_id(), mId.getToUser(), mId.getContent(),
-					recievedMessage.getBytes(), mId.getMsgLabel(),
+					null, mId.getMsgLabel(),
 					mId.getSendDate(), LocalDateTime.now().toString())));
 			return ResponseEntity.ok().body(set);
 		} catch (Exception e) {
