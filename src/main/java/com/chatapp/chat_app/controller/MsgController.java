@@ -324,7 +324,9 @@ public class MsgController {
 		ChatUser f = dao.getSingleUser(friend_id);
 		try {
 			Set<Message> set = new HashSet<Message>();
-			set.add(mDao.saveMessage(myId, new Message(f, myMultipartFile.getBytes(), myMultipartFile.getOriginalFilename() + "," + myMultipartFile.getContentType(),
+			set.add(mDao.saveMessage(myId,
+					new Message(f, myMultipartFile.getBytes(),
+							myMultipartFile.getOriginalFilename() + "," + myMultipartFile.getContentType(),
 							LocalDateTime.now().toString())));
 			return ResponseEntity.ok().body(set);
 		} catch (Exception e) {
@@ -333,21 +335,26 @@ public class MsgController {
 
 	}
 
-	// @PostMapping("/send-file")
-	// public String saveRecievedUserFileMessage(@RequestParam("msgFile")
-	// MultipartFile myMultipartFile,
-	// @RequestParam("username") int myId, @RequestParam("friend_id") int friend_id)
-	// throws IOException {
-	// // System.out.println(myMultipartFile.getOriginalFilename());
-	// ChatUser f = dao.getSingleUser(friend_id);
-	// Set<Message> set = new HashSet<Message>();
-	// set.add(mDao.saveMessage(myId,
-	// new Message(f, myMultipartFile.getBytes(),
-	// myMultipartFile.getOriginalFilename() + "," +
-	// myMultipartFile.getContentType(),
-	// LocalDateTime.now().toString())));
-	// return "done";
-	// }
+	@PostMapping("/recieved-file")
+	public ResponseEntity<?> saveRecievedUserFileMessage(String requestData, HttpSession session)
+			throws IOException {
+		try {
+			ChatUser c = (ChatUser) session.getAttribute("user");
+			if (c == null)
+				return ResponseEntity.badRequest().body("Session has expired");
+			JSONObject json = new JSONObject(requestData);
+			long recievedMessageId = json.getLong("recievedMessageId");
+			Message mId = mDao.getSingleMessage(recievedMessageId);
+			Set<Message> set = new HashSet<Message>();
+
+			set.add(mDao.updateMessage(new Message(mId.getMessage_id(), mId.getToUser(), mId.getContent(),
+					null, mId.getMsgLabel(),
+					mId.getSendDate(), LocalDateTime.now().toString())));
+			return ResponseEntity.ok().body(set);
+		} catch (Exception e) {
+			return ResponseEntity.ok().body(e);
+		}
+	}
 
 	@GetMapping("/get-message")
 	public ResponseEntity<?> fetchMessage(String requestData, HttpSession session) {

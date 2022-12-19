@@ -149,7 +149,7 @@ function connect() {
 					reader.readAsDataURL(event.data);
 					reader.onloadend = function() {
 						var base64String = reader.result;
-						let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2];
+						let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2].split('_|')[0];
 						switch (contentType) {
 							case 'application':
 								childDiv.className = 'left-msg';
@@ -201,7 +201,7 @@ function connect() {
 		} else {
 
 			var activeUser = JSON.parse(event.data);
-
+			console.log(activeUser);
 			if ('user_id' in activeUser) {
 				if (activeUser.isActive == true) {
 					let exist = active.some((e) => {
@@ -250,6 +250,21 @@ function connect() {
 								var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
 								friendList.prepend(first);
+								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
+								$.ajax({
+									type: "POST",
+									url: "/recieved-file",
+									data: {
+										requestData: JSON.stringify({
+											recievedMessageId
+										})
+									},
+									success: function(response) {
+										console.log(response);
+										globalMessageId = 0;
+		
+									}
+								});
 							} else {
 								messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = bin2String(activeUser.content).split('_|')[0].substring(0, 10) + '...';
@@ -293,6 +308,21 @@ function connect() {
 							} else if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
 								holdBinaryMessageDetails.push(activeUser);
 								contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
+								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
+								$.ajax({
+									type: "POST",
+									url: "/recieved-file",
+									data: {
+										requestData: JSON.stringify({
+											recievedMessageId
+										})
+									},
+									success: function(response) {
+										console.log(response);
+										globalMessageId = 0;
+		
+									}
+								});
 							} else {
 								var labelTime = new Date();
 								if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
@@ -1037,8 +1067,9 @@ function preocessMessage(e) {
 					if (isBlocked === 'false') {
 						if (fileToSendAsChat.value != "") {
 							//ws.binaryType = "arraybuffer"
-							ws.send(fileToSendAsChat.files[0]);
-
+							let fileType = fileToSendAsChat.files[0].type;
+							let fileName = fileToSendAsChat.files[0].name;
+							let filSend = fileToSendAsChat.files[0];
 							var parentDiv = document.createElement('div');
 							var childDiv = document.createElement('div');
 							var timeLabel = document.createElement('label');
@@ -1066,7 +1097,7 @@ function preocessMessage(e) {
 								let formFile = new FormData();
 								formFile.append('msgFile', fileToSendAsChat.files[0])
 								formFile.append('username', username)
-								formFile.append('friend_id', friend_id)
+								formFile.append('friend_id', friend_id);
 								$.ajax({
 									type: "POST",
 									url: "/send-file",
@@ -1085,11 +1116,12 @@ function preocessMessage(e) {
 													}
 												}]
 											},
-											content: unpack("binarydta," + fileToSendAsChat.files[0].type + "," + fileToSendAsChat.files[0].name + "_|" + globalMessageId),
+											content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
 											sendDate: new Date().toString(),
 											recievedDate: new Date().toString(),
 
 										}));
+										ws.send(filSend);
 									}
 								});
 
@@ -1152,16 +1184,32 @@ function preocessMessage(e) {
 								formFile.append('msgFile', fileToSendAsChat.files[0])
 								formFile.append('username', username)
 								formFile.append('friend_id', friend_id)
-								//$.ajax({
-								//	type: "POST",
-								//	url: "/send-file",
-								//	contentType: false,
-								//	processData: false,
-								//	data: formFile,
-								//	success: function (response) {
-								//		//console.log(response);
-								//	}
-								//});
+								$.ajax({
+									type: "POST",
+									url: "/send-file",
+									contentType: false,
+									processData: false,
+									data: formFile,
+									success: function(response) {
+										console.log(response[0].message_id);
+										globalMessageId = response[0].message_id;
+										ws.send(JSON.stringify({
+											toUser: {
+												user_id: friend_id,
+												friend: [{
+													myFriend: {
+														user_id: username
+													}
+												}]
+											},
+											content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
+											sendDate: new Date().toString(),
+											recievedDate: new Date().toString(),
+
+										}));
+										ws.send(filSend);
+									}
+								});
 							}
 						} else {
 							var formData = new FormData(e.target);
