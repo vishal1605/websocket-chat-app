@@ -192,7 +192,6 @@ function connect() {
 						parentDiv.append(childDiv);
 						messageSection.append(parentDiv);
 						holdBinaryMessageDetails.shift();
-						//////////////////Ajax here////////////////////////
 					}
 				} else {
 					holdBinaryMessageDetails.shift();
@@ -201,7 +200,6 @@ function connect() {
 		} else {
 
 			var activeUser = JSON.parse(event.data);
-			console.log(activeUser);
 			if ('user_id' in activeUser) {
 				if (activeUser.isActive == true) {
 					let exist = active.some((e) => {
@@ -216,8 +214,7 @@ function connect() {
 				} else {
 					var removeUser = active.find((e) => {
 						return e.user_id == activeUser.user_id;
-					})
-					//console.log(removeUser);
+					});
 					active.splice(active.indexOf(removeUser), 1);
 
 				}
@@ -262,7 +259,7 @@ function connect() {
 									success: function(response) {
 										console.log(response);
 										globalMessageId = 0;
-		
+
 									}
 								});
 							} else {
@@ -320,7 +317,7 @@ function connect() {
 									success: function(response) {
 										console.log(response);
 										globalMessageId = 0;
-		
+
 									}
 								});
 							} else {
@@ -483,9 +480,8 @@ function whoOnline() {
 	if (!active.length == 0) {
 
 		[...friendList.children].forEach((e) => {
-
-			//e.style.background = "aqua";
-		})
+			e.style.background = "white";
+		});
 		active.forEach((on) => {
 			var elem = [...friendList.children].find((e) => {
 				return e.id == on.user_id;
@@ -498,19 +494,15 @@ function whoOnline() {
 				elem.remove();
 				friendList.prepend(first);
 			}
-		})
-
-
+		});
 	} else {
 		[...friendList.children].forEach((e) => {
 
 			if (e.id != "no-friends-list") {
 				e.style.background = "";
 			}
-		})
-
+		});
 	}
-
 }
 
 // setInterval(()=>whoOnline(),10000);

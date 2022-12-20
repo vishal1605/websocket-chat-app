@@ -302,7 +302,6 @@ public class MsgController {
 				return ResponseEntity.badRequest().body("Session has expired");
 			JSONObject json = new JSONObject(requestData);
 			long recievedMessageId = json.getLong("recievedMessageId");
-			String recievedMessage = json.getString("recievedMessage");
 			Message mId = mDao.getSingleMessage(recievedMessageId);
 			Set<Message> set = new HashSet<Message>();
 
