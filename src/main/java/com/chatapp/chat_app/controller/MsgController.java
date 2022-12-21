@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,6 +80,19 @@ public class MsgController {
 		mv.setViewName("redirect:/");
 		return mv;
 	}
+	
+//	@CrossOrigin
+//	@PostMapping("/register")
+//	public ResponseEntity<?> registerProcess(ChatUser user, HttpSession session) throws Exception {
+//		boolean success = false;
+//		try {
+//			ChatUser u = dao.saveUser(user);
+//			success = true;
+//			return ResponseEntity.ok(u);
+//		} catch (Exception e) {
+//			throw new Exception(e);
+//		}
+//	}
 
 	@GetMapping("/login-form")
 	public ModelAndView login() {
