@@ -195,8 +195,8 @@ public class MsgController {
 			if (friends.size() != 0) {
 				List<Message> messages = new ArrayList<>();
 				for (ChatUser chatUser : friends) {
-					messages.addAll(mDao.getFriendMessages(Long.parseLong(myId), chatUser.getUser_id()));
-					messages.addAll(mDao.getFriendMessages(chatUser.getUser_id(), Long.parseLong(myId)));
+					messages.add(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()));
+					messages.add(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)));
 					// System.out.println(messages);
 					if (messages.size() != 0) {
 						for (int i = 0; i < messages.size(); i++) {

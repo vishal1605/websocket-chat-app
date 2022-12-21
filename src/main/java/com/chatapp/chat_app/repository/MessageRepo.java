@@ -24,4 +24,7 @@ public interface MessageRepo extends JpaRepository<Message, Long>{
     @Query(value = "select * from message inner join chat_user_messages on message.message_id = chat_user_messages.messages_message_id where chat_user_user_id=?1 and to_user_user_id=?2",nativeQuery = true)
     public List<Message> getUserSpecificMessage(long userId, long fId);
     
+    @Query(value = "select * from message inner join chat_user_messages on message.message_id = chat_user_messages.messages_message_id where chat_user_user_id=?1 and to_user_user_id=?2 ORDER BY send_date DESC LIMIT 1;",nativeQuery = true)
+    public Message getUserSpecificLastMessage(long userId, long fId);
+    
 }

@@ -608,7 +608,7 @@ function getAllFriends(id) {
 								moreOptions.children[3].classList.remove('fade-model');
 							}
 							console.log(blockList);
-							friendList.innerHTML += `<li class="list-of-friend mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user.user_id}, '${e.rename}',this)"
+							friendList.innerHTML += `<li class="list-of-friend mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user.user_id},this)"
 									 style="position:relative;cursor:pointer" id="${e.user.user_id}" data-find="${'find_' + e.user.user_id}" data-blocked="${e.blocked}">
 														
 														<div id="notification-logo" class="shadow" style="color:black"><span id="notification-count">0</span></div>
@@ -695,7 +695,7 @@ function addFriend(id, f_dummyName) {
 			list.style.color = 'black';
 			list.style.position = 'relative';
 			list.style.cursor = 'pointer'
-			list.setAttribute('onclick', `showMessageOfSpecificUser(${username},${responseObject.user.user_id},'${responseObject.rename}', this)`)
+			list.setAttribute('onclick', `showMessageOfSpecificUser(${username},${responseObject.user.user_id}, this)`)
 			list.id = responseObject.user.user_id;
 			list.setAttribute('data-find', 'find_' + responseObject.user.user_id)
 			list.setAttribute('data-blocked', responseObject.blocked)
@@ -866,8 +866,8 @@ function submitProfilePic() {
 }
 
 ////////////////////////////////////////////Show Your Specfic Friend Older Chat with You & Start more Chat///////////////////////////
-function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
-	//console.log(element.children[1].children[0].src);
+function showMessageOfSpecificUser(u_id, f_id, element) {
+	//console.log(element.children[2].children[0].innerText);
 	var zro = messageArray.filter(e => e == f_id);
 	zro.forEach(e => messageArray.splice(messageArray.indexOf(e), 1))
 	document.getElementById(f_id).children[0].textContent = 0;
@@ -902,7 +902,7 @@ function showMessageOfSpecificUser(u_id, f_id, friendName, element) {
 			msgHeaderProfilePic.classList.add('show-element');
 			messageHeaderTemplete.classList.add('shadow-sm');
 			messageInputTemplete.classList.add('show-model');
-			messageHeaderLabel.innerText = friendName;
+			messageHeaderLabel.innerText = element.children[2].children[0].innerText;
 			profileMoreOptions.innerHTML = `<i class="fa-solid fa-bars"></i>`;
 			moreOptions.children[0].setAttribute("data-id", f_id);
 			moreOptions.children[0].addEventListener('click', removeFriend);
@@ -1360,9 +1360,9 @@ function renameFriendAgain(e) {
 			friendId: id
 		},
 		success: function(response) {
-			console.log(response);
-			//messageHeaderLabel.innerText = response;
-			//friendList.querySelector(`[data-find="find_${id}"]`).children[2].children[0].innerText = response;
+			//console.log(response);
+			messageHeaderLabel.innerText = response;
+			friendList.querySelector(`[data-find="find_${id}"]`).children[2].children[0].innerText = response;
 		}
 	});
 	againRenameInput.value = '';
