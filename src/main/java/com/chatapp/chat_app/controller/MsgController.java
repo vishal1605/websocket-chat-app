@@ -69,30 +69,30 @@ public class MsgController {
 
 	}
 
-	@PostMapping("/register")
-	public ModelAndView registerProcess(ChatUser user, HttpSession session) {
-		ModelAndView mv = new ModelAndView();
-		boolean success = false;
-		ChatUser u = dao.saveUser(user);
+	// @PostMapping("/register")
+	// public ModelAndView registerProcess(ChatUser user, HttpSession session) {
+	// ModelAndView mv = new ModelAndView();
+	// boolean success = false;
+	// ChatUser u = dao.saveUser(user);
 
-		System.out.println(u);
-		session.setAttribute("successMsg", success);
-		mv.setViewName("redirect:/");
-		return mv;
+	// System.out.println(u);
+	// session.setAttribute("successMsg", success);
+	// mv.setViewName("redirect:/");
+	// return mv;
+	// }
+
+	@CrossOrigin
+	@PostMapping("/register")
+	public ResponseEntity<?> registerProcess(ChatUser user, HttpSession session) throws Exception {
+		boolean success = false;
+		try {
+			dao.saveUser(user);
+			success = true;
+			return ResponseEntity.ok(success);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
 	}
-	
-//	@CrossOrigin
-//	@PostMapping("/register")
-//	public ResponseEntity<?> registerProcess(ChatUser user, HttpSession session) throws Exception {
-//		boolean success = false;
-//		try {
-//			ChatUser u = dao.saveUser(user);
-//			success = true;
-//			return ResponseEntity.ok(u);
-//		} catch (Exception e) {
-//			throw new Exception(e);
-//		}
-//	}
 
 	@GetMapping("/login-form")
 	public ModelAndView login() {
@@ -102,21 +102,42 @@ public class MsgController {
 
 	}
 
+	// @PostMapping("/login")
+	// public ModelAndView loginProcess(ChatUser user, HttpSession session) {
+	// ModelAndView mv = new ModelAndView();
+	// ChatUser u = dao.login(user.getUserName());
+	// byte[] b = new byte[0];
+	// if (u == null) {
+	// mv.setViewName("redirect:/login-form");
+	// return mv;
+	// }
+	// u.getFriend().clear();
+	// u.getMessages().clear();
+	// u.setProfile_img(b);
+	// session.setAttribute("user", u);
+	// mv.setViewName("redirect:/dashboard/" + u.getUserName());
+	// return mv;
+	// }
+
+	@CrossOrigin
 	@PostMapping("/login")
-	public ModelAndView loginProcess(ChatUser user, HttpSession session) {
-		ModelAndView mv = new ModelAndView();
-		ChatUser u = dao.login(user.getUserName());
-		byte[] b = new byte[0];
-		if (u == null) {
-			mv.setViewName("redirect:/login-form");
-			return mv;
+	public ChatUser loginProcess(ChatUser user, HttpSession session) throws Exception {
+		try {
+			byte[] b = new byte[0];
+			ChatUser u = dao.login(user.getUserName());
+			if (u == null) {
+				return new ChatUser();
+
+			}
+			u.getFriend().clear();
+			u.getMessages().clear();
+			u.setProfile_img(b);
+			session.setAttribute("user", u);
+			return u;
+		} catch (Exception e) {
+			throw new Exception(e);
 		}
-		u.getFriend().clear();
-		u.getMessages().clear();
-		u.setProfile_img(b);
-		session.setAttribute("user", u);
-		mv.setViewName("redirect:/dashboard/" + u.getUserName());
-		return mv;
+
 	}
 
 	@GetMapping("/logout")
