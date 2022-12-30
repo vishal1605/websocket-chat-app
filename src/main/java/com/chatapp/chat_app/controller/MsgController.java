@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -18,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -44,7 +46,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 @RestController
-@RestControllerAdvice
+@CrossOrigin(origins = "http://localhost:5173/" ,allowCredentials = "true")
 public class MsgController {
 
 	@Autowired
@@ -69,30 +71,30 @@ public class MsgController {
 
 	}
 
-	// @PostMapping("/register")
-	// public ModelAndView registerProcess(ChatUser user, HttpSession session) {
-	// ModelAndView mv = new ModelAndView();
-	// boolean success = false;
-	// ChatUser u = dao.saveUser(user);
-
-	// System.out.println(u);
-	// session.setAttribute("successMsg", success);
-	// mv.setViewName("redirect:/");
-	// return mv;
-	// }
-
-	@CrossOrigin
 	@PostMapping("/register")
-	public ResponseEntity<?> registerProcess(ChatUser user, HttpSession session) throws Exception {
+	public ModelAndView registerProcess(ChatUser user, HttpSession session) {
+		ModelAndView mv = new ModelAndView();
 		boolean success = false;
-		try {
-			dao.saveUser(user);
-			success = true;
-			return ResponseEntity.ok(success);
-		} catch (Exception e) {
-			throw new Exception(e);
-		}
+		ChatUser u = dao.saveUser(user);
+
+		System.out.println(u);
+		session.setAttribute("successMsg", success);
+		mv.setViewName("redirect:/");
+		return mv;
 	}
+
+//	@CrossOrigin
+//	@PostMapping("/register")
+//	public ResponseEntity<?> registerProcess(ChatUser user, HttpSession session) throws Exception {
+//		boolean success = false;
+//		try {
+//			dao.saveUser(user);
+//			success = true;
+//			return ResponseEntity.ok(success);
+//		} catch (Exception e) {
+//			throw new Exception(e);
+//		}
+//	}
 
 	@GetMapping("/login-form")
 	public ModelAndView login() {
@@ -102,50 +104,59 @@ public class MsgController {
 
 	}
 
-	// @PostMapping("/login")
-	// public ModelAndView loginProcess(ChatUser user, HttpSession session) {
-	// ModelAndView mv = new ModelAndView();
-	// ChatUser u = dao.login(user.getUserName());
-	// byte[] b = new byte[0];
-	// if (u == null) {
-	// mv.setViewName("redirect:/login-form");
-	// return mv;
-	// }
-	// u.getFriend().clear();
-	// u.getMessages().clear();
-	// u.setProfile_img(b);
-	// session.setAttribute("user", u);
-	// mv.setViewName("redirect:/dashboard/" + u.getUserName());
-	// return mv;
-	// }
+//	@PostMapping("/login")
+//	public ModelAndView loginProcess(ChatUser user, HttpSession session) {
+//		ModelAndView mv = new ModelAndView();
+//		ChatUser u = dao.login(user.getUserName());
+//		byte[] b = new byte[0];
+//		if (u == null) {
+//			mv.setViewName("redirect:/login-form");
+//			return mv;
+//		}
+//		u.getFriend().clear();
+//		u.getMessages().clear();
+//		u.setProfile_img(b);
+//		session.setAttribute("user", u);
+//		mv.setViewName("redirect:/dashboard/" + u.getUserName());
+//		return mv;
+//	}
 
-	@CrossOrigin
 	@PostMapping("/login")
-	public ChatUser loginProcess(ChatUser user, HttpSession session) throws Exception {
+	public ResponseEntity<?> loginProcess(ChatUser user, HttpSession session) throws Exception {
 		try {
 			byte[] b = new byte[0];
 			ChatUser u = dao.login(user.getUserName());
 			if (u == null) {
-				return new ChatUser();
+				return ResponseEntity.ok(new ChatUser());
 
 			}
 			u.getFriend().clear();
 			u.getMessages().clear();
 			u.setProfile_img(b);
 			session.setAttribute("user", u);
-			return u;
+			System.out.println(session.getId());
+			//System.out.println(request.getCookies()[0].getName());
+			HttpHeaders responseHeaders = new HttpHeaders();
+			responseHeaders.add(HttpHeaders.SET_COOKIE,session.getId());
+			return ResponseEntity.ok().headers(responseHeaders).body(u);
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
 
 	}
 
+//	@GetMapping("/logout")
+//	public ModelAndView logoutProcess(HttpSession session) {
+//		ModelAndView mv = new ModelAndView();
+//		session.removeAttribute("user");
+//		mv.setViewName("redirect:/login-form");
+//		return mv;
+//	}
+	
 	@GetMapping("/logout")
-	public ModelAndView logoutProcess(HttpSession session) {
-		ModelAndView mv = new ModelAndView();
+	public ResponseEntity<?> logoutProcess(HttpSession session) {
 		session.removeAttribute("user");
-		mv.setViewName("redirect:/login-form");
-		return mv;
+		return ResponseEntity.ok("success");
 	}
 
 	@GetMapping("/dashboard/{name}")
@@ -340,9 +351,8 @@ public class MsgController {
 			Message mId = mDao.getSingleMessage(recievedMessageId);
 			Set<Message> set = new HashSet<Message>();
 
-			set.add(mDao.updateMessage(new Message(mId.getMessage_id(), mId.getToUser(), mId.getContent(),
-					null, mId.getMsgLabel(),
-					mId.getSendDate(), LocalDateTime.now().toString())));
+			set.add(mDao.updateMessage(new Message(mId.getMessage_id(), mId.getToUser(), mId.getContent(), null,
+					mId.getMsgLabel(), mId.getSendDate(), LocalDateTime.now().toString())));
 			return ResponseEntity.ok().body(set);
 		} catch (Exception e) {
 			return ResponseEntity.ok().body(e);
@@ -370,8 +380,7 @@ public class MsgController {
 	}
 
 	@PostMapping("/recieved-file")
-	public ResponseEntity<?> saveRecievedUserFileMessage(String requestData, HttpSession session)
-			throws IOException {
+	public ResponseEntity<?> saveRecievedUserFileMessage(String requestData, HttpSession session) throws IOException {
 		try {
 			ChatUser c = (ChatUser) session.getAttribute("user");
 			if (c == null)
@@ -381,9 +390,8 @@ public class MsgController {
 			Message mId = mDao.getSingleMessage(recievedMessageId);
 			Set<Message> set = new HashSet<Message>();
 
-			set.add(mDao.updateMessage(new Message(mId.getMessage_id(), mId.getToUser(), mId.getContent(),
-					null, mId.getMsgLabel(),
-					mId.getSendDate(), LocalDateTime.now().toString())));
+			set.add(mDao.updateMessage(new Message(mId.getMessage_id(), mId.getToUser(), mId.getContent(), null,
+					mId.getMsgLabel(), mId.getSendDate(), LocalDateTime.now().toString())));
 			return ResponseEntity.ok().body(set);
 		} catch (Exception e) {
 			return ResponseEntity.ok().body(e);
@@ -424,11 +432,15 @@ public class MsgController {
 	}
 
 	@GetMapping("/get-profile-pic")
-	public ResponseEntity<?> uploadProfilePic(String requestData, HttpSession session) {
+	public ResponseEntity<?> uploadProfilePic(String requestData, HttpSession session, HttpServletRequest request) {
+//		System.out.println(request.getCookies()[0].getName());
 		try {
+			System.out.println(requestData);
 			ChatUser c = (ChatUser) session.getAttribute("user");
-			if (c == null)
+			if (c == null) {
+				System.out.println(c);
 				return ResponseEntity.badRequest().body("Session has expired");
+			}
 			byte[] loggedInPic = dao.getLoggedInPic(Long.parseLong(requestData));
 			byte[] profilePic = Base64.encodeBase64(loggedInPic);
 
