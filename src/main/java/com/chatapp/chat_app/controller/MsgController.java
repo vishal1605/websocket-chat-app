@@ -230,6 +230,7 @@ public class MsgController {
 	@GetMapping("/get-last-message")
 	public ResponseEntity<?> getLastMessage(String requestData, String myId, HttpSession session) {
 		try {
+			System.out.println(requestData+"bajsbhhbd");
 			ChatUser c = (ChatUser) session.getAttribute("user");
 			if (c == null)
 				return ResponseEntity.badRequest().body("Session has expired");
@@ -241,31 +242,34 @@ public class MsgController {
 			if (friends.size() != 0) {
 				List<Message> messages = new ArrayList<>();
 				for (ChatUser chatUser : friends) {
-					messages.add(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()));
-					messages.add(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)));
-					// System.out.println(messages);
-					if (messages.size() != 0) {
-						for (int i = 0; i < messages.size(); i++) {
-							for (int j = i + 1; j < messages.size(); j++) {
-								if (LocalDateTime.parse(messages.get(i).getSendDate())
-										.isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
-									Message temp = messages.get(j);
-									messages.set(j, messages.get(i));
-									messages.set(i, temp);
+					
+					if(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()) != null) {
+						messages.add(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()));
+						messages.add(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)));
+						// System.out.println(messages);
+						if (messages.size() != 0) {
+							for (int i = 0; i < messages.size(); i++) {
+								for (int j = i + 1; j < messages.size(); j++) {
+									if (LocalDateTime.parse(messages.get(i).getSendDate())
+											.isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
+										Message temp = messages.get(j);
+										messages.set(j, messages.get(i));
+										messages.set(i, temp);
+									}
 								}
 							}
+							Message m = new Message();
+							m.setToUser(chatUser);
+							m.setContent(messages.get(messages.size() - 1).getContent());
+							m.setSendDate(messages.get(messages.size() - 1).getSendDate());
+							m.setMsgLabel(messages.get(messages.size() - 1).getMsgLabel());
+							messages1.add(m);
+
+						} else {
+
 						}
-						Message m = new Message();
-						m.setToUser(chatUser);
-						m.setContent(messages.get(messages.size() - 1).getContent());
-						m.setSendDate(messages.get(messages.size() - 1).getSendDate());
-						m.setMsgLabel(messages.get(messages.size() - 1).getMsgLabel());
-						messages1.add(m);
-
-					} else {
-
+						messages.clear();
 					}
-					messages.clear();
 				}
 			}
 			return ResponseEntity.ok().body(messages1);
