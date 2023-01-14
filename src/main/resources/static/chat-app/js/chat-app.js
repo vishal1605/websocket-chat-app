@@ -607,7 +607,7 @@ function getAllFriends(id) {
 								moreOptions.children[2].classList.add('fade-model');
 								moreOptions.children[3].classList.remove('fade-model');
 							}
-							console.log(blockList);
+							//console.log(blockList);
 							friendList.innerHTML += `<li class="list-of-friend mb-1" onclick="showMessageOfSpecificUser(${username}, ${e.user.user_id},this)"
 									 style="position:relative;cursor:pointer" id="${e.user.user_id}" data-find="${'find_' + e.user.user_id}" data-blocked="${e.blocked}">
 														
@@ -625,6 +625,7 @@ function getAllFriends(id) {
 													</li>`;
 						});
 						lastMessages.forEach((e) => {
+							console.log(e)
 							var sendDate = new Date(e.sendDate);
 							var decodedString = atob(e.content);
 							if (+sendDate.getDate() === +new Date().getDate()) {

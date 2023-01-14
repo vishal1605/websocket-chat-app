@@ -243,7 +243,7 @@ public class MsgController {
 				List<Message> messages = new ArrayList<>();
 				for (ChatUser chatUser : friends) {
 					
-					if(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()) != null) {
+					if(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()) != null && mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)) !=null) {
 						messages.add(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()));
 						messages.add(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)));
 						// System.out.println(messages);
@@ -262,6 +262,7 @@ public class MsgController {
 							m.setToUser(chatUser);
 							m.setContent(messages.get(messages.size() - 1).getContent());
 							m.setSendDate(messages.get(messages.size() - 1).getSendDate());
+							m.setRecievedDate(messages.get(messages.size() - 1).getRecievedDate());
 							m.setMsgLabel(messages.get(messages.size() - 1).getMsgLabel());
 							messages1.add(m);
 
@@ -269,6 +270,62 @@ public class MsgController {
 
 						}
 						messages.clear();
+					}else {
+						if(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()) != null) {
+							messages.add(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()));
+							//messages.add(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)));
+							// System.out.println(messages);
+							if (messages.size() != 0) {
+								for (int i = 0; i < messages.size(); i++) {
+									for (int j = i + 1; j < messages.size(); j++) {
+										if (LocalDateTime.parse(messages.get(i).getSendDate())
+												.isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
+											Message temp = messages.get(j);
+											messages.set(j, messages.get(i));
+											messages.set(i, temp);
+										}
+									}
+								}
+								Message m = new Message();
+								m.setToUser(chatUser);
+								m.setContent(messages.get(messages.size() - 1).getContent());
+								m.setSendDate(messages.get(messages.size() - 1).getSendDate());
+								m.setRecievedDate(messages.get(messages.size() - 1).getRecievedDate());
+								m.setMsgLabel(messages.get(messages.size() - 1).getMsgLabel());
+								messages1.add(m);
+
+							} else {
+
+							}
+							messages.clear();
+						}
+						if(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)) !=null) {
+							messages.add(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)));
+							// System.out.println(messages);
+							if (messages.size() != 0) {
+								for (int i = 0; i < messages.size(); i++) {
+									for (int j = i + 1; j < messages.size(); j++) {
+										if (LocalDateTime.parse(messages.get(i).getSendDate())
+												.isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
+											Message temp = messages.get(j);
+											messages.set(j, messages.get(i));
+											messages.set(i, temp);
+										}
+									}
+								}
+								Message m = new Message();
+								m.setToUser(chatUser);
+								m.setContent(messages.get(messages.size() - 1).getContent());
+								m.setSendDate(messages.get(messages.size() - 1).getSendDate());
+								m.setRecievedDate(messages.get(messages.size() - 1).getRecievedDate());
+								m.setMsgLabel(messages.get(messages.size() - 1).getMsgLabel());
+								messages1.add(m);
+
+							} else {
+
+							}
+							messages.clear();
+						}
 					}
 				}
 			}
