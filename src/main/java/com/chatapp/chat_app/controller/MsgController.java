@@ -46,7 +46,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173/" ,allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:5173/" ,allowCredentials = "true")
 public class MsgController {
 
 	@Autowired
@@ -104,60 +104,60 @@ public class MsgController {
 
 	}
 
-//	@PostMapping("/login")
-//	public ModelAndView loginProcess(ChatUser user, HttpSession session) {
-//		ModelAndView mv = new ModelAndView();
-//		ChatUser u = dao.login(user.getUserName());
-//		byte[] b = new byte[0];
-//		if (u == null) {
-//			mv.setViewName("redirect:/login-form");
-//			return mv;
-//		}
-//		u.getFriend().clear();
-//		u.getMessages().clear();
-//		u.setProfile_img(b);
-//		session.setAttribute("user", u);
-//		mv.setViewName("redirect:/dashboard/" + u.getUserName());
-//		return mv;
-//	}
-
 	@PostMapping("/login")
-	public ResponseEntity<?> loginProcess(ChatUser user, HttpSession session) throws Exception {
-		try {
-			byte[] b = new byte[0];
-			ChatUser u = dao.login(user.getUserName());
-			if (u == null) {
-				return ResponseEntity.ok(new ChatUser());
-
-			}
-			u.getFriend().clear();
-			u.getMessages().clear();
-			u.setProfile_img(b);
-			session.setAttribute("user", u);
-			System.out.println(session.getId());
-			//System.out.println(request.getCookies()[0].getName());
-			HttpHeaders responseHeaders = new HttpHeaders();
-			responseHeaders.add(HttpHeaders.SET_COOKIE,session.getId());
-			return ResponseEntity.ok().headers(responseHeaders).body(u);
-		} catch (Exception e) {
-			throw new Exception(e);
+	public ModelAndView loginProcess(ChatUser user, HttpSession session) {
+		ModelAndView mv = new ModelAndView();
+		ChatUser u = dao.login(user.getUserName());
+		byte[] b = new byte[0];
+		if (u == null) {
+			mv.setViewName("redirect:/login-form");
+			return mv;
 		}
-
+		u.getFriend().clear();
+		u.getMessages().clear();
+		u.setProfile_img(b);
+		session.setAttribute("user", u);
+		mv.setViewName("redirect:/dashboard/" + u.getUserName());
+		return mv;
 	}
 
-//	@GetMapping("/logout")
-//	public ModelAndView logoutProcess(HttpSession session) {
-//		ModelAndView mv = new ModelAndView();
-//		session.removeAttribute("user");
-//		mv.setViewName("redirect:/login-form");
-//		return mv;
+//	@PostMapping("/login")
+//	public ResponseEntity<?> loginProcess(ChatUser user, HttpSession session) throws Exception {
+//		try {
+//			byte[] b = new byte[0];
+//			ChatUser u = dao.login(user.getUserName());
+//			if (u == null) {
+//				return ResponseEntity.ok(new ChatUser());
+//
+//			}
+//			u.getFriend().clear();
+//			u.getMessages().clear();
+//			u.setProfile_img(b);
+//			session.setAttribute("user", u);
+//			System.out.println(session.getId());
+//			//System.out.println(request.getCookies()[0].getName());
+//			HttpHeaders responseHeaders = new HttpHeaders();
+//			responseHeaders.add(HttpHeaders.SET_COOKIE,session.getId());
+//			return ResponseEntity.ok().headers(responseHeaders).body(u);
+//		} catch (Exception e) {
+//			throw new Exception(e);
+//		}
+//
 //	}
-	
+
 	@GetMapping("/logout")
-	public ResponseEntity<?> logoutProcess(HttpSession session) {
+	public ModelAndView logoutProcess(HttpSession session) {
+		ModelAndView mv = new ModelAndView();
 		session.removeAttribute("user");
-		return ResponseEntity.ok("success");
+		mv.setViewName("redirect:/login-form");
+		return mv;
 	}
+	
+//	@GetMapping("/logout")
+//	public ResponseEntity<?> logoutProcess(HttpSession session) {
+//		session.removeAttribute("user");
+//		return ResponseEntity.ok("success");
+//	}
 
 	@GetMapping("/dashboard/{name}")
 	public ModelAndView dashboard(@PathVariable("name") String name, HttpSession session) {
