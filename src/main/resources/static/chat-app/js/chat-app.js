@@ -68,14 +68,14 @@ let blockList = [];
 let isBlocked = false;
 
 ////Event Listners
-myFriends.onclick = function(e) {
+myFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'rgb(219, 219, 247)';
 	notMyFriends.style.background = '#ffe7c7';
 }
 
-notMyFriends.onclick = function(e) {
+notMyFriends.onclick = function (e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#ffe7c7';
@@ -111,7 +111,7 @@ function getMyProfilePicture() {
 		data: {
 			requestData: username
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			if (responseObject == "") {
 			} else {
 
@@ -125,7 +125,7 @@ function getMyProfilePicture() {
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function(event) {
+	ws.onmessage = function (event) {
 		var parentDiv = document.createElement('div');
 		var childDiv = document.createElement('div');
 		var timeLabel = document.createElement('label');
@@ -147,7 +147,7 @@ function connect() {
 					}
 					var reader = new FileReader();
 					reader.readAsDataURL(event.data);
-					reader.onloadend = function() {
+					reader.onloadend = function () {
 						var base64String = reader.result;
 						let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2].split('_|')[0];
 						switch (contentType) {
@@ -237,7 +237,7 @@ function connect() {
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 								//console.log(messageArray);
 								var count = {};
-								messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+								messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 								//console.log(count);
 								for (let key in count) {
 									document.getElementById(key).children[0].textContent = count[key];
@@ -256,7 +256,7 @@ function connect() {
 											recievedMessageId
 										})
 									},
-									success: function(response) {
+									success: function (response) {
 										console.log(response);
 										globalMessageId = 0;
 
@@ -268,7 +268,7 @@ function connect() {
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 								//console.log(messageArray);
 								var count = {};
-								messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
+								messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
 								//console.log(count);
 								for (let key in count) {
 									document.getElementById(key).children[0].textContent = count[key];
@@ -289,7 +289,7 @@ function connect() {
 											recievedMessageId, recievedMessage
 										})
 									},
-									success: function(response) {
+									success: function (response) {
 										console.log(response);
 										globalMessageId = 0;
 
@@ -314,7 +314,7 @@ function connect() {
 											recievedMessageId
 										})
 									},
-									success: function(response) {
+									success: function (response) {
 										console.log(response);
 										globalMessageId = 0;
 
@@ -347,7 +347,7 @@ function connect() {
 											recievedMessageId, recievedMessage
 										})
 									},
-									success: function(response) {
+									success: function (response) {
 										console.log(response);
 										globalMessageId = 0;
 
@@ -389,7 +389,7 @@ function connect() {
 											recievedMessageId, recievedMessage
 										})
 									},
-									success: function(response) {
+									success: function (response) {
 										console.log(response);
 										globalMessageId = 0;
 
@@ -428,7 +428,7 @@ function connect() {
 											recievedMessageId, recievedMessage
 										})
 									},
-									success: function(response) {
+									success: function (response) {
 										console.log(response);
 										globalMessageId = 0;
 
@@ -445,7 +445,7 @@ function connect() {
 		}
 		// whoOnline();
 	}
-	ws.onerror = function(error) {
+	ws.onerror = function (error) {
 		console.log(error)
 		online.checked = false;
 	}
@@ -513,7 +513,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function(responseObject) {
+		success: function (responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -564,8 +564,8 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function(responseObject) {
-			//console.log(responseObject);
+		success: function (responseObject) {
+			console.log(responseObject);
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
 				let modifiedFriendList = responseObject.map((u) => ({ ...u.user, profile_img: null }));
@@ -577,14 +577,20 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function(lastMessages) {
-						lastMessages.sort((a, b) => {
+					success: function (lastMessages) {
+						// console.log(lastMessages);
+						let userLastMessage = [];
+						for (let i in lastMessages) {
+							userLastMessage.push(...lastMessages[i]);
+						}
+
+						userLastMessage.sort((a, b) => {
 							var date1 = new Date(a.sendDate)
 							var date2 = new Date(b.sendDate)
 							return date2 - date1;
 						});
-						lastMessages.reverse();
-						lastMessages.forEach((e1) => {
+						userLastMessage.reverse();
+						userLastMessage.forEach((e1) => {
 							responseObject.forEach((e) => {
 								if (e1.toUser.user_id == e.user.user_id) {
 
@@ -600,7 +606,7 @@ function getAllFriends(id) {
 							});
 
 						});
-						//console.log(responseObject);
+						// console.log(responseObject);
 						responseObject.forEach((e) => {
 							if (e.blocked) {
 								blockList.push(e);
@@ -624,22 +630,91 @@ function getAllFriends(id) {
 														</div>
 													</li>`;
 						});
-						lastMessages.forEach((e) => {
-							console.log(e)
-							var sendDate = new Date(e.sendDate);
-							var decodedString = atob(e.content);
-							if (+sendDate.getDate() === +new Date().getDate()) {
+						let i = 1;
+						[...friendList.children].forEach(e => {
+							if (lastMessages[i][0] != undefined) {
+								lastMessages[i].sort((a, b) => {
+									var date1 = new Date(a.sendDate)
+									var date2 = new Date(b.sendDate)
+									return date2 - date1;
+								});
+								//console.log(lastMessages[i][0]);
+								if (lastMessages[i][0].toUser.user_id == username) {
+									//console.log(lastMessages[i]);
+									for (let index = 0; index < lastMessages[i].length; index++) {
+										if (lastMessages[i][index].recievedDate != null) {
+											var decodedString = atob(lastMessages[i][index].content);
 
-								document.getElementById(e.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
-							} else {
-								document.getElementById(e.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
+											var sendDate = new Date(lastMessages[i][index].sendDate);
+											// console.log(lastMessages[i][index].toUser.user_id);
+											// console.log(document.getElementById(lastMessages[i][index].toUser.user_id));
+											if (document.getElementById(lastMessages[i][index].toUser.user_id) == null) {
+												//console.log(lastMessages[i]);
+												let findIt = lastMessages[i].find(e => {
+													if (document.getElementById(e.toUser.user_id) != null) {
+
+														return e;
+													}
+												});
+												console.log(findIt);
+												if (+sendDate.getDate() === +new Date().getDate()) {
+
+													document.getElementById(findIt.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
+												} else {
+													document.getElementById(findIt.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
+												}
+												if (lastMessages[i][index].msgLabel == "") {
+													console.log(findIt.msgLabel);
+													document.getElementById(findIt.toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
+												} else {
+													document.getElementById(findIt.toUser.user_id).children[2].children[1].innerText = "document...";
+												}
+
+											} else {
+
+												if (+sendDate.getDate() === +new Date().getDate()) {
+
+													document.getElementById(lastMessages[i][index].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
+												} else {
+													document.getElementById(lastMessages[i][index].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
+												}
+												if (lastMessages[i][index].msgLabel == "") {
+													document.getElementById(lastMessages[i][index].toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
+												} else {
+													document.getElementById(lastMessages[i][index].toUser.user_id).children[2].children[1].innerText = "document...";
+												}
+											}
+											break;
+										}
+
+									}
+								} else {
+									var decodedString = atob(lastMessages[i][0].content);
+
+									var sendDate = new Date(lastMessages[i][0].sendDate);
+									if (+sendDate.getDate() === +new Date().getDate()) {
+
+										document.getElementById(lastMessages[i][0].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
+									} else {
+										document.getElementById(lastMessages[i][0].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
+									}
+									if (lastMessages[i][0].msgLabel == "") {
+										document.getElementById(lastMessages[i][0].toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
+									} else {
+										document.getElementById(lastMessages[i][0].toUser.user_id).children[2].children[1].innerText = "document...";
+									}
+
+								}
 							}
-							if (e.msgLabel == "") {
-								document.getElementById(e.toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
-							} else {
-								document.getElementById(e.toUser.user_id).children[2].children[1].innerText = "document...";
-							}
+
+
+
+							i++;
+
+
 						})
+
+
 						hideLoader();
 						document.querySelectorAll('#notification-logo').forEach(e => e.style.display = 'none');
 					}
@@ -648,7 +723,7 @@ function getAllFriends(id) {
 
 
 			} else {
-				friendList.innerHTML = `<li class="rounded" id="no-friends-list" style="height:40px; background-color:white;">Sorry! no friends</li>`;
+				//friendList.innerHTML = `<li class="rounded" id="no-friends-list" style="height:40px; background-color:white;">Sorry! no friends</li>`;
 				hideLoader();
 			}
 			getAllChatUsers();
@@ -666,8 +741,8 @@ function getAllBlockedFriend() {
 			requestData: username,
 		}
 		,
-		success: function(response) {
-			console.log(response);
+		success: function (response) {
+			//console.log(response);
 			response.forEach(e => {
 				blockList.push(e);
 			})
@@ -688,7 +763,7 @@ function addFriend(id, f_dummyName) {
 			requestData: friendId,
 			givenName: f_dummyName
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			console.log(responseObject)
 			var list = document.createElement('li');
 			list.className = 'list-of-friend mb-1';
@@ -759,7 +834,7 @@ function removeFriend(e) {
 			data: {
 				requestData: friendId
 			},
-			success: function(result) {
+			success: function (result) {
 				if (!(blockList.indexOf(blockList.find(e => e.fId == result.fId)) == -1)) {
 
 					blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
@@ -774,7 +849,7 @@ function removeFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function(responseObject) {
+		success: function (responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
@@ -801,7 +876,7 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function(e) {
+closePopUpProfileModel.onclick = function (e) {
 	profilePic.value = '';
 	if (alertMsg.classList.contains('show-model')) {
 		alertMsg.classList.remove('show-model');
@@ -854,7 +929,7 @@ function submitProfilePic() {
 		contentType: false,
 		processData: false,
 		data: formData,
-		success: function(response) {
+		success: function (response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
 
 		}
@@ -891,7 +966,7 @@ function showMessageOfSpecificUser(u_id, f_id, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function(response) {
+		success: function (response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -1097,7 +1172,7 @@ function preocessMessage(e) {
 									contentType: false,
 									processData: false,
 									data: formFile,
-									success: function(response) {
+									success: function (response) {
 										console.log(response[0].message_id);
 										globalMessageId = response[0].message_id;
 										ws.send(JSON.stringify({
@@ -1183,7 +1258,7 @@ function preocessMessage(e) {
 									contentType: false,
 									processData: false,
 									data: formFile,
-									success: function(response) {
+									success: function (response) {
 										console.log(response[0].message_id);
 										globalMessageId = response[0].message_id;
 										ws.send(JSON.stringify({
@@ -1236,7 +1311,7 @@ function preocessMessage(e) {
 										username, friend_id, myMessage
 									})
 								},
-								success: function(response) {
+								success: function (response) {
 									console.log(response[0].message_id);
 									globalMessageId = response[0].message_id;
 									ws.send(JSON.stringify({
@@ -1360,7 +1435,7 @@ function renameFriendAgain(e) {
 			user_id: username,
 			friendId: id
 		},
-		success: function(response) {
+		success: function (response) {
 			//console.log(response);
 			messageHeaderLabel.innerText = response;
 			friendList.querySelector(`[data-find="find_${id}"]`).children[2].children[0].innerText = response;
@@ -1396,7 +1471,7 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 		data: {
 			requestData: f_id
 		},
-		success: function(result) {
+		success: function (result) {
 			console.log(result)
 			if (result) {
 
@@ -1416,7 +1491,7 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 		data: {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
-		success: function(result) {
+		success: function (result) {
 			if (!(result[result.length - 1].recievedDate == null)) {
 				var dateTimeStamp = document.createElement('div');
 				dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
@@ -1472,7 +1547,7 @@ function blockFriend(e) {
 			data: {
 				requestData: e.target.value
 			},
-			success: function(result) {
+			success: function (result) {
 				console.log(result);
 				blockList.push(result);
 			}
@@ -1490,7 +1565,7 @@ function blockSpecficFriend(e) {
 		data: {
 			requestData: e.target.getAttribute('data-block')
 		},
-		success: function(result) {
+		success: function (result) {
 			console.log(result);
 			blockList.push(result);
 		}
@@ -1525,7 +1600,7 @@ function unBlockFriend(e) {
 			data: {
 				requestData: e.target.value
 			},
-			success: function(result) {
+			success: function (result) {
 				console.log(result);
 				blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
 			}
@@ -1542,7 +1617,7 @@ function unBlockSpecficFriend(e) {
 		data: {
 			requestData: e.target.getAttribute('data-unblock')
 		},
-		success: function(result) {
+		success: function (result) {
 			console.log(result);
 			blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
 		}

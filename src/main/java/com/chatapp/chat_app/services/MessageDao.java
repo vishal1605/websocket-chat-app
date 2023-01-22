@@ -34,8 +34,8 @@ public class MessageDao {
         return message;
 
     }
-    public Message getFriendLastMessages(long user_id, long f_id){
-        Message message = repo.getUserSpecificLastMessage(user_id, f_id);
+    public List<Message> getFriendLastMessages(long user_id, long f_id){
+        List<Message> message = repo.getUserSpecificLastMessage(user_id, f_id);
         return message;
 
     }

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +47,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:5173/" ,allowCredentials = "true")
+// @CrossOrigin(origins = "http://localhost:5173/" ,allowCredentials = "true")
 public class MsgController {
 
 	@Autowired
@@ -83,18 +84,19 @@ public class MsgController {
 		return mv;
 	}
 
-//	@CrossOrigin
-//	@PostMapping("/register")
-//	public ResponseEntity<?> registerProcess(ChatUser user, HttpSession session) throws Exception {
-//		boolean success = false;
-//		try {
-//			dao.saveUser(user);
-//			success = true;
-//			return ResponseEntity.ok(success);
-//		} catch (Exception e) {
-//			throw new Exception(e);
-//		}
-//	}
+	// @CrossOrigin
+	// @PostMapping("/register")
+	// public ResponseEntity<?> registerProcess(ChatUser user, HttpSession session)
+	// throws Exception {
+	// boolean success = false;
+	// try {
+	// dao.saveUser(user);
+	// success = true;
+	// return ResponseEntity.ok(success);
+	// } catch (Exception e) {
+	// throw new Exception(e);
+	// }
+	// }
 
 	@GetMapping("/login-form")
 	public ModelAndView login() {
@@ -121,29 +123,30 @@ public class MsgController {
 		return mv;
 	}
 
-//	@PostMapping("/login")
-//	public ResponseEntity<?> loginProcess(ChatUser user, HttpSession session) throws Exception {
-//		try {
-//			byte[] b = new byte[0];
-//			ChatUser u = dao.login(user.getUserName());
-//			if (u == null) {
-//				return ResponseEntity.ok(new ChatUser());
-//
-//			}
-//			u.getFriend().clear();
-//			u.getMessages().clear();
-//			u.setProfile_img(b);
-//			session.setAttribute("user", u);
-//			System.out.println(session.getId());
-//			//System.out.println(request.getCookies()[0].getName());
-//			HttpHeaders responseHeaders = new HttpHeaders();
-//			responseHeaders.add(HttpHeaders.SET_COOKIE,session.getId());
-//			return ResponseEntity.ok().headers(responseHeaders).body(u);
-//		} catch (Exception e) {
-//			throw new Exception(e);
-//		}
-//
-//	}
+	// @PostMapping("/login")
+	// public ResponseEntity<?> loginProcess(ChatUser user, HttpSession session)
+	// throws Exception {
+	// try {
+	// byte[] b = new byte[0];
+	// ChatUser u = dao.login(user.getUserName());
+	// if (u == null) {
+	// return ResponseEntity.ok(new ChatUser());
+	//
+	// }
+	// u.getFriend().clear();
+	// u.getMessages().clear();
+	// u.setProfile_img(b);
+	// session.setAttribute("user", u);
+	// System.out.println(session.getId());
+	// //System.out.println(request.getCookies()[0].getName());
+	// HttpHeaders responseHeaders = new HttpHeaders();
+	// responseHeaders.add(HttpHeaders.SET_COOKIE,session.getId());
+	// return ResponseEntity.ok().headers(responseHeaders).body(u);
+	// } catch (Exception e) {
+	// throw new Exception(e);
+	// }
+	//
+	// }
 
 	@GetMapping("/logout")
 	public ModelAndView logoutProcess(HttpSession session) {
@@ -152,12 +155,12 @@ public class MsgController {
 		mv.setViewName("redirect:/login-form");
 		return mv;
 	}
-	
-//	@GetMapping("/logout")
-//	public ResponseEntity<?> logoutProcess(HttpSession session) {
-//		session.removeAttribute("user");
-//		return ResponseEntity.ok("success");
-//	}
+
+	// @GetMapping("/logout")
+	// public ResponseEntity<?> logoutProcess(HttpSession session) {
+	// session.removeAttribute("user");
+	// return ResponseEntity.ok("success");
+	// }
 
 	@GetMapping("/dashboard/{name}")
 	public ModelAndView dashboard(@PathVariable("name") String name, HttpSession session) {
@@ -230,109 +233,45 @@ public class MsgController {
 	@GetMapping("/get-last-message")
 	public ResponseEntity<?> getLastMessage(String requestData, String myId, HttpSession session) {
 		try {
-			System.out.println(requestData+"bajsbhhbd");
 			ChatUser c = (ChatUser) session.getAttribute("user");
 			if (c == null)
 				return ResponseEntity.badRequest().body("Session has expired");
-			// System.out.println(requestData);
+
 			TypeToken<List<ChatUser>> token = new TypeToken<List<ChatUser>>() {
 			};
 			List<ChatUser> friends = new Gson().fromJson(requestData, token.getType());
-			List<Message> messages1 = new ArrayList<>();
+			Map<Integer, List<?>> map = new HashMap<>();
+			int i = 1;
 			if (friends.size() != 0) {
-				List<Message> messages = new ArrayList<>();
 				for (ChatUser chatUser : friends) {
-					
-					if(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()) != null && mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)) !=null) {
-						messages.add(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()));
-						messages.add(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)));
-						// System.out.println(messages);
-						if (messages.size() != 0) {
-							for (int i = 0; i < messages.size(); i++) {
-								for (int j = i + 1; j < messages.size(); j++) {
-									if (LocalDateTime.parse(messages.get(i).getSendDate())
-											.isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
-										Message temp = messages.get(j);
-										messages.set(j, messages.get(i));
-										messages.set(i, temp);
-									}
-								}
-							}
-							Message m = new Message();
-							m.setToUser(chatUser);
-							m.setContent(messages.get(messages.size() - 1).getContent());
-							m.setSendDate(messages.get(messages.size() - 1).getSendDate());
-							m.setRecievedDate(messages.get(messages.size() - 1).getRecievedDate());
-							m.setMsgLabel(messages.get(messages.size() - 1).getMsgLabel());
-							messages1.add(m);
+					List<Message> messages = new ArrayList<>();
+					if (mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()) != null
+							&& mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)) != null) {
+						messages.addAll(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()));
+						messages.addAll(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)));
+						map.put(i, messages);
+						i++;
 
-						} else {
-
+					} else {
+						if (mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()) != null) {
+							messages.addAll(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()));
+							map.put(i, messages);
+							i++;
 						}
-						messages.clear();
-					}else {
-						if(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()) != null) {
-							messages.add(mDao.getFriendLastMessages(Long.parseLong(myId), chatUser.getUser_id()));
-							//messages.add(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)));
-							// System.out.println(messages);
-							if (messages.size() != 0) {
-								for (int i = 0; i < messages.size(); i++) {
-									for (int j = i + 1; j < messages.size(); j++) {
-										if (LocalDateTime.parse(messages.get(i).getSendDate())
-												.isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
-											Message temp = messages.get(j);
-											messages.set(j, messages.get(i));
-											messages.set(i, temp);
-										}
-									}
-								}
-								Message m = new Message();
-								m.setToUser(chatUser);
-								m.setContent(messages.get(messages.size() - 1).getContent());
-								m.setSendDate(messages.get(messages.size() - 1).getSendDate());
-								m.setRecievedDate(messages.get(messages.size() - 1).getRecievedDate());
-								m.setMsgLabel(messages.get(messages.size() - 1).getMsgLabel());
-								messages1.add(m);
+						if (mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)) != null) {
+							messages.addAll(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)));
+							map.put(i, messages);
+							i++;
 
-							} else {
-
-							}
-							messages.clear();
-						}
-						if(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)) !=null) {
-							messages.add(mDao.getFriendLastMessages(chatUser.getUser_id(), Long.parseLong(myId)));
-							// System.out.println(messages);
-							if (messages.size() != 0) {
-								for (int i = 0; i < messages.size(); i++) {
-									for (int j = i + 1; j < messages.size(); j++) {
-										if (LocalDateTime.parse(messages.get(i).getSendDate())
-												.isAfter(LocalDateTime.parse(messages.get(j).getSendDate()))) {
-											Message temp = messages.get(j);
-											messages.set(j, messages.get(i));
-											messages.set(i, temp);
-										}
-									}
-								}
-								Message m = new Message();
-								m.setToUser(chatUser);
-								m.setContent(messages.get(messages.size() - 1).getContent());
-								m.setSendDate(messages.get(messages.size() - 1).getSendDate());
-								m.setRecievedDate(messages.get(messages.size() - 1).getRecievedDate());
-								m.setMsgLabel(messages.get(messages.size() - 1).getMsgLabel());
-								messages1.add(m);
-
-							} else {
-
-							}
-							messages.clear();
 						}
 					}
 				}
 			}
-			return ResponseEntity.ok().body(messages1);
+			return ResponseEntity.ok().body(map);
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(e);
 		}
+
 	}
 
 	@GetMapping("/makeFriend")
@@ -494,7 +433,7 @@ public class MsgController {
 
 	@GetMapping("/get-profile-pic")
 	public ResponseEntity<?> uploadProfilePic(String requestData, HttpSession session, HttpServletRequest request) {
-//		System.out.println(request.getCookies()[0].getName());
+		// System.out.println(request.getCookies()[0].getName());
 		try {
 			System.out.println(requestData);
 			ChatUser c = (ChatUser) session.getAttribute("user");
