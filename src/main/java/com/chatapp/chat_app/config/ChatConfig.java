@@ -25,7 +25,7 @@ public class ChatConfig implements WebSocketConfigurer{
     @Bean
     public ServletServerContainerFactoryBean createWebSocketContainer() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-        container.setMaxBinaryMessageBufferSize(30485760);
+        container.setMaxBinaryMessageBufferSize(304857600);
         return container;
     }
 

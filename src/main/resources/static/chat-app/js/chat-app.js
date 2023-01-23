@@ -66,16 +66,17 @@ let holdNotificationMessages = [];
 let holdNotificationFromUser = [];
 let blockList = [];
 let isBlocked = false;
+let fileSize = 0;
 
 ////Event Listners
-myFriends.onclick = function (e) {
+myFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(1,1)'
 	notFriendList.style.transform = 'scale(0,1)'
 	myFriends.style.background = 'rgb(219, 219, 247)';
 	notMyFriends.style.background = '#ffe7c7';
 }
 
-notMyFriends.onclick = function (e) {
+notMyFriends.onclick = function(e) {
 	friendList.style.transform = 'scale(0,1)'
 	notFriendList.style.transform = 'scale(1,1)'
 	myFriends.style.background = '#ffe7c7';
@@ -111,7 +112,7 @@ function getMyProfilePicture() {
 		data: {
 			requestData: username
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			if (responseObject == "") {
 			} else {
 
@@ -125,7 +126,7 @@ function getMyProfilePicture() {
 ///////////////////////////////////////Connect To Websocket connection Or Take user to online/////////////////////////////
 function connect() {
 	ws = new WebSocket("ws://" + document.location.host + "/chat/" + username);
-	ws.onmessage = function (event) {
+	ws.onmessage = function(event) {
 		var parentDiv = document.createElement('div');
 		var childDiv = document.createElement('div');
 		var timeLabel = document.createElement('label');
@@ -147,7 +148,7 @@ function connect() {
 					}
 					var reader = new FileReader();
 					reader.readAsDataURL(event.data);
-					reader.onloadend = function () {
+					reader.onloadend = function() {
 						var base64String = reader.result;
 						let contentName = bin2String(userOpenToTakeMsg.content).split(",")[2].split('_|')[0];
 						switch (contentType) {
@@ -237,7 +238,7 @@ function connect() {
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 								//console.log(messageArray);
 								var count = {};
-								messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+								messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
 								//console.log(count);
 								for (let key in count) {
 									document.getElementById(key).children[0].textContent = count[key];
@@ -248,27 +249,31 @@ function connect() {
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
 								friendList.prepend(first);
 								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
-								$.ajax({
-									type: "POST",
-									url: "/recieved-file",
-									data: {
-										requestData: JSON.stringify({
-											recievedMessageId
-										})
-									},
-									success: function (response) {
-										console.log(response);
-										globalMessageId = 0;
+								if (fileSize / 1024 / 1024 > 3.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
 
-									}
-								});
+								}else{
+									$.ajax({
+										type: "POST",
+										url: "/recieved-file",
+										data: {
+											requestData: JSON.stringify({
+												recievedMessageId
+											})
+										},
+										success: function (response) {
+											console.log(response);
+											globalMessageId = 0;
+	
+										}
+									});
+								}
 							} else {
 								messageArray.push(activeUser.toUser.friend[0].myFriend.user_id)
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[2].children[1].innerText = bin2String(activeUser.content).split('_|')[0].substring(0, 10) + '...';
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).children[3].children[0].innerText = moment(new Date(activeUser.sendDate)).format('h:mm a');
 								//console.log(messageArray);
 								var count = {};
-								messageArray.forEach(function (i) { count[i] = (count[i] || 0) + 1; });
+								messageArray.forEach(function(i) { count[i] = (count[i] || 0) + 1; });
 								//console.log(count);
 								for (let key in count) {
 									document.getElementById(key).children[0].textContent = count[key];
@@ -281,20 +286,24 @@ function connect() {
 
 								recievedMessage = bin2String(activeUser.content).split('_|')[0];
 								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
-								$.ajax({
-									type: "POST",
-									url: "/recieved-message",
-									data: {
-										requestData: JSON.stringify({
-											recievedMessageId, recievedMessage
-										})
-									},
-									success: function (response) {
-										console.log(response);
-										globalMessageId = 0;
+								if (fileSize / 1024 / 1024 > 3.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
 
-									}
-								});
+								}else{
+									$.ajax({
+										type: "POST",
+										url: "/recieved-file",
+										data: {
+											requestData: JSON.stringify({
+												recievedMessageId
+											})
+										},
+										success: function (response) {
+											console.log(response);
+											globalMessageId = 0;
+	
+										}
+									});
+								}
 							}
 
 						} else {
@@ -306,20 +315,20 @@ function connect() {
 								holdBinaryMessageDetails.push(activeUser);
 								contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
 								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
-								$.ajax({
-									type: "POST",
-									url: "/recieved-file",
-									data: {
-										requestData: JSON.stringify({
-											recievedMessageId
-										})
-									},
-									success: function (response) {
-										console.log(response);
-										globalMessageId = 0;
+								// $.ajax({
+								// 	type: "POST",
+								// 	url: "/recieved-file",
+								// 	data: {
+								// 		requestData: JSON.stringify({
+								// 			recievedMessageId
+								// 		})
+								// 	},
+								// 	success: function (response) {
+								// 		console.log(response);
+								// 		globalMessageId = 0;
 
-									}
-								});
+								// 	}
+								// });
 							} else {
 								var labelTime = new Date();
 								if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
@@ -347,7 +356,7 @@ function connect() {
 											recievedMessageId, recievedMessage
 										})
 									},
-									success: function (response) {
+									success: function(response) {
 										console.log(response);
 										globalMessageId = 0;
 
@@ -389,7 +398,7 @@ function connect() {
 											recievedMessageId, recievedMessage
 										})
 									},
-									success: function (response) {
+									success: function(response) {
 										console.log(response);
 										globalMessageId = 0;
 
@@ -428,7 +437,7 @@ function connect() {
 											recievedMessageId, recievedMessage
 										})
 									},
-									success: function (response) {
+									success: function(response) {
 										console.log(response);
 										globalMessageId = 0;
 
@@ -445,7 +454,7 @@ function connect() {
 		}
 		// whoOnline();
 	}
-	ws.onerror = function (error) {
+	ws.onerror = function(error) {
 		console.log(error)
 		online.checked = false;
 	}
@@ -513,7 +522,7 @@ function getAllChatUsers() {
 		type: "GET",
 		url: "/getAllChatUsers",
 
-		success: function (responseObject) {
+		success: function(responseObject) {
 			allChatUsers = [...responseObject]
 			responseObject.forEach((e) => {
 				var result = allFriendsUsers.some((friend) => {
@@ -564,7 +573,7 @@ function getAllFriends(id) {
 		data: {
 			requestData: id
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			console.log(responseObject);
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
@@ -577,7 +586,7 @@ function getAllFriends(id) {
 						myId: id
 					}
 					,
-					success: function (lastMessages) {
+					success: function(lastMessages) {
 						// console.log(lastMessages);
 						let userLastMessage = [];
 						for (let i in lastMessages) {
@@ -741,7 +750,7 @@ function getAllBlockedFriend() {
 			requestData: username,
 		}
 		,
-		success: function (response) {
+		success: function(response) {
 			//console.log(response);
 			response.forEach(e => {
 				blockList.push(e);
@@ -763,7 +772,7 @@ function addFriend(id, f_dummyName) {
 			requestData: friendId,
 			givenName: f_dummyName
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			console.log(responseObject)
 			var list = document.createElement('li');
 			list.className = 'list-of-friend mb-1';
@@ -834,7 +843,7 @@ function removeFriend(e) {
 			data: {
 				requestData: friendId
 			},
-			success: function (result) {
+			success: function(result) {
 				if (!(blockList.indexOf(blockList.find(e => e.fId == result.fId)) == -1)) {
 
 					blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
@@ -849,7 +858,7 @@ function removeFriend(e) {
 		data: {
 			requestData: friendId
 		},
-		success: function (responseObject) {
+		success: function(responseObject) {
 			var list = document.createElement('li');
 			list.className = 'list-of-no-friend border border-1 border-dark mb-1';
 			list.style.backgroundColor = 'red';
@@ -876,7 +885,7 @@ function removeFriend(e) {
 }
 
 ////////////////////////////////////////////////Close Model for Update Your Profile pic ////////////////////////////////////////////////
-closePopUpProfileModel.onclick = function (e) {
+closePopUpProfileModel.onclick = function(e) {
 	profilePic.value = '';
 	if (alertMsg.classList.contains('show-model')) {
 		alertMsg.classList.remove('show-model');
@@ -929,7 +938,7 @@ function submitProfilePic() {
 		contentType: false,
 		processData: false,
 		data: formData,
-		success: function (response) {
+		success: function(response) {
 			myProfilePic.src = 'data:image/png;base64,' + response;
 
 		}
@@ -966,7 +975,7 @@ function showMessageOfSpecificUser(u_id, f_id, element) {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
 
-		success: function (response) {
+		success: function(response) {
 			if (response.length !== 0) {
 				var showDate = new Date();
 				if (globalDate.indexOf(moment(showDate).format("DD/MM/YYYY")) == -1) {
@@ -1166,32 +1175,51 @@ function preocessMessage(e) {
 								formFile.append('msgFile', fileToSendAsChat.files[0])
 								formFile.append('username', username)
 								formFile.append('friend_id', friend_id);
-								$.ajax({
-									type: "POST",
-									url: "/send-file",
-									contentType: false,
-									processData: false,
-									data: formFile,
-									success: function (response) {
-										console.log(response[0].message_id);
-										globalMessageId = response[0].message_id;
-										ws.send(JSON.stringify({
-											toUser: {
-												user_id: friend_id,
-												friend: [{
-													myFriend: {
-														user_id: username
-													}
-												}]
-											},
-											content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
-											sendDate: new Date().toString(),
-											recievedDate: new Date().toString(),
-
-										}));
-										ws.send(filSend);
-									}
-								});
+								if (fileSize / 1024 / 1024 > 3.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
+									globalMessageId = 1;
+									ws.send(JSON.stringify({
+										toUser: {
+											user_id: friend_id,
+											friend: [{
+												myFriend: {
+													user_id: username
+												}
+											}]
+										},
+										content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
+										sendDate: new Date().toString(),
+										recievedDate: new Date().toString(),
+	
+									}));
+									ws.send(filSend);
+								}else{
+									$.ajax({
+										type: "POST",
+										url: "/send-file",
+										contentType: false,
+										processData: false,
+										data: formFile,
+										success: function (response) {
+											console.log(response[0].message_id);
+											globalMessageId = response[0].message_id;
+											ws.send(JSON.stringify({
+												toUser: {
+													user_id: friend_id,
+													friend: [{
+														myFriend: {
+															user_id: username
+														}
+													}]
+												},
+												content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
+												sendDate: new Date().toString(),
+												recievedDate: new Date().toString(),
+	
+											}));
+											ws.send(filSend);
+										}
+									});
+								}
 
 
 							} else {
@@ -1252,32 +1280,51 @@ function preocessMessage(e) {
 								formFile.append('msgFile', fileToSendAsChat.files[0])
 								formFile.append('username', username)
 								formFile.append('friend_id', friend_id)
-								$.ajax({
-									type: "POST",
-									url: "/send-file",
-									contentType: false,
-									processData: false,
-									data: formFile,
-									success: function (response) {
-										console.log(response[0].message_id);
-										globalMessageId = response[0].message_id;
-										ws.send(JSON.stringify({
-											toUser: {
-												user_id: friend_id,
-												friend: [{
-													myFriend: {
-														user_id: username
-													}
-												}]
-											},
-											content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
-											sendDate: new Date().toString(),
-											recievedDate: new Date().toString(),
-
-										}));
-										ws.send(filSend);
-									}
-								});
+								if (fileSize / 1024 / 1024 > 3.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
+									globalMessageId = 1;
+									ws.send(JSON.stringify({
+										toUser: {
+											user_id: friend_id,
+											friend: [{
+												myFriend: {
+													user_id: username
+												}
+											}]
+										},
+										content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
+										sendDate: new Date().toString(),
+										recievedDate: new Date().toString(),
+	
+									}));
+									ws.send(filSend);
+								}else{
+									$.ajax({
+										type: "POST",
+										url: "/send-file",
+										contentType: false,
+										processData: false,
+										data: formFile,
+										success: function (response) {
+											console.log(response[0].message_id);
+											globalMessageId = response[0].message_id;
+											ws.send(JSON.stringify({
+												toUser: {
+													user_id: friend_id,
+													friend: [{
+														myFriend: {
+															user_id: username
+														}
+													}]
+												},
+												content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
+												sendDate: new Date().toString(),
+												recievedDate: new Date().toString(),
+	
+											}));
+											ws.send(filSend);
+										}
+									});
+								}
 							}
 						} else {
 							var formData = new FormData(e.target);
@@ -1311,7 +1358,7 @@ function preocessMessage(e) {
 										username, friend_id, myMessage
 									})
 								},
-								success: function (response) {
+								success: function(response) {
 									console.log(response[0].message_id);
 									globalMessageId = response[0].message_id;
 									ws.send(JSON.stringify({
@@ -1378,13 +1425,43 @@ function openMoreOptions(e) {
 //////////////////////////////////////////////File send in chat////////////////////////////////////////////////////////////
 
 function trackFileToBeSendInChat(e) {
-	messageArea.value = e.target.value.split("\\")[2];
-	let sendMyFile = e.target.files[0]
-	fileTobyte(sendMyFile).then((e) => {
-		fileByteArray = e;
-		fileString = btoa(uint8ToString(e))
+	if (e.target.value.split("\\")[2] != undefined) {
+		messageArea.value = e.target.value.split("\\")[2];
+		let sendMyFile = e.target.files[0]
+		if (sendMyFile.size / 1024 / 1024 > 3.0002957458496094 && sendMyFile.size / 1024 / 1024 < 70.00032) {
+			fileSize = sendMyFile.size;
+			showLoader();
+			messageArea.value = e.target.value.split("\\")[2];
 
-	})
+			fileTobyte(sendMyFile).then((e) => {
+				fileByteArray = e;
+				fileString = btoa(uint8ToString(e))
+				hideLoader();
+
+			})
+
+		} else {
+			if (sendMyFile.size / 1024 / 1024 <= 3.0002957458496094) {
+				fileSize = sendMyFile.size;
+				messageArea.value = e.target.value.split("\\")[2];
+
+				fileTobyte(sendMyFile).then((e) => {
+					fileByteArray = e;
+					fileString = btoa(uint8ToString(e))
+
+				})
+			} else {
+				alert("File size should be less then 3Mb")
+				messageArea.value = "";
+			}
+		}
+
+	}else{
+		
+	messageArea.value = "";
+	}
+
+
 }
 ///////////////////////////////////////////////////Loader Function /////////////////////////////////////////////////////////
 
@@ -1435,7 +1512,7 @@ function renameFriendAgain(e) {
 			user_id: username,
 			friendId: id
 		},
-		success: function (response) {
+		success: function(response) {
 			//console.log(response);
 			messageHeaderLabel.innerText = response;
 			friendList.querySelector(`[data-find="find_${id}"]`).children[2].children[0].innerText = response;
@@ -1471,7 +1548,7 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 		data: {
 			requestData: f_id
 		},
-		success: function (result) {
+		success: function(result) {
 			console.log(result)
 			if (result) {
 
@@ -1491,7 +1568,7 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 		data: {
 			requestData: JSON.stringify({ u_id, f_id })
 		},
-		success: function (result) {
+		success: function(result) {
 			if (!(result[result.length - 1].recievedDate == null)) {
 				var dateTimeStamp = document.createElement('div');
 				dateTimeStamp.className = 'd-flex align-items-center justify-content-center';
@@ -1547,7 +1624,7 @@ function blockFriend(e) {
 			data: {
 				requestData: e.target.value
 			},
-			success: function (result) {
+			success: function(result) {
 				console.log(result);
 				blockList.push(result);
 			}
@@ -1565,7 +1642,7 @@ function blockSpecficFriend(e) {
 		data: {
 			requestData: e.target.getAttribute('data-block')
 		},
-		success: function (result) {
+		success: function(result) {
 			console.log(result);
 			blockList.push(result);
 		}
@@ -1600,7 +1677,7 @@ function unBlockFriend(e) {
 			data: {
 				requestData: e.target.value
 			},
-			success: function (result) {
+			success: function(result) {
 				console.log(result);
 				blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
 			}
@@ -1617,7 +1694,7 @@ function unBlockSpecficFriend(e) {
 		data: {
 			requestData: e.target.getAttribute('data-unblock')
 		},
-		success: function (result) {
+		success: function(result) {
 			console.log(result);
 			blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
 		}
