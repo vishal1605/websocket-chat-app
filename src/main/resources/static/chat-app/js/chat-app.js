@@ -200,7 +200,7 @@ function connect() {
 			}
 		} else {
 
-			var activeUser = JSON.parse(event.data);
+			var activeUser = JSON.parse(event.data);			
 			if ('user_id' in activeUser) {
 				if (activeUser.isActive == true) {
 					let exist = active.some((e) => {
@@ -248,10 +248,12 @@ function connect() {
 								var first = document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).cloneNode(true);
 								document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).remove();
 								friendList.prepend(first);
-								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
-								if (fileSize / 1024 / 1024 > 3.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
-
+								recievedMessageId = bin2String(activeUser.content).split('_|')[1].split('#')[0];
+								fileSize = Number(bin2String(activeUser.content).split('#')[1]);
+								if (fileSize / 1024 / 1024 > 2.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
+									
 								}else{
+									
 									$.ajax({
 										type: "POST",
 										url: "/recieved-file",
@@ -285,10 +287,12 @@ function connect() {
 								friendList.prepend(first);
 
 								recievedMessage = bin2String(activeUser.content).split('_|')[0];
-								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
-								if (fileSize / 1024 / 1024 > 3.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
-
+								recievedMessageId = bin2String(activeUser.content).split('_|')[1].split('#')[0];
+								fileSize = Number(bin2String(activeUser.content).split('#')[1]);
+								if (fileSize / 1024 / 1024 > 2.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
+									
 								}else{
+									
 									$.ajax({
 										type: "POST",
 										url: "/recieved-file",
@@ -308,27 +312,33 @@ function connect() {
 
 						} else {
 							if (bin2String(activeUser.content).split(',')[0] == "notification") {
-								console.log(bin2String(activeUser.content).split(',')[1]);
+								
 								// document.getElementById(activeUser.toUser.friend[0].myFriend.user_id).setAttribute('data-blocked', bin2String(activeUser.content).split(',')[1].trim());
 								// isBlocked = bin2String(activeUser.content).split(',')[1].trim();
 							} else if (bin2String(activeUser.content).split(',')[0] == "binarydta") {
 								holdBinaryMessageDetails.push(activeUser);
 								contentType = bin2String(activeUser.content).split(",")[1].split('/')[0];
-								recievedMessageId = bin2String(activeUser.content).split('_|')[1];
-								// $.ajax({
-								// 	type: "POST",
-								// 	url: "/recieved-file",
-								// 	data: {
-								// 		requestData: JSON.stringify({
-								// 			recievedMessageId
-								// 		})
-								// 	},
-								// 	success: function (response) {
-								// 		console.log(response);
-								// 		globalMessageId = 0;
-
-								// 	}
-								// });
+								recievedMessageId = bin2String(activeUser.content).split('_|')[1].split('#')[0];
+								fileSize = Number(bin2String(activeUser.content).split('#')[1]);
+								if (fileSize / 1024 / 1024 > 2.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
+									
+								}else{
+									
+									$.ajax({
+										type: "POST",
+										url: "/recieved-file",
+										data: {
+											requestData: JSON.stringify({
+												recievedMessageId
+											})
+										},
+										success: function (response) {
+											console.log(response);
+											globalMessageId = 0;
+	
+										}
+									});
+								}
 							} else {
 								var labelTime = new Date();
 								if (globalDate.indexOf(moment(labelTime).format("DD/MM/YYYY")) == -1) {
@@ -574,7 +584,7 @@ function getAllFriends(id) {
 			requestData: id
 		},
 		success: function(responseObject) {
-			console.log(responseObject);
+			
 			allFriendsUsers = [...responseObject]
 			if (responseObject.length != 0) {
 				let modifiedFriendList = responseObject.map((u) => ({ ...u.user, profile_img: null }));
@@ -587,7 +597,7 @@ function getAllFriends(id) {
 					}
 					,
 					success: function(lastMessages) {
-						// console.log(lastMessages);
+						//console.log(lastMessages);
 						let userLastMessage = [];
 						for (let i in lastMessages) {
 							userLastMessage.push(...lastMessages[i]);
@@ -639,89 +649,89 @@ function getAllFriends(id) {
 														</div>
 													</li>`;
 						});
-						let i = 1;
-						[...friendList.children].forEach(e => {
-							if (lastMessages[i][0] != undefined) {
-								lastMessages[i].sort((a, b) => {
-									var date1 = new Date(a.sendDate)
-									var date2 = new Date(b.sendDate)
-									return date2 - date1;
-								});
-								//console.log(lastMessages[i][0]);
-								if (lastMessages[i][0].toUser.user_id == username) {
-									//console.log(lastMessages[i]);
-									for (let index = 0; index < lastMessages[i].length; index++) {
-										if (lastMessages[i][index].recievedDate != null) {
-											var decodedString = atob(lastMessages[i][index].content);
+						// let i = 1;
+						// [...friendList.children].forEach(e => {
+						// 	if (lastMessages[i][0] != undefined) {
+						// 		lastMessages[i].sort((a, b) => {
+						// 			var date1 = new Date(a.sendDate)
+						// 			var date2 = new Date(b.sendDate)
+						// 			return date2 - date1;
+						// 		});
+						// 		//console.log(lastMessages[i][0]);
+						// 		if (lastMessages[i][0].toUser.user_id == username) {
+						// 			//console.log(lastMessages[i]);
+						// 			for (let index = 0; index < lastMessages[i].length; index++) {
+						// 				if (lastMessages[i][index].recievedDate != null) {
+						// 					var decodedString = atob(lastMessages[i][index].content);
 
-											var sendDate = new Date(lastMessages[i][index].sendDate);
-											// console.log(lastMessages[i][index].toUser.user_id);
-											// console.log(document.getElementById(lastMessages[i][index].toUser.user_id));
-											if (document.getElementById(lastMessages[i][index].toUser.user_id) == null) {
-												//console.log(lastMessages[i]);
-												let findIt = lastMessages[i].find(e => {
-													if (document.getElementById(e.toUser.user_id) != null) {
+						// 					var sendDate = new Date(lastMessages[i][index].sendDate);
+						// 					// console.log(lastMessages[i][index].toUser.user_id);
+						// 					// console.log(document.getElementById(lastMessages[i][index].toUser.user_id));
+						// 					if (document.getElementById(lastMessages[i][index].toUser.user_id) == null) {
+						// 						//console.log(lastMessages[i]);
+						// 						let findIt = lastMessages[i].find(e => {
+						// 							if (document.getElementById(e.toUser.user_id) != null) {
 
-														return e;
-													}
-												});
-												console.log(findIt);
-												if (+sendDate.getDate() === +new Date().getDate()) {
+						// 								return e;
+						// 							}
+						// 						});
+						// 						console.log(findIt);
+						// 						if (+sendDate.getDate() === +new Date().getDate()) {
 
-													document.getElementById(findIt.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
-												} else {
-													document.getElementById(findIt.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
-												}
-												if (lastMessages[i][index].msgLabel == "") {
-													console.log(findIt.msgLabel);
-													document.getElementById(findIt.toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
-												} else {
-													document.getElementById(findIt.toUser.user_id).children[2].children[1].innerText = "document...";
-												}
+						// 							document.getElementById(findIt.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
+						// 						} else {
+						// 							document.getElementById(findIt.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
+						// 						}
+						// 						if (lastMessages[i][index].msgLabel == "") {
+						// 							console.log(findIt.msgLabel);
+						// 							document.getElementById(findIt.toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
+						// 						} else {
+						// 							document.getElementById(findIt.toUser.user_id).children[2].children[1].innerText = "document...";
+						// 						}
 
-											} else {
+						// 					} else {
 
-												if (+sendDate.getDate() === +new Date().getDate()) {
+						// 						if (+sendDate.getDate() === +new Date().getDate()) {
 
-													document.getElementById(lastMessages[i][index].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
-												} else {
-													document.getElementById(lastMessages[i][index].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
-												}
-												if (lastMessages[i][index].msgLabel == "") {
-													document.getElementById(lastMessages[i][index].toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
-												} else {
-													document.getElementById(lastMessages[i][index].toUser.user_id).children[2].children[1].innerText = "document...";
-												}
-											}
-											break;
-										}
+						// 							document.getElementById(lastMessages[i][index].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
+						// 						} else {
+						// 							document.getElementById(lastMessages[i][index].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
+						// 						}
+						// 						if (lastMessages[i][index].msgLabel == "") {
+						// 							document.getElementById(lastMessages[i][index].toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
+						// 						} else {
+						// 							document.getElementById(lastMessages[i][index].toUser.user_id).children[2].children[1].innerText = "document...";
+						// 						}
+						// 					}
+						// 					break;
+						// 				}
 
-									}
-								} else {
-									var decodedString = atob(lastMessages[i][0].content);
+						// 			}
+						// 		} else {
+						// 			var decodedString = atob(lastMessages[i][0].content);
 
-									var sendDate = new Date(lastMessages[i][0].sendDate);
-									if (+sendDate.getDate() === +new Date().getDate()) {
+						// 			var sendDate = new Date(lastMessages[i][0].sendDate);
+						// 			if (+sendDate.getDate() === +new Date().getDate()) {
 
-										document.getElementById(lastMessages[i][0].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
-									} else {
-										document.getElementById(lastMessages[i][0].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
-									}
-									if (lastMessages[i][0].msgLabel == "") {
-										document.getElementById(lastMessages[i][0].toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
-									} else {
-										document.getElementById(lastMessages[i][0].toUser.user_id).children[2].children[1].innerText = "document...";
-									}
+						// 				document.getElementById(lastMessages[i][0].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
+						// 			} else {
+						// 				document.getElementById(lastMessages[i][0].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
+						// 			}
+						// 			if (lastMessages[i][0].msgLabel == "") {
+						// 				document.getElementById(lastMessages[i][0].toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
+						// 			} else {
+						// 				document.getElementById(lastMessages[i][0].toUser.user_id).children[2].children[1].innerText = "document...";
+						// 			}
 
-								}
-							}
-
-
-
-							i++;
+						// 		}
+						// 	}
 
 
-						})
+
+						// 	i++;
+
+
+						// })
 
 
 						hideLoader();
@@ -773,7 +783,6 @@ function addFriend(id, f_dummyName) {
 			givenName: f_dummyName
 		},
 		success: function(responseObject) {
-			console.log(responseObject)
 			var list = document.createElement('li');
 			list.className = 'list-of-friend mb-1';
 			list.style.backgroundColor = 'white';
@@ -952,7 +961,6 @@ function submitProfilePic() {
 
 ////////////////////////////////////////////Show Your Specfic Friend Older Chat with You & Start more Chat///////////////////////////
 function showMessageOfSpecificUser(u_id, f_id, element) {
-	//console.log(element.children[2].children[0].innerText);
 	var zro = messageArray.filter(e => e == f_id);
 	zro.forEach(e => messageArray.splice(messageArray.indexOf(e), 1))
 	document.getElementById(f_id).children[0].textContent = 0;
@@ -1175,7 +1183,7 @@ function preocessMessage(e) {
 								formFile.append('msgFile', fileToSendAsChat.files[0])
 								formFile.append('username', username)
 								formFile.append('friend_id', friend_id);
-								if (fileSize / 1024 / 1024 > 3.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
+								if (fileSize / 1024 / 1024 > 2.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
 									globalMessageId = 1;
 									ws.send(JSON.stringify({
 										toUser: {
@@ -1186,7 +1194,7 @@ function preocessMessage(e) {
 												}
 											}]
 										},
-										content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
+										content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId+"#"+fileSize),
 										sendDate: new Date().toString(),
 										recievedDate: new Date().toString(),
 	
@@ -1211,7 +1219,7 @@ function preocessMessage(e) {
 														}
 													}]
 												},
-												content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
+												content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId+"#"+fileSize),
 												sendDate: new Date().toString(),
 												recievedDate: new Date().toString(),
 	
@@ -1280,7 +1288,7 @@ function preocessMessage(e) {
 								formFile.append('msgFile', fileToSendAsChat.files[0])
 								formFile.append('username', username)
 								formFile.append('friend_id', friend_id)
-								if (fileSize / 1024 / 1024 > 3.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
+								if (fileSize / 1024 / 1024 > 2.0002957458496094 && fileSize / 1024 / 1024 < 70.00032) {
 									globalMessageId = 1;
 									ws.send(JSON.stringify({
 										toUser: {
@@ -1291,7 +1299,7 @@ function preocessMessage(e) {
 												}
 											}]
 										},
-										content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
+										content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId+"#"+fileSize),
 										sendDate: new Date().toString(),
 										recievedDate: new Date().toString(),
 	
@@ -1316,7 +1324,7 @@ function preocessMessage(e) {
 														}
 													}]
 												},
-												content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId),
+												content: unpack("binarydta," + fileType + "," + fileName + "_|" + globalMessageId+"#"+fileSize),
 												sendDate: new Date().toString(),
 												recievedDate: new Date().toString(),
 	
@@ -1428,7 +1436,7 @@ function trackFileToBeSendInChat(e) {
 	if (e.target.value.split("\\")[2] != undefined) {
 		messageArea.value = e.target.value.split("\\")[2];
 		let sendMyFile = e.target.files[0]
-		if (sendMyFile.size / 1024 / 1024 > 3.0002957458496094 && sendMyFile.size / 1024 / 1024 < 70.00032) {
+		if (sendMyFile.size / 1024 / 1024 > 2.0002957458496094 && sendMyFile.size / 1024 / 1024 < 70.00032) {
 			fileSize = sendMyFile.size;
 			showLoader();
 			messageArea.value = e.target.value.split("\\")[2];
@@ -1441,7 +1449,7 @@ function trackFileToBeSendInChat(e) {
 			})
 
 		} else {
-			if (sendMyFile.size / 1024 / 1024 <= 3.0002957458496094) {
+			if (sendMyFile.size / 1024 / 1024 <= 2.0002957458496094) {
 				fileSize = sendMyFile.size;
 				messageArea.value = e.target.value.split("\\")[2];
 
@@ -1455,7 +1463,6 @@ function trackFileToBeSendInChat(e) {
 				messageArea.value = "";
 			}
 		}
-
 	}else{
 		
 	messageArea.value = "";
@@ -1534,7 +1541,6 @@ function searchLocalFriend(e) {
 
 //////////////////////////////////////////////////////////App Notification Releted///////////////////////////////////
 function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
-	console.log(blockList);
 	blockNewFriend.value = f_id;
 	unBlockNewFriend.value = f_id;
 	notifyModalBody.innerHTML = "";
@@ -1590,7 +1596,6 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 
 		}
 	});
-	console.log(document.getElementById(f_id).getAttribute('data-dname'))
 	saveNewFriendFromNotification.setAttribute('onclick', `saveNotificationFriend(${f_id},'${document.getElementById(f_id).getAttribute('data-dname')}')`);
 }
 
