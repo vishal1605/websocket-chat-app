@@ -46,6 +46,8 @@ const notifyModalName = document.getElementById('notify-modal-name');
 const notifyModalImg = document.getElementById('notify-modal-img');
 const blockNewFriend = document.getElementById('block-new-friend');
 const unBlockNewFriend = document.getElementById('unblock-new-friend');
+const menuBar = document.getElementById('menu-bar');
+const sideBar = document.getElementById('friend-sidebr');
 const saveNewFriendFromNotification = document.getElementById('save-new-friend-from-notification');
 
 //Global variable
@@ -102,6 +104,8 @@ function initialFunct() {
 	document.addEventListener('click', closeMoreOptions);
 	blockNewFriend.addEventListener('click', blockFriend);
 	unBlockNewFriend.addEventListener('click', unBlockFriend);
+	menuBar.addEventListener('click', showHideMenuBar)
+	window.addEventListener('resize', iamRunning)
 	//searchFriendLocal.addEventListener('input', searchLocalFriend);
 }
 ///////////////////////////////Fetch Logged in User Profile/////////////////////////////////////
@@ -263,7 +267,6 @@ function connect() {
 											})
 										},
 										success: function (response) {
-											console.log(response);
 											globalMessageId = 0;
 	
 										}
@@ -302,7 +305,6 @@ function connect() {
 											})
 										},
 										success: function (response) {
-											console.log(response);
 											globalMessageId = 0;
 	
 										}
@@ -333,7 +335,6 @@ function connect() {
 											})
 										},
 										success: function (response) {
-											console.log(response);
 											globalMessageId = 0;
 	
 										}
@@ -367,7 +368,6 @@ function connect() {
 										})
 									},
 									success: function(response) {
-										console.log(response);
 										globalMessageId = 0;
 
 									}
@@ -409,7 +409,6 @@ function connect() {
 										})
 									},
 									success: function(response) {
-										console.log(response);
 										globalMessageId = 0;
 
 									}
@@ -448,7 +447,6 @@ function connect() {
 										})
 									},
 									success: function(response) {
-										console.log(response);
 										globalMessageId = 0;
 
 									}
@@ -465,7 +463,6 @@ function connect() {
 		// whoOnline();
 	}
 	ws.onerror = function(error) {
-		console.log(error)
 		online.checked = false;
 	}
 
@@ -649,89 +646,87 @@ function getAllFriends(id) {
 														</div>
 													</li>`;
 						});
-						// let i = 1;
-						// [...friendList.children].forEach(e => {
-						// 	if (lastMessages[i][0] != undefined) {
-						// 		lastMessages[i].sort((a, b) => {
-						// 			var date1 = new Date(a.sendDate)
-						// 			var date2 = new Date(b.sendDate)
-						// 			return date2 - date1;
-						// 		});
-						// 		//console.log(lastMessages[i][0]);
-						// 		if (lastMessages[i][0].toUser.user_id == username) {
-						// 			//console.log(lastMessages[i]);
-						// 			for (let index = 0; index < lastMessages[i].length; index++) {
-						// 				if (lastMessages[i][index].recievedDate != null) {
-						// 					var decodedString = atob(lastMessages[i][index].content);
+						let i = 1;
+						[...friendList.children].forEach(e => {
+							if (lastMessages[i][0] != undefined) {
+								lastMessages[i].sort((a, b) => {
+									var date1 = new Date(a.sendDate)
+									var date2 = new Date(b.sendDate)
+									return date2 - date1;
+								});
+								//console.log(lastMessages[i][0]);
+								if (lastMessages[i][0].toUser.user_id == username) {
+									//console.log(lastMessages[i]);
+									for (let index = 0; index < lastMessages[i].length; index++) {
+										if (lastMessages[i][index].recievedDate != null) {
+											var decodedString = atob(lastMessages[i][index].content);
 
-						// 					var sendDate = new Date(lastMessages[i][index].sendDate);
-						// 					// console.log(lastMessages[i][index].toUser.user_id);
-						// 					// console.log(document.getElementById(lastMessages[i][index].toUser.user_id));
-						// 					if (document.getElementById(lastMessages[i][index].toUser.user_id) == null) {
-						// 						//console.log(lastMessages[i]);
-						// 						let findIt = lastMessages[i].find(e => {
-						// 							if (document.getElementById(e.toUser.user_id) != null) {
+											var sendDate = new Date(lastMessages[i][index].sendDate);
+											// console.log(lastMessages[i][index].toUser.user_id);
+											// console.log(document.getElementById(lastMessages[i][index].toUser.user_id));
+											if (document.getElementById(lastMessages[i][index].toUser.user_id) == null) {
+												//console.log(lastMessages[i]);
+												let findIt = lastMessages[i].find(e => {
+													if (document.getElementById(e.toUser.user_id) != null) {
 
-						// 								return e;
-						// 							}
-						// 						});
-						// 						console.log(findIt);
-						// 						if (+sendDate.getDate() === +new Date().getDate()) {
+														return e;
+													}
+												});
+												if (+sendDate.getDate() === +new Date().getDate()) {
 
-						// 							document.getElementById(findIt.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
-						// 						} else {
-						// 							document.getElementById(findIt.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
-						// 						}
-						// 						if (lastMessages[i][index].msgLabel == "") {
-						// 							console.log(findIt.msgLabel);
-						// 							document.getElementById(findIt.toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
-						// 						} else {
-						// 							document.getElementById(findIt.toUser.user_id).children[2].children[1].innerText = "document...";
-						// 						}
+													document.getElementById(findIt.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
+												} else {
+													document.getElementById(findIt.toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
+												}
+												if (lastMessages[i][index].msgLabel == "") {
+													document.getElementById(findIt.toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
+												} else {
+													document.getElementById(findIt.toUser.user_id).children[2].children[1].innerText = "document...";
+												}
 
-						// 					} else {
+											} else {
 
-						// 						if (+sendDate.getDate() === +new Date().getDate()) {
+												if (+sendDate.getDate() === +new Date().getDate()) {
 
-						// 							document.getElementById(lastMessages[i][index].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
-						// 						} else {
-						// 							document.getElementById(lastMessages[i][index].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
-						// 						}
-						// 						if (lastMessages[i][index].msgLabel == "") {
-						// 							document.getElementById(lastMessages[i][index].toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
-						// 						} else {
-						// 							document.getElementById(lastMessages[i][index].toUser.user_id).children[2].children[1].innerText = "document...";
-						// 						}
-						// 					}
-						// 					break;
-						// 				}
+													document.getElementById(lastMessages[i][index].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
+												} else {
+													document.getElementById(lastMessages[i][index].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
+												}
+												if (lastMessages[i][index].msgLabel == "") {
+													document.getElementById(lastMessages[i][index].toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
+												} else {
+													document.getElementById(lastMessages[i][index].toUser.user_id).children[2].children[1].innerText = "document...";
+												}
+											}
+											break;
+										}
 
-						// 			}
-						// 		} else {
-						// 			var decodedString = atob(lastMessages[i][0].content);
+									}
+								} else {
+									var decodedString = atob(lastMessages[i][0].content);
 
-						// 			var sendDate = new Date(lastMessages[i][0].sendDate);
-						// 			if (+sendDate.getDate() === +new Date().getDate()) {
+									var sendDate = new Date(lastMessages[i][0].sendDate);
+									if (+sendDate.getDate() === +new Date().getDate()) {
 
-						// 				document.getElementById(lastMessages[i][0].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
-						// 			} else {
-						// 				document.getElementById(lastMessages[i][0].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
-						// 			}
-						// 			if (lastMessages[i][0].msgLabel == "") {
-						// 				document.getElementById(lastMessages[i][0].toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
-						// 			} else {
-						// 				document.getElementById(lastMessages[i][0].toUser.user_id).children[2].children[1].innerText = "document...";
-						// 			}
+										document.getElementById(lastMessages[i][0].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("h:mm a")}`;
+									} else {
+										document.getElementById(lastMessages[i][0].toUser.user_id).children[3].children[0].innerText = `${moment(sendDate).format("DD/MM/YY")}`;
+									}
+									if (lastMessages[i][0].msgLabel == "") {
+										document.getElementById(lastMessages[i][0].toUser.user_id).children[2].children[1].innerText = decodedString.substring(0, 10) + "...";
+									} else {
+										document.getElementById(lastMessages[i][0].toUser.user_id).children[2].children[1].innerText = "document...";
+									}
 
-						// 		}
-						// 	}
+								}
+							}
 
 
 
-						// 	i++;
+							i++;
 
 
-						// })
+						})
 
 
 						hideLoader();
@@ -1208,7 +1203,6 @@ function preocessMessage(e) {
 										processData: false,
 										data: formFile,
 										success: function (response) {
-											console.log(response[0].message_id);
 											globalMessageId = response[0].message_id;
 											ws.send(JSON.stringify({
 												toUser: {
@@ -1313,7 +1307,6 @@ function preocessMessage(e) {
 										processData: false,
 										data: formFile,
 										success: function (response) {
-											console.log(response[0].message_id);
 											globalMessageId = response[0].message_id;
 											ws.send(JSON.stringify({
 												toUser: {
@@ -1367,7 +1360,7 @@ function preocessMessage(e) {
 									})
 								},
 								success: function(response) {
-									console.log(response[0].message_id);
+									
 									globalMessageId = response[0].message_id;
 									ws.send(JSON.stringify({
 										toUser: {
@@ -1555,7 +1548,7 @@ function showNotifyUserMessage(u_id, f_id, imgString, dummyName, element) {
 			requestData: f_id
 		},
 		success: function(result) {
-			console.log(result)
+			
 			if (result) {
 
 				blockNewFriend.classList.add('fade-model');
@@ -1630,7 +1623,7 @@ function blockFriend(e) {
 				requestData: e.target.value
 			},
 			success: function(result) {
-				console.log(result);
+				
 				blockList.push(result);
 			}
 		});
@@ -1648,7 +1641,6 @@ function blockSpecficFriend(e) {
 			requestData: e.target.getAttribute('data-block')
 		},
 		success: function(result) {
-			console.log(result);
 			blockList.push(result);
 		}
 	});
@@ -1660,7 +1652,6 @@ function blockSpecficFriend(e) {
 }
 
 function unBlockFriend(e) {
-	console.log(e);
 	if (e.target.value != "") {
 		ws.send(JSON.stringify({
 			toUser: {
@@ -1683,7 +1674,6 @@ function unBlockFriend(e) {
 				requestData: e.target.value
 			},
 			success: function(result) {
-				console.log(result);
 				blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
 			}
 		});
@@ -1700,7 +1690,6 @@ function unBlockSpecficFriend(e) {
 			requestData: e.target.getAttribute('data-unblock')
 		},
 		success: function(result) {
-			console.log(result);
 			blockList.splice(blockList.indexOf(blockList.find(e => e.fId == result.fId)), 1);
 		}
 	});
@@ -1713,4 +1702,21 @@ function unBlockSpecficFriend(e) {
 
 function closeAllPhotoModal(e) {
 	exampleModal.hide();
+}
+// function showHideMenuBar(e){
+// 	if(sideBar.classList.contains('show-model')){
+// 		sideBar.classList.remove('show-model');
+// 		sideBar.setAttribute('style', 'display:none !important;');
+// 	}else{
+
+// 		sideBar.classList.add('show-model');
+// 		sideBar.setAttribute('style', 'display:block !important;');
+// 		console.log(sideBar);
+// 	}
+// }
+
+function iamRunning(){
+	if(window.innerWidth == 576){
+
+	}
 }

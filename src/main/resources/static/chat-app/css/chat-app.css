@@ -327,6 +327,10 @@
 	display: block;
 }
 
+#menu-bar{
+	display: none;
+}
+
 /* //////////////////////////////////////////////////////Notification releted////////////////////////////////////// */
 #notification-list .list-of-notification-msg{
 	border-radius: 10px;
@@ -349,8 +353,20 @@
 
 
 /* ////////////////////////////////////////////////////Media Queries//////////////////////////////////////////////// */
-@media only screen and (max-width: 768px) {
-	/* #friend-sidebr{
-		position: absolute;
+@media only screen and (max-width: 576px) {
+	#friend-sidebr{
+		/* position: absolute !important;
+		display: none !important;
+		width: 200px;
+		background-color: #f9e4db;
+		z-index: 1000; */
+		width: 200px !important;
+	}
+
+	/* #menu-bar{
+		display: block;
+	}
+	#chat-main{
+		height: 550px;
 	} */
 }
