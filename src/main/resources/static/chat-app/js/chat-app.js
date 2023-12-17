@@ -104,7 +104,7 @@ function initialFunct() {
 	document.addEventListener('click', closeMoreOptions);
 	blockNewFriend.addEventListener('click', blockFriend);
 	unBlockNewFriend.addEventListener('click', unBlockFriend);
-	menuBar.addEventListener('click', showHideMenuBar)
+	// menuBar.addEventListener('click', showHideMenuBar)
 	window.addEventListener('resize', iamRunning)
 	//searchFriendLocal.addEventListener('input', searchLocalFriend);
 }
