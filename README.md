@@ -60,3 +60,18 @@ CREATE TABLE `chat_user_messages` (
   CONSTRAINT `FKk0lmg32lpdoo34gosk380jme` FOREIGN KEY (`messages_message_id`) REFERENCES `message` (`message_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 ```
+
+#Screenshots
+
+![Screenshot 2023-12-17 135126](https://github.com/vishal1605/websocket-chat-app/assets/68631914/3c2a9cbd-d0eb-4017-84aa-3c4e2e40cd32)
+
+![Screenshot 2023-12-17 135144](https://github.com/vishal1605/websocket-chat-app/assets/68631914/aac6b716-a4b1-4512-aaca-26139c64c92b)
+
+![Screenshot 2023-12-17 135209](https://github.com/vishal1605/websocket-chat-app/assets/68631914/c7e855ff-4b8d-4231-8f40-441c5eaa3238)
+
+![Screenshot 2023-12-17 135227](https://github.com/vishal1605/websocket-chat-app/assets/68631914/7770ce55-4115-4532-9cd2-63aef8438e25)
+
+![Screenshot 2023-12-17 135250](https://github.com/vishal1605/websocket-chat-app/assets/68631914/9d828acb-853f-48e8-91eb-e05b06eaf6a8)
+
+
+
